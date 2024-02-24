@@ -1,0 +1,29 @@
+internship controller
+/api/internships - get all internships
+/api/internships - [company] post create internship - enter keywords
+/api/internships/{internshipId} - get internship by id
+
+/api/internships/{internshipId} - [later] get internship by id statistics
+/api/internships/{internshipId} - post apply
+
+applicant controller
+/api/internships/{internshipId}/applicants - [c] get all applicants(see current steps, reject)
+/api/internships/{internshipId}/steps/cv/applicant/{applicantId} - [c] get cv info by applicant
+/api/internships/{internshipId}/steps/interview/applicant/{applicantId} - [c] get steps info by applicant
+
+step controller
+/api/internships/{internshipId}/steps - get all steps 
+/api/internships/{internshipId}/steps /current - get current steps info
+
+cv controller
+/api/internships/{internshipId}/steps/cv - get steps info
+/api/internships/{internshipId}/steps/cv - post upload cv
+/api/internships/{internshipId}/steps/cv/applicant/{applicantId} - see cv of applicant
+
+questions controllers
+
+interview controller
+/api/internships/{internshipId}/steps/interview - get steps info
+/api/internships/{internshipId}/steps/interview  - post select interview date
+/api/internships/{internshipId}/steps/interview/applicant/{applicantId} - see interview of applicant
+
