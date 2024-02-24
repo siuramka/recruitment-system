@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
             UserName = registerUserDto.Email,
             PhoneNumber = registerUserDto.PhoneNumber,
             Location = registerUserDto.Location,
-            DateOfBirth = registerUserDto.DateOfBirth,
+            DateOfBirth = registerUserDto.DateOfBirth.ToUniversalTime(),
             FirstName = registerUserDto.FirstName,
             LastName = registerUserDto.LastName
         };
@@ -89,7 +89,7 @@ public class AuthController : ControllerBase
             UserName = registerCompanyDto.RegisterUserDto.Email,
             PhoneNumber = registerCompanyDto.RegisterUserDto.PhoneNumber,
             Location = registerCompanyDto.RegisterUserDto.Location,
-            DateOfBirth = registerCompanyDto.RegisterUserDto.DateOfBirth,
+            DateOfBirth = registerCompanyDto.RegisterUserDto.DateOfBirth.ToUniversalTime(),
             FirstName = registerCompanyDto.RegisterUserDto.FirstName,
             LastName = registerCompanyDto.RegisterUserDto.LastName,
             Company = company

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.DataAccess.Seeders;
 using RecruitmentSystem.Domain.Models;
@@ -16,7 +17,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddAuthorization();
-        
+        builder.Services.AddAutoMapper(typeof(Program)); 
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +29,8 @@ public class Program
 
         builder.Services.AddDbContext<RecruitmentDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), x => x.MigrationsAssembly("RecruitmentSystem.DataAccess"));
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+                x => x.MigrationsAssembly("RecruitmentSystem.DataAccess"));
         });
 
 
@@ -54,6 +56,8 @@ public class Program
             });
         
         builder.Services.AddScoped<StepSeeder>();
+        builder.Services.AddScoped<AuthSeeder>();
+        builder.Services.AddScoped<JwtService>();
 
         var app = builder.Build();
 
@@ -85,7 +89,9 @@ public class Program
         using var scope = app.Services.CreateScope();
         var dbSeeder = scope.ServiceProvider.GetRequiredService<StepSeeder>();
         dbSeeder.SeedSteps();
-        
+        var authSeeder = scope.ServiceProvider.GetRequiredService<AuthSeeder>();
+        Task.WhenAll(authSeeder.SeedRoles());
+
         app.Run();
     }
 }

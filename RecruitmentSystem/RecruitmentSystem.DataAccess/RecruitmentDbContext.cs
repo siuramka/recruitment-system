@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.DataAccess;
 
-public class RecruitmentDbContext : DbContext
+public class RecruitmentDbContext : IdentityDbContext<SiteUser>
 {
     public RecruitmentDbContext(DbContextOptions<RecruitmentDbContext> options) : base(options)
     {
@@ -27,4 +28,7 @@ public class RecruitmentDbContext : DbContext
     public DbSet<Cv> Cvs { get; set; }
     public DbSet<Anwser> Anwsers { get; set; }
     public DbSet<Company> Companys { get; set; }
+    public DbSet<Internship> Internships { get; set; }
+    public DbSet<InternshipStep> InternshipSteps { get; set; }
+    public DbSet<Interview> Interviews { get; set; }
 }

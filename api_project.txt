@@ -27,3 +27,6 @@ interview controller
 /api/internships/{internshipId}/steps/interview  - post select interview date
 /api/internships/{internshipId}/steps/interview/applicant/{applicantId} - see interview of applicant
 
+dotnet ef database update --project RecruitmentSystem.DataAccess --startup-project RecruitmentSystem.API
+
+dotnet ef migrations add Inital --project RecruitmentSystem.DataAccess --startup-project RecruitmentSystem.API   

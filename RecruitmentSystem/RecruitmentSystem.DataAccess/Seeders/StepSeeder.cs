@@ -13,6 +13,10 @@ public class StepSeeder
 
     public void SeedSteps()
     {
+        if (_dbContext.Steps.Any())
+        {
+            return;
+        }
         _dbContext.Steps.AddRange(
             new Step
             {
