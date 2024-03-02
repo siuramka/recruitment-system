@@ -12,8 +12,8 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    [Migration("20240302161310_CvContent")]
-    partial class CvContent
+    [Migration("20240302170355_Initialnew")]
+    partial class Initialnew
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,7 +256,11 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Property<Guid>("ApplicationId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Content")
+                    b.Property<byte[]>("FileContent")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("text");
 

@@ -83,14 +83,15 @@ public class AuthSeeder
 
     public async Task SeedRoles()
     {
-        await SeedCompany();
-        await SeedUser();
-        
         foreach (var role in Roles.SiteRoles)
         {
             var roleExists = await _roleManager.RoleExistsAsync(role);
             if (!roleExists)
                 await _roleManager.CreateAsync(new IdentityRole(role));
         }
+        
+        await SeedCompany();
+        await SeedUser();
+        
     }
 }
