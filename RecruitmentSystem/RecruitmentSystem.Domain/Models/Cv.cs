@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace RecruitmentSystem.Domain.Models;
 
 public class Cv
@@ -12,5 +14,7 @@ public class Cv
     
     public SiteUser SiteUser { get; set; }
     
-    public string FilePath { get; set; }
+    public string FileName { get; set; }
+    public byte[] FileContent { get; set; }
+
 }
