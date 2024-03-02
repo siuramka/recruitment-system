@@ -35,7 +35,7 @@ public class JwtService
         (
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.UtcNow.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(9999),
             claims: authClaims,
             signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -46,11 +46,9 @@ public class JwtService
     public string CreateRefreshToken()
     {
         var randomNumber = new byte[32];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        }
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)

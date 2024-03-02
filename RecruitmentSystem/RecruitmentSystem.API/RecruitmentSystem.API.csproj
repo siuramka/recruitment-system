@@ -17,6 +17,7 @@
         </PackageReference>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="24.2.8" />
     </ItemGroup>
 
     <ItemGroup>
