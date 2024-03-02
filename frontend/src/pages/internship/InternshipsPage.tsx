@@ -34,6 +34,7 @@ const InternshipsPage = () => {
   };
 
   useEffect(() => {
+    console.log("hello");
     getData();
   }, []);
 

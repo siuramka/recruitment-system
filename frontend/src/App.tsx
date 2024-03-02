@@ -17,8 +17,8 @@ function App() {
       {user ? (
         <LayoutManager role={user.role}>
           <Routes>
-            <Route path="*" element={<Navigate to="/error" replace />} />
-            <Route path="/error" element={<NotFoundPage />} />
+            {/* <Route path="*" element={<Navigate to="/error" replace />} />
+            <Route path="/error" element={<NotFoundPage />} /> */}
             <Route path="/internships" element={<InternshipsPage />} />
             <Route
               path="/internships/:internshipId/application"
