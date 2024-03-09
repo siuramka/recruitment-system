@@ -4,10 +4,12 @@ import { getAllInternships } from "@/services/InternshipService";
 import { Button } from "@/components/ui/button";
 import { createApplication } from "@/services/ApplicationService";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const InternshipsPage = () => {
   const [internships, setInternships] = useState<InternshipDto[]>([]);
   const [activeInternship, setActiveInternship] = useState<InternshipDto>();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const getData = async () => {
@@ -29,6 +31,7 @@ const InternshipsPage = () => {
           title: "Successfully applied to internship!",
           description: `${activeInternship.name} at ${activeInternship.companyDto.name}`,
         });
+        navigate(`/internships/${activeInternship.id}/application`);
       }
     }
   };

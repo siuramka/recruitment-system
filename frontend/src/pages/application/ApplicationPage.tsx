@@ -86,10 +86,10 @@ const ApplicationPage = () => {
       </div>
       <div className="border rounded-md min-h-svh shadow-lg w-full p-4">
         {currentStep && currentStep.stepType == "Screening" && (
-          <ScreeningSection />
+          <ScreeningSection internshipId={internshipId} />
         )}
         {currentStep && currentStep.stepType == "Intreview" && (
-          <InterviewSection />
+          <InterviewSection internshipId={internshipId} />
         )}
         {currentStep && currentStep.stepType == "Offer" && <OfferSection />}
       </div>

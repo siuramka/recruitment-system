@@ -32,13 +32,13 @@ public class AuthSeeder
             Location = "Kaunas"
         };
 
-        var company = new Company
+        var company = new Company()
         {
-            Name = "teltonika",
-            Email = "hr@teltonika.com",
+            Email = "hr@company.com",
+            Name = "Mariusoftas",
             Location = "Kaunas",
-            PhoneNumber = "+123213123",
-            Website = "www.teltonika.lt"
+            PhoneNumber = "+370613221321",
+            Website = "company.com"
         };
 
         var existingAdminUser = await _userManager.FindByEmailAsync(siteUser.Email);

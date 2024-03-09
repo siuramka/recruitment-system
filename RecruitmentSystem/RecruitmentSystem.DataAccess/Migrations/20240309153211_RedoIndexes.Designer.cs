@@ -12,8 +12,8 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    [Migration("20240302170355_Initialnew")]
-    partial class Initialnew
+    [Migration("20240309153211_RedoIndexes")]
+    partial class RedoIndexes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,10 +192,7 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Property<Guid>("InternshipId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("InternshipStepInternshipId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("InternshipStepStepId")
+                    b.Property<Guid>("InternshipStepId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("SiteUserId")
@@ -209,9 +206,9 @@ namespace RecruitmentSystem.DataAccess.Migrations
 
                     b.HasIndex("InternshipId");
 
-                    b.HasIndex("SiteUserId");
+                    b.HasIndex("InternshipStepId");
 
-                    b.HasIndex("InternshipStepStepId", "InternshipStepInternshipId");
+                    b.HasIndex("SiteUserId");
 
                     b.ToTable("Applications");
                 });
@@ -347,7 +344,8 @@ namespace RecruitmentSystem.DataAccess.Migrations
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.InternshipStep", b =>
                 {
-                    b.Property<Guid>("StepId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("InternshipId")
@@ -356,9 +354,14 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Property<int>("PositionAscending")
                         .HasColumnType("integer");
 
-                    b.HasKey("StepId", "InternshipId");
+                    b.Property<Guid>("StepId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("InternshipId");
+
+                    b.HasIndex("StepId");
 
                     b.ToTable("InternshipSteps");
                 });
@@ -557,15 +560,15 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RecruitmentSystem.Domain.Models.InternshipStep", "InternshipStep")
+                        .WithMany("Applications")
+                        .HasForeignKey("InternshipStepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("RecruitmentSystem.Domain.Models.SiteUser", "SiteUser")
                         .WithMany()
                         .HasForeignKey("SiteUserId");
-
-                    b.HasOne("RecruitmentSystem.Domain.Models.InternshipStep", "InternshipStep")
-                        .WithMany()
-                        .HasForeignKey("InternshipStepStepId", "InternshipStepInternshipId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Internship");
 
@@ -649,6 +652,11 @@ namespace RecruitmentSystem.DataAccess.Migrations
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>
                 {
                     b.Navigation("InternshipSteps");
+                });
+
+            modelBuilder.Entity("RecruitmentSystem.Domain.Models.InternshipStep", b =>
+                {
+                    b.Navigation("Applications");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Step", b =>

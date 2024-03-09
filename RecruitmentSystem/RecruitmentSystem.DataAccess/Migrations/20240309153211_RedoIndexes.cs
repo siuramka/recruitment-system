@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialnew : Migration
+    public partial class RedoIndexes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -246,13 +246,14 @@ namespace RecruitmentSystem.DataAccess.Migrations
                 name: "InternshipSteps",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     StepId = table.Column<Guid>(type: "uuid", nullable: false),
                     InternshipId = table.Column<Guid>(type: "uuid", nullable: false),
                     PositionAscending = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InternshipSteps", x => new { x.StepId, x.InternshipId });
+                    table.PrimaryKey("PK_InternshipSteps", x => x.Id);
                     table.ForeignKey(
                         name: "FK_InternshipSteps_Internships_InternshipId",
                         column: x => x.InternshipId,
@@ -275,8 +276,7 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     SiteUserId = table.Column<string>(type: "text", nullable: true),
                     InternshipId = table.Column<Guid>(type: "uuid", nullable: false),
-                    InternshipStepStepId = table.Column<Guid>(type: "uuid", nullable: false),
-                    InternshipStepInternshipId = table.Column<Guid>(type: "uuid", nullable: false),
+                    InternshipStepId = table.Column<Guid>(type: "uuid", nullable: false),
                     Skills = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -288,10 +288,10 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Applications_InternshipSteps_InternshipStepStepId_Internshi~",
-                        columns: x => new { x.InternshipStepStepId, x.InternshipStepInternshipId },
+                        name: "FK_Applications_InternshipSteps_InternshipStepId",
+                        column: x => x.InternshipStepId,
                         principalTable: "InternshipSteps",
-                        principalColumns: new[] { "StepId", "InternshipId" },
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Applications_Internships_InternshipId",
@@ -365,9 +365,9 @@ namespace RecruitmentSystem.DataAccess.Migrations
                 column: "InternshipId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Applications_InternshipStepStepId_InternshipStepInternshipId",
+                name: "IX_Applications_InternshipStepId",
                 table: "Applications",
-                columns: new[] { "InternshipStepStepId", "InternshipStepInternshipId" });
+                column: "InternshipStepId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Applications_SiteUserId",
@@ -436,6 +436,11 @@ namespace RecruitmentSystem.DataAccess.Migrations
                 name: "IX_InternshipSteps_InternshipId",
                 table: "InternshipSteps",
                 column: "InternshipId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InternshipSteps_StepId",
+                table: "InternshipSteps",
+                column: "StepId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Internships_CompanyId",

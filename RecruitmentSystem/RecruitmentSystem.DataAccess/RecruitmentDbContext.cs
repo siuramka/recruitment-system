@@ -16,8 +16,8 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
             .Property(a => a.StepType)
             .HasConversion<string>();
 
-        modelBuilder.Entity<InternshipStep>()
-            .HasKey(elo => new { elo.StepId, elo.InternshipId });
+        // modelBuilder.Entity<InternshipStep>()
+        //     .HasKey(elo => new { elo.StepId, elo.InternshipId, elo.Id });
 
         base.OnModelCreating(modelBuilder);
     }

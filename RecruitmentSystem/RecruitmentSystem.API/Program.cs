@@ -82,9 +82,10 @@ public class Program
                 // options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; needed if exp time < 5 minutes
             });
         
-        builder.Services.AddScoped<StepSeeder>();
+        builder.Services.AddScoped<DataSeeder>();
         builder.Services.AddScoped<AuthSeeder>();
         builder.Services.AddScoped<JwtService>();
+        builder.Services.AddScoped<PdfService>();
 
         var app = builder.Build();
 
@@ -114,8 +115,9 @@ public class Program
         app.MapControllers();
         
         using var scope = app.Services.CreateScope();
-        var dbSeeder = scope.ServiceProvider.GetRequiredService<StepSeeder>();
+        var dbSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
         dbSeeder.SeedSteps();
+        dbSeeder.SeedInternship();
         var authSeeder = scope.ServiceProvider.GetRequiredService<AuthSeeder>();
         Task.WhenAll(authSeeder.SeedRoles());
 

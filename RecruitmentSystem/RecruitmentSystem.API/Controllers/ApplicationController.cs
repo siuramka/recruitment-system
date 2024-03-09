@@ -50,9 +50,36 @@ public class ApplicationController : ControllerBase
         
         return Ok(new ApplicationDto { Id = application.Id});
     }
+    
+    [HttpGet]
+    [Authorize(Roles = Roles.Company)]
+    [Route("api/internships/{internshipId:guid}/applications")]
+    public async Task<IActionResult> GetAll(Guid internshipId)
+    {
+        var internship = await _db.Internships
+            .Include(i => i.InternshipSteps)
+            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
 
+        if (internship is null)
+        {
+            return NotFound("Internship not found");
+        }
+        
+        var internshipApplications = await _db.Applications
+            .Where(app => app.InternshipId == internshipId)
+            .Include(app => app.Internship)
+            .ThenInclude(i => i.Company)
+            .Include(app => app.SiteUser)
+            .Include(app => app.InternshipStep)
+            .ThenInclude(istep => istep.Step)
+            .ToListAsync();
+
+        return Ok(internshipApplications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
+    }
+    
+    
     [HttpPost]
-    [Authorize(Roles = Roles.SiteUser)]
+    [Authorize]
     [Route("/api/internships/{internshipId:guid}/applications")]
     public async Task<IActionResult> Create(Guid internshipId)
     {
@@ -91,4 +118,13 @@ public class ApplicationController : ControllerBase
 
         return CreatedAtAction(nameof(Create), _mapper.Map<ApplicationDto>(application));
     }
+    
+    // [HttpPost]
+    // [Authorize]
+    // [Route("/api/applications/{applicationId:guid}/stage")]
+    // public async Task<IActionResult> UpdateStage(Guid applicationId, [FromBody] UpdateApplicationStageDto updateApplicationStageDto)
+    // {
+    //     var application = await _db.Applications.FirstOrDefaultAsync(a => a.Id == applicationId);
+    //     var 
+    // }
 }

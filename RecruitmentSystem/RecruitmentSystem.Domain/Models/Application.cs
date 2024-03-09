@@ -6,11 +6,10 @@ public class Application
     public DateTime CreatedOn { get; set; }
     
     public SiteUser SiteUser { get; set; }
-    
     public Guid InternshipId { get; set; }
     public Internship Internship { get; set; }
     
+    public Guid InternshipStepId { get; set; }
     public InternshipStep InternshipStep { get; set; }
-    
     public string Skills { get; set; }
 }
