@@ -24,36 +24,45 @@ public class ApplicationController : ControllerBase
         _mapper = mapper;
         _userManager = userManager;
     }
-
+    
     [HttpGet]
     [Authorize(Roles = Roles.SiteUser)]
-    [Route("/api/internships/{internshipId:guid}/application")]
-    public async Task<IActionResult> Get(Guid internshipId)
+    [Route("/api/applications/{applicationId:guid}")]
+    public async Task<IActionResult> GetById(Guid applicationId)
     {
-        var internship = await _db.Internships.Include(i => i.InternshipSteps)
-            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
-
-        if (internship is null)
-        {
-            return NotFound("Internship not found!");
-        }
-        
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId);
-        
         var application = await _db.Applications
-            .FirstOrDefaultAsync(ap => ap.SiteUser.Id == siteUser.Id 
-                            && ap.Internship.Id == internshipId );
+            .Include(app => app.Internship)
+            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
         
         if (application is null)
             return NotFound("Application not found!");
         
-        return Ok(new ApplicationDto { Id = application.Id});
+        return Ok(_mapper.Map<ApplicationDto>(application));
+    }
+    
+    [HttpGet]
+    [Authorize(Roles = Roles.SiteUser)]
+    [Route("/api/applications")]
+    public async Task<IActionResult> GetAllUser()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var siteUser = await _userManager.FindByIdAsync(userId);
+        
+        var applications = await _db.Applications
+            .Include(app => app.Internship)
+            .ThenInclude(i => i.Company)
+            .Include(app => app.SiteUser)
+            .Include(app => app.InternshipStep)
+            .ThenInclude(istep => istep.Step)
+            .Where(app => app.SiteUser == siteUser)
+            .ToListAsync();
+
+        return Ok(applications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
     }
     
     [HttpGet]
     [Authorize(Roles = Roles.Company)]
-    [Route("api/internships/{internshipId:guid}/applications")]
+    [Route("/api/internships/{internshipId:guid}/applications")]
     public async Task<IActionResult> GetAll(Guid internshipId)
     {
         var internship = await _db.Internships
@@ -118,13 +127,4 @@ public class ApplicationController : ControllerBase
 
         return CreatedAtAction(nameof(Create), _mapper.Map<ApplicationDto>(application));
     }
-    
-    // [HttpPost]
-    // [Authorize]
-    // [Route("/api/applications/{applicationId:guid}/stage")]
-    // public async Task<IActionResult> UpdateStage(Guid applicationId, [FromBody] UpdateApplicationStageDto updateApplicationStageDto)
-    // {
-    //     var application = await _db.Applications.FirstOrDefaultAsync(a => a.Id == applicationId);
-    //     var 
-    // }
 }

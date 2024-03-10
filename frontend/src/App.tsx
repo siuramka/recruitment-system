@@ -9,7 +9,8 @@ import { Toaster } from "./components/ui/toaster";
 import ApplicationPage from "./pages/application/ApplicationPage";
 import { COMPANY, SITE_USER } from "./interfaces/Auth/Roles";
 import CompanyInternships from "./pages/dashboard/company/internships/CompanyInternships";
-import CompanyInternshipView from "./pages/dashboard/company/internships/CompanyInternshipView";
+import CompanyApplicationsList from "./pages/dashboard/company/internships/CompanyApplicationsList";
+import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
 
 function App() {
   const user = useSelector(selectUser);
@@ -33,8 +34,12 @@ function App() {
                           element={<InternshipsPage />}
                         />
                         <Route
-                          path="/internships/:internshipId/application"
+                          path="/applications/:applicationId"
                           element={<ApplicationPage />}
+                        />
+                        <Route
+                          path="/applications"
+                          element={<UserApplicationsList />}
                         />
                       </>
                     );
@@ -53,7 +58,7 @@ function App() {
                         />
                         <Route
                           path="/company/internships/:internshipId"
-                          element={<CompanyInternshipView />}
+                          element={<CompanyApplicationsList />}
                         />
                       </>
                     );

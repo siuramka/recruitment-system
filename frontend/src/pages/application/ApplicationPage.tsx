@@ -1,41 +1,33 @@
-import { InternshipDto } from "@/interfaces/Internship/InternshipDto";
-import { getInternship } from "@/services/InternshipService";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NextIcon from "./components/NextIcon";
 import { ApplicationStepDto } from "@/interfaces/Step/ApplicationStepDto";
 import { getApplicationSteps } from "@/services/StepService";
 import { getApplication } from "@/services/ApplicationService";
+import OfferSection from "./components/OfferSection";
+import { ApplicationDto } from "@/interfaces/Application/ApplicationDto";
 import ScreeningSection from "./components/ScreeningSection";
 import InterviewSection from "./components/InterviewSection";
-import OfferSection from "./components/OfferSection";
 
 const ApplicationPage = () => {
-  const { internshipId } = useParams() as { internshipId: string };
-  const [internship, setInternship] = useState<InternshipDto>();
+  const { applicationId } = useParams() as { applicationId: string };
+  const [application, setApplication] = useState<ApplicationDto>();
   const [steps, setSteps] = useState<ApplicationStepDto[]>([]);
   const navigate = useNavigate();
 
   const currentStep = steps.filter((stepItem) => stepItem.isCurrentStep)[0];
 
-  const getInternshipData = async () => {
-    const internshipData = await getInternship({ internshipId });
-    if (internshipData) {
-      setInternship(internshipData);
-    } else {
-      navigate("/error");
-    }
-  };
-
   const getApplicaiton = async () => {
-    const application = await getApplication({ internshipId });
-    if (!application) {
+    const data = await getApplication({ applicationId });
+    if (!data) {
       navigate("/error");
+    } else {
+      setApplication(data);
     }
   };
 
   const getApplicationStepsData = async () => {
-    const applicationStepsData = await getApplicationSteps({ internshipId });
+    const applicationStepsData = await getApplicationSteps({ applicationId });
 
     if (applicationStepsData) {
       setSteps(applicationStepsData);
@@ -43,7 +35,6 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
-    getInternshipData();
     getApplicaiton();
     getApplicationStepsData();
   }, []);
@@ -86,11 +77,11 @@ const ApplicationPage = () => {
       </div>
       <div className="border rounded-md min-h-svh shadow-lg w-full p-4">
         {currentStep && currentStep.stepType == "Screening" && (
-          <ScreeningSection internshipId={internshipId} />
+          <ScreeningSection applicaitonId={applicationId} />
         )}
-        {currentStep && currentStep.stepType == "Intreview" && (
+        {/* {currentStep && currentStep.stepType == "Intreview" && (
           <InterviewSection internshipId={internshipId} />
-        )}
+        )} */}
         {currentStep && currentStep.stepType == "Offer" && <OfferSection />}
       </div>
     </>

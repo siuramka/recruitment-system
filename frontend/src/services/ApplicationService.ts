@@ -30,14 +30,14 @@ export const createApplication = async ({
 };
 
 type getApplicationParams = {
-  internshipId: string;
+  applicationId: string;
 };
 
 export const getApplication = async ({
-  internshipId,
+  applicationId,
 }: getApplicationParams) => {
   try {
-    const response = await api.get(`internships/${internshipId}/application`);
+    const response = await api.get(`applications/${applicationId}`);
 
     if (response.status === 200) {
       const responseData: ApplicationDto = response.data;
@@ -50,11 +50,30 @@ export const getApplication = async ({
   }
 };
 
-export const getAllApplications = async ({
+type getAllInternshipApplicationsParams = {
+  internshipId: string;
+};
+
+export const getAllInternshipApplications = async ({
   internshipId,
-}: getApplicationParams) => {
+}: getAllInternshipApplicationsParams) => {
   try {
     const response = await api.get(`internships/${internshipId}/applications`);
+
+    if (response.status === 200) {
+      const responseData: ApplicationListItemDto[] = response.data;
+      return responseData;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+export const getAllUserApplications = async () => {
+  try {
+    const response = await api.get(`/applications`);
 
     if (response.status === 200) {
       const responseData: ApplicationListItemDto[] = response.data;

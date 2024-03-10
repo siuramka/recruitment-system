@@ -3,18 +3,20 @@ import { downloadCv, getScreening } from "../../../services/CvService";
 import { Button } from "@/components/ui/button";
 
 export type ScreeningSectionParams = {
-  internshipId: string;
+  applicaitonId: string;
 };
 
-const ScreeningSection = ({ internshipId }: ScreeningSectionParams) => {
+const ScreeningSection = ({
+  applicaitonId: applicationId,
+}: ScreeningSectionParams) => {
   const [hasUploadedCv, setHasUploadedCv] = useState<boolean>(false);
 
   const getCvData = async () => {
-    await downloadCv({ internshipId });
+    await downloadCv({ applicationId });
   };
 
   const getScreeningData = async () => {
-    const hasUploadedCv = await getScreening({ internshipId });
+    const hasUploadedCv = await getScreening({ applicationId });
     if (hasUploadedCv) {
       setHasUploadedCv(true);
     }

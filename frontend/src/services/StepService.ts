@@ -1,17 +1,16 @@
 import { ApplicationStepDto } from "@/interfaces/Step/ApplicationStepDto";
 import api from "./Api";
+import { toast } from "@/components/ui/use-toast";
 
 type getApplicationStepsParams = {
-  internshipId: string;
+  applicationId: string;
 };
 
 export const getApplicationSteps = async ({
-  internshipId,
+  applicationId,
 }: getApplicationStepsParams) => {
   try {
-    const response = await api.get(
-      `internships/${internshipId}/application/steps`
-    );
+    const response = await api.get(`application/${applicationId}/steps`);
 
     if (response.status === 200) {
       const responseData: ApplicationStepDto[] = response.data;
@@ -66,8 +65,10 @@ export const updateApplicationStep = async ({
     );
 
     if (response.status === 200) {
-      const responseData = response.data;
-      return responseData;
+      toast({
+        title: "Successfully updated application step!",
+      });
+      return {};
     }
 
     return null;

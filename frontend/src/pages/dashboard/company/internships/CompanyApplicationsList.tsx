@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAllApplications } from "../../../../services/ApplicationService";
+import { getAllInternshipApplications } from "../../../../services/ApplicationService";
 import {
   TableCaption,
   TableHeader,
@@ -15,17 +15,22 @@ import { DialogDemo } from "../../internship/DialogDemo";
 import { InternshipDto } from "../../../../interfaces/Internship/InternshipDto";
 import { CompanyInternshipApplicantSheet } from "./CompanyInternshipApplicantSheet";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-const CompanyInternshipView = () => {
+const CompanyApplicationsList = () => {
   const [applications, setApplications] = useState<ApplicationListItemDto[]>(
     []
   );
-
   const [internship, setInternsihp] = useState<InternshipDto>();
+  const [refreshState, setRefreshState] = useState(false);
   const { internshipId } = useParams() as { internshipId: string };
 
+  const handleRefresh = () => {
+    setRefreshState((prevRefreshState) => !prevRefreshState);
+  };
+
   const getData = async () => {
-    var data = await getAllApplications({ internshipId });
+    var data = await getAllInternshipApplications({ internshipId });
     if (data) {
       setApplications(data);
       setInternsihp(data[0].internshipDto);
@@ -34,7 +39,7 @@ const CompanyInternshipView = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [refreshState]);
 
   return (
     <div className="flex flex-col">
@@ -43,7 +48,7 @@ const CompanyInternshipView = () => {
       </span>
       <div>
         <Table>
-          <TableCaption>A list of your apps.</TableCaption>
+          <TableCaption>A list of applications at your company.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Candidate</TableHead>
@@ -75,6 +80,7 @@ const CompanyInternshipView = () => {
                   <CompanyInternshipApplicantSheet
                     appId={app.id}
                     internshipId={internshipId}
+                    handleRefresh={handleRefresh}
                   />
                 </TableCell>
               </TableRow>
@@ -92,6 +98,6 @@ const CompanyInternshipView = () => {
   );
 };
 
-export default CompanyInternshipView;
+export default CompanyApplicationsList;
 
 // Table list of applicants

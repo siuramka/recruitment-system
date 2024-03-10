@@ -2,13 +2,13 @@ import api from "./Api";
 import { saveAs } from "file-saver";
 
 type downloadCvParams = {
-  internshipId: string;
+  applicationId: string;
 };
 
-export const downloadCv = async ({ internshipId }: downloadCvParams) => {
+export const downloadCv = async ({ applicationId }: downloadCvParams) => {
   try {
     const response = await api.get(
-      `internships/${internshipId}/application/screening/cv`,
+      `applications/${applicationId}/screening/cv`,
       {
         responseType: "blob",
       }
@@ -21,14 +21,12 @@ export const downloadCv = async ({ internshipId }: downloadCvParams) => {
 };
 
 type getScreeningParams = {
-  internshipId: string;
+  applicationId: string;
 };
 
-export const getScreening = async ({ internshipId }: getScreeningParams) => {
+export const getScreening = async ({ applicationId }: getScreeningParams) => {
   try {
-    const response = await api.get(
-      `internships/${internshipId}/application/screening/cv`
-    );
+    const response = await api.get(`applications/${applicationId}/screening`);
 
     if (response.status === 200) {
       return {};

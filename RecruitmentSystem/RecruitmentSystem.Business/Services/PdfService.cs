@@ -5,17 +5,12 @@ namespace RecruitmentSystem.Business.Services;
 
 public class PdfService
 {
-    public string GetTextFromPdf(byte[] pdfBytes)
+    public static string GetTextFromPdf(byte[] pdfBytes)
     {
-        PdfLoadedDocument loadedDocument = new PdfLoadedDocument(pdfBytes);
+        var loadedDocument = new PdfLoadedDocument(pdfBytes);
         
-        string extractedTexts = "";
-        
-        foreach (PdfPageBase page in loadedDocument.Pages)
-        {
-            extractedTexts += page.ExtractText(true);
-        }
-        
+        var extractedTexts = loadedDocument.Pages.Cast<PdfPageBase>().Aggregate("", (current, page) => current + page.ExtractText(true));
+
         loadedDocument.Close(true);
 
         return extractedTexts;

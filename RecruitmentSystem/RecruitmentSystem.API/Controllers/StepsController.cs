@@ -1,13 +1,10 @@
-using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.DataAccess;
-using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Application;
-using RecruitmentSystem.Domain.Dtos.Internship;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.API.Controllers;
@@ -28,30 +25,20 @@ public class StepsController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    [Route("/api/internships/{internshipId:guid}/application/steps")]
-    public async Task<IActionResult> Get(Guid internshipId)
+    [Route("/api/application/{applicationId}/steps")]
+    public async Task<IActionResult> Get(Guid applicationId)
     {
-        var internship = await _db.Internships
-            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
+        var application = await _db.Applications
+            .Include(app => app.InternshipStep)
+            .ThenInclude(internshipStep => internshipStep.Step)
+            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
         
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId);
-
-        if (internship is null)
-            return NotFound("Internship not found!");
-
         var internshipSteps =
             await _db.InternshipSteps
                 .Include(internshipStep => internshipStep.Internship)
                 .Include(internshipStep => internshipStep.Step)
-                .Where(internshipStep => internshipStep.InternshipId == internshipId)
+                .Where(internshipStep => internshipStep.InternshipId == application.InternshipId)
                 .ToListAsync();
-        
-        var application = await _db.Applications
-            .Include(app => app.InternshipStep)
-            .ThenInclude(internshipStep => internshipStep.Step)
-            .FirstOrDefaultAsync(ap => ap.SiteUser.Id == siteUser.Id 
-                                       && ap.Internship.Id == internshipId );
 
         if (application is null)
             return NotFound("Application not found!");

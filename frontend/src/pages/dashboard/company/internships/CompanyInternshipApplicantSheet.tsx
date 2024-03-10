@@ -13,24 +13,8 @@ import {
 } from "@/components/ui/sheet";
 ("use client");
 
-import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -39,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  getApplicationSteps,
   getApplicationStepsById,
   updateApplicationStep,
 } from "@/services/StepService";
@@ -48,14 +31,17 @@ import { ApplicationStepDto } from "@/interfaces/Step/ApplicationStepDto";
 type props = {
   appId: string;
   internshipId: string;
+  handleRefresh: () => void;
 };
 
 export function CompanyInternshipApplicantSheet({
   appId,
   internshipId,
+  handleRefresh,
 }: props) {
   const [step, setStep] = useState("");
   const [allSteps, setAllSteps] = useState<ApplicationStepDto[]>([]);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const getData = async () => {
     var dataSteps = await getApplicationStepsById({
@@ -63,29 +49,31 @@ export function CompanyInternshipApplicantSheet({
       applicationId: appId,
     });
     if (dataSteps) {
-      setAllSteps(dataSteps);
-
       const activeStep = dataSteps.find((s) => s.isCurrentStep);
       setStep(activeStep!.stepType);
+      setAllSteps(dataSteps);
     }
   };
 
   const onStageChange = async (value: string) => {
     setStep(value);
-    await updateApplicationStep({
+    setIsUpdating(true);
+    var data = await updateApplicationStep({
       internshipId,
       applicationId: appId,
       stepType: value,
     });
-  };
 
-  useEffect(() => {
-    getData();
-  }, []);
+    if (data) {
+      handleRefresh();
+    }
+
+    setIsUpdating(false);
+  };
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
+      <SheetTrigger onClick={getData} asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-[1000px]">
@@ -103,11 +91,17 @@ export function CompanyInternshipApplicantSheet({
             <CardContent>
               <Select onValueChange={onStageChange} defaultValue={step}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Theme" />
+                  <SelectValue placeholder={step} />
                 </SelectTrigger>
                 <SelectContent>
                   {allSteps.map((s) => (
-                    <SelectItem value={s.stepType}>{s.stepType}</SelectItem>
+                    <SelectItem
+                      key={s.positionAscending}
+                      disabled={isUpdating}
+                      value={s.stepType}
+                    >
+                      {s.stepType}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

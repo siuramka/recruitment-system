@@ -1,3 +1,5 @@
+import { InternshipDto } from "../Internship/InternshipDto";
 export interface ApplicationDto {
-  Id: string;
+  id: string;
+  internshipDto: InternshipDto;
 }

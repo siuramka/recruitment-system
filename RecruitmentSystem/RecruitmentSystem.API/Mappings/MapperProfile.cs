@@ -18,7 +18,11 @@ public class MapperProfile : Profile
         CreateMap<Internship, InternshipCreateDto>().ReverseMap();
 
         CreateMap<Company, CompanyDto>().ReverseMap();
-        CreateMap<Application, ApplicationDto>().ReverseMap();
+        CreateMap<Application, ApplicationDto>()
+            .ForMember(dest => dest.InternshipDto, opt => opt.MapFrom(src => src.Internship))
+            .ReverseMap();
+        
+        
         CreateMap<SiteUser, SiteUserDto>().ReverseMap();
         
         CreateMap<InternshipStep, ApplicationStepDto>()

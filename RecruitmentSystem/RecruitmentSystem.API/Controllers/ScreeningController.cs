@@ -32,29 +32,20 @@ public class ScreeningController : ControllerBase
     
     [HttpGet]
     [Authorize]
-    [Route("/api/internships/{internshipId:guid}/application/screening")]
-    public async Task<IActionResult> Get(Guid internshipId)
+    [Route("/api/applications/{applicationId:guid}/screening")]
+    public async Task<IActionResult> Get(Guid applicationId)
     {
-        var internship = await _db.Internships.Include(i => i.InternshipSteps)
-            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
-
-        if (internship is null)
-        {
-            return NotFound("Internship not found!");
-        }
-
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var siteUser = await _userManager.FindByIdAsync(userId);
 
         var application = await _db.Applications
-            .FirstOrDefaultAsync(ap => ap.SiteUser.Id == siteUser.Id
-                                       && ap.Internship.Id == internshipId);
+            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
 
         if (application is null)
             return BadRequest("Application not found");
 
         var cv = await _db.Cvs
-            .FirstOrDefaultAsync(c => c.InternshipId == internshipId && c.ApplicationId == application.Id);
+            .FirstOrDefaultAsync(c => c.ApplicationId == application.Id);
 
         if (cv is null)
         {
@@ -66,29 +57,17 @@ public class ScreeningController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    [Route("/api/internships/{internshipId:guid}/application/screening/cv")]
-    public async Task<IActionResult> GetCv(Guid internshipId)
+    [Route("/api/applications/{applicationId:guid}/screening/cv")]
+    public async Task<IActionResult> GetCv(Guid applicationId)
     {
-        var internship = await _db.Internships.Include(i => i.InternshipSteps)
-            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
-
-        if (internship is null)
-        {
-            return NotFound("Internship not found!");
-        }
-
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId);
-
         var application = await _db.Applications
-            .FirstOrDefaultAsync(ap => ap.SiteUser.Id == siteUser.Id
-                                       && ap.Internship.Id == internshipId);
+            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
 
         if (application is null)
             return BadRequest("Application not found");
 
         var cv = await _db.Cvs
-            .FirstOrDefaultAsync(c => c.InternshipId == internshipId && c.ApplicationId == application.Id);
+            .FirstOrDefaultAsync(c => c.ApplicationId == application.Id);
 
         if (cv is null)
         {
@@ -100,29 +79,22 @@ public class ScreeningController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    [Route("/api/internships/{internshipId:guid}/application/screening")]
-    public async Task<IActionResult> CreateScreening(IFormFile cvFile, Guid internshipId)
+    [Route("/api/applications/{applicationId:guid}/screening")]
+    public async Task<IActionResult> CreateScreening(IFormFile cvFile, Guid applicationId)
     {
-        var internship = await _db.Internships.Include(i => i.InternshipSteps)
-            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
-
-        if (internship is null)
-        {
-            return NotFound("Internship not found!");
-        }
-
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var siteUser = await _userManager.FindByIdAsync(userId);
 
         var application = await _db.Applications
-            .FirstOrDefaultAsync(ap => ap.SiteUser.Id == siteUser.Id
-                                       && ap.Internship.Id == internshipId);
+            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
+
+        var internship = await _db.Internships.FirstOrDefaultAsync(i => i.Id.Equals(application.InternshipId));
 
         if (application is null)
             return BadRequest("Application not found");
 
         var cv = await _db.Cvs
-            .FirstOrDefaultAsync(c => c.InternshipId == internshipId && c.ApplicationId == application.Id);
+            .FirstOrDefaultAsync(c => c.ApplicationId.Equals(applicationId));
 
         if (cv is not null)
         {
