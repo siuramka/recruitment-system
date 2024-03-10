@@ -12,17 +12,17 @@ public class DataSeeder
         _dbContext = dbContext;
     }
 
-    public void SeedInternship()
+    public async Task SeedInternship()
     {
         if (_dbContext.Internships.Any())
         {
             return;
         }
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
-        var company = _dbContext.Companys.First();
-        _dbContext.Internships.Add(new Internship()
+        var company = await _dbContext.Companys.FirstAsync();
+        await _dbContext.Internships.AddAsync(new Internship()
         {
             Company = company,
             Name = "Software JAVA Internship",
@@ -39,11 +39,11 @@ public class DataSeeder
             SlotsAvailable = 5,
             TakenSlots = 0,
         });
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
-        var internship = _dbContext.Internships.First();
+        var internship = await _dbContext.Internships.FirstAsync();
 
-        _dbContext.InternshipSteps.AddRange(
+        await _dbContext.InternshipSteps.AddRangeAsync(
             new InternshipStep()
             {
                 Step = _dbContext.Steps.First(x => x.StepType == StepType.Screening),
@@ -63,17 +63,16 @@ public class DataSeeder
                 PositionAscending = 2
             });
         
-        _dbContext.SaveChanges();
-
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void SeedSteps()
+    public async Task SeedSteps()
     {
         if (_dbContext.Steps.Any())
         {
             return;
         }
-        _dbContext.Steps.AddRange(
+        await _dbContext.Steps.AddRangeAsync(
             new Step
             {
                 Name = "Screening",
@@ -99,6 +98,6 @@ public class DataSeeder
                 Name = "Quiz",
                 StepType = StepType.Quiz
             });
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 }

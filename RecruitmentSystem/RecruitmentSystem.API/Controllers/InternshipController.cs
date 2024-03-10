@@ -40,8 +40,8 @@ public class InternshipController : ControllerBase
 
         internship.Company = company;
         internship.CreatedAt = DateTime.Now.ToUniversalTime();
-        internship.StartDate = internship.StartDate.ToUniversalTime();
-        internship.EndDate = internship.EndDate.ToUniversalTime();
+        internship.StartDate = DateTime.Now.ToUniversalTime();
+        internship.EndDate = DateTime.Now.ToUniversalTime();//TODO: DELETE THES UNECESSSARY FUCKED SHADCN DATE PICKER
 
         _db.Internships.Add(internship);
         await _db.SaveChangesAsync();

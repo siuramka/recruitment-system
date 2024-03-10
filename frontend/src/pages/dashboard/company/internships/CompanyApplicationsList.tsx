@@ -11,7 +11,7 @@ import {
   Table,
 } from "@/components/ui/table";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
-import { DialogDemo } from "../../internship/DialogDemo";
+import { CreateInternshipDialog } from "./CreateInternshipDialog";
 import { InternshipDto } from "../../../../interfaces/Internship/InternshipDto";
 import { CompanyInternshipApplicantSheet } from "./CompanyInternshipApplicantSheet";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +44,7 @@ const CompanyApplicationsList = () => {
   return (
     <div className="flex flex-col">
       <span className="flex justify-end">
-        <DialogDemo />
+        <CreateInternshipDialog />
       </span>
       <div>
         <Table>

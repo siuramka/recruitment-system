@@ -14,7 +14,7 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table";
-import { DialogDemo } from "../dashboard/internship/DialogDemo";
+import { CreateInternshipDialog } from "../dashboard/company/internships/CreateInternshipDialog";
 import { useNavigate } from "react-router-dom";
 
 export function UserApplicationsList() {
@@ -36,7 +36,7 @@ export function UserApplicationsList() {
   return (
     <div className="flex flex-col">
       <span className="flex justify-end">
-        <DialogDemo />
+        <CreateInternshipDialog />
       </span>
       <div>
         <Table>

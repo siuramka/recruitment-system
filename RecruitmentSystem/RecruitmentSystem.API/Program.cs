@@ -115,11 +115,12 @@ public class Program
         app.MapControllers();
         
         using var scope = app.Services.CreateScope();
-        var dbSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-        dbSeeder.SeedSteps();
-        dbSeeder.SeedInternship();
         var authSeeder = scope.ServiceProvider.GetRequiredService<AuthSeeder>();
         Task.WhenAll(authSeeder.SeedRoles());
+        
+        var dbSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+        Task.WhenAll(dbSeeder.SeedSteps());
+        Task.WhenAll(dbSeeder.SeedInternship());
 
         app.Run();
     }

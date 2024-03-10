@@ -10,12 +10,18 @@ import {
 import { InternshipDto } from "@/interfaces/Internship/InternshipDto";
 import { getAllInternships } from "@/services/InternshipService";
 import { useEffect, useState } from "react";
-import { DialogDemo } from "../../internship/DialogDemo";
+import { CreateInternshipDialog } from "./CreateInternshipDialog";
 import { useNavigate } from "react-router-dom";
 
 const CompanyInternships = () => {
   const [internships, setInternships] = useState<InternshipDto[]>([]);
+  const [refreshState, setRefreshState] = useState(false);
+
   const navigate = useNavigate();
+
+  const handleRefresh = () => {
+    setRefreshState((prevRefreshState) => !prevRefreshState);
+  };
 
   const getData = async () => {
     const internshipsData = await getAllInternships();
@@ -26,12 +32,12 @@ const CompanyInternships = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [refreshState]);
 
   return (
     <div className="flex flex-col">
       <span className="flex justify-end">
-        <DialogDemo />
+        <CreateInternshipDialog handleRefresh={handleRefresh} />
       </span>
       <div>
         <Table>

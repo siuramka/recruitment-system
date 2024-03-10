@@ -1,4 +1,5 @@
 using RecruitmentSystem.Domain.Dtos.Application;
+using RecruitmentSystem.Domain.Dtos.Steps;
 
 namespace RecruitmentSystem.Domain.Dtos.Internship;
 
@@ -11,10 +12,8 @@ public class InternshipCreateDto
     public string Requirements { get; set; }
     public bool IsPaid { get; set; }
     public bool IsRemote { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
     public int SlotsAvailable { get; set; }
     public string Skills { get; set; }
     
-    public List<ApplicationStepDto> InternshipStepDtos { get; set; }
+    public List<InternshipCreateStepDto> InternshipStepDtos { get; set; }
 }

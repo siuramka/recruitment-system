@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.DataAccess;
+using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Application;
+using RecruitmentSystem.Domain.Dtos.Steps;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.API.Controllers;
@@ -22,7 +24,16 @@ public class StepsController : ControllerBase
         _mapper = mapper;
         _userManager = userManager;
     }
-
+    
+    [HttpGet]
+    [Authorize(Roles=Roles.Company)]
+    [Route("/api/steps")]
+    public async Task<IActionResult> GetAvailableSteps()
+    {
+        var steps = await _db.Steps.ToListAsync();
+        return Ok(steps.Select(_mapper.Map<StepDto>));
+    }
+    
     [HttpGet]
     [Authorize]
     [Route("/api/application/{applicationId}/steps")]

@@ -1,6 +1,22 @@
 import { ApplicationStepDto } from "@/interfaces/Step/ApplicationStepDto";
 import api from "./Api";
 import { toast } from "@/components/ui/use-toast";
+import { StepDto } from "@/interfaces/Step/StepDto";
+
+export const getAvailableSteps = async () => {
+  try {
+    const response = await api.get(`steps`);
+
+    if (response.status === 200) {
+      const responseData: StepDto[] = response.data;
+      return responseData;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
 
 type getApplicationStepsParams = {
   applicationId: string;
