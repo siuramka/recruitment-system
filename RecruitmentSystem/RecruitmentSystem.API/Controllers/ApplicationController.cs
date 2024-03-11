@@ -26,18 +26,22 @@ public class ApplicationController : ControllerBase
     }
     
     [HttpGet]
-    [Authorize(Roles = Roles.SiteUser)]
+    [Authorize]
     [Route("/api/applications/{applicationId:guid}")]
     public async Task<IActionResult> GetById(Guid applicationId)
     {
         var application = await _db.Applications
             .Include(app => app.Internship)
+            .ThenInclude(i => i.Company)
+            .Include(app => app.SiteUser)
+            .Include(app => app.InternshipStep)
+            .ThenInclude(istep => istep.Step)
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
         
         if (application is null)
             return NotFound("Application not found!");
         
-        return Ok(_mapper.Map<ApplicationDto>(application));
+        return Ok(_mapper.Map<ApplicationListItemDto>(application));
     }
     
     [HttpGet]

@@ -30,6 +30,10 @@ function App() {
                         {/* <Route path="*" element={<Navigate to="/error" replace />} />
                       <Route path="/error" element={<NotFoundPage />} /> */}
                         <Route
+                          path="*"
+                          element={<Navigate to="/internships" replace />}
+                        />
+                        <Route
                           path="/internships"
                           element={<InternshipsPage />}
                         />

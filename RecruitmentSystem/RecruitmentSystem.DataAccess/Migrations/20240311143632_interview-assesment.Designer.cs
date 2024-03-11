@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecruitmentSystem.DataAccess;
@@ -11,9 +12,11 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311143632_interview-assesment")]
+    partial class interviewassesment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,6 +157,29 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Anwser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsSuccessful")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.ToTable("Anwsers");
+                });
+
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Application", b =>
                 {
                     b.Property<Guid>("Id")
@@ -185,27 +211,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.HasIndex("SiteUserId");
 
                     b.ToTable("Applications");
-                });
-
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Assessment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ApplicationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId")
-                        .IsUnique();
-
-                    b.ToTable("Assessments");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Company", b =>
@@ -545,6 +550,17 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Anwser", b =>
+                {
+                    b.HasOne("RecruitmentSystem.Domain.Models.Application", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+                });
+
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Application", b =>
                 {
                     b.HasOne("RecruitmentSystem.Domain.Models.Internship", "Internship")
@@ -568,17 +584,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Navigation("InternshipStep");
 
                     b.Navigation("SiteUser");
-                });
-
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Assessment", b =>
-                {
-                    b.HasOne("RecruitmentSystem.Domain.Models.Application", "Application")
-                        .WithOne("Assessment")
-                        .HasForeignKey("RecruitmentSystem.Domain.Models.Assessment", "ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Application");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Cv", b =>
@@ -654,11 +659,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .HasForeignKey("RecruitmentSystem.Domain.Models.SiteUser", "CompanyId");
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Application", b =>
-                {
-                    b.Navigation("Assessment");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Company", b =>

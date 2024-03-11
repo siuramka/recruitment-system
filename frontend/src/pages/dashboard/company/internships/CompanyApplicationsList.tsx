@@ -13,9 +13,8 @@ import {
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
 import { CreateInternshipDialog } from "./CreateInternshipDialog";
 import { InternshipDto } from "../../../../interfaces/Internship/InternshipDto";
-import { CompanyInternshipApplicantSheet } from "./CompanyInternshipApplicantSheet";
+import { CompanyInternshipApplicantSheet } from "./Sheet/CompanyInternshipApplicantSheet";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 const CompanyApplicationsList = () => {
   const [applications, setApplications] = useState<ApplicationListItemDto[]>(
@@ -43,9 +42,6 @@ const CompanyApplicationsList = () => {
 
   return (
     <div className="flex flex-col">
-      <span className="flex justify-end">
-        <CreateInternshipDialog />
-      </span>
       <div>
         <Table>
           <TableCaption>A list of applications at your company.</TableCaption>

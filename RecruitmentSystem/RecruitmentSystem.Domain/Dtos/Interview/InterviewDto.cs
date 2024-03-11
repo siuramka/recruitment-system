@@ -1,10 +1,9 @@
-namespace RecruitmentSystem.Domain.Models;
+namespace RecruitmentSystem.Domain.Dtos.Interview;
 
-public class Interview
+public class InterviewDto
 {
     public Guid Id { get; set; }
     public Guid ApplicationId { get; set; }
-    public Application Application { get; set; }
     public DateTime StartTime { get; set; }
     public string Instructions { get; set; }
     public int MinutesLength { get; set; }

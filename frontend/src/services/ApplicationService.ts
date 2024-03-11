@@ -40,7 +40,7 @@ export const getApplication = async ({
     const response = await api.get(`applications/${applicationId}`);
 
     if (response.status === 200) {
-      const responseData: ApplicationDto = response.data;
+      const responseData: ApplicationListItemDto = response.data;
       return responseData;
     }
 

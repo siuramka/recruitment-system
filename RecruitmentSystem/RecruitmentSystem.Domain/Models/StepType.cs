@@ -4,7 +4,7 @@ public enum StepType
 {
     Screening,
     Interview,
-    Quiz,
+    Assessment,
     Offer,
     Rejection
 }

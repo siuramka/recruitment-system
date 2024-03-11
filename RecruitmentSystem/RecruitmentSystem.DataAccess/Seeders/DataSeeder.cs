@@ -95,8 +95,8 @@ public class DataSeeder
             },
             new Step
             {
-                Name = "Quiz",
-                StepType = StepType.Quiz
+                Name = "Assessment",
+                StepType = StepType.Assessment
             });
         await _dbContext.SaveChangesAsync();
     }

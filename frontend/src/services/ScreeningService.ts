@@ -37,3 +37,33 @@ export const getScreening = async ({ applicationId }: getScreeningParams) => {
     return null;
   }
 };
+
+type createScreeningParams = {
+  applicationId: string;
+  file: FormData;
+};
+
+export const createScreening = async ({
+  applicationId,
+  file,
+}: createScreeningParams) => {
+  try {
+    const response = await api.post(
+      `applications/${applicationId}/screening`,
+      file,
+      {
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return {};
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};

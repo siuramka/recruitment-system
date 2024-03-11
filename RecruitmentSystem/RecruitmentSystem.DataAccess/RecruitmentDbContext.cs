@@ -26,9 +26,9 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
     public DbSet<Step> Steps { get; set; }
     public DbSet<Application> Applications { get; set; }
     public DbSet<Cv> Cvs { get; set; }
-    public DbSet<Anwser> Anwsers { get; set; }
     public DbSet<Company> Companys { get; set; }
     public DbSet<Internship> Internships { get; set; }
     public DbSet<InternshipStep> InternshipSteps { get; set; }
     public DbSet<Interview> Interviews { get; set; }
+    public DbSet<Assessment> Assessments { get; set; }
 }

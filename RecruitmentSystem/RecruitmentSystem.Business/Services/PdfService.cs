@@ -5,7 +5,7 @@ namespace RecruitmentSystem.Business.Services;
 
 public class PdfService
 {
-    public static string GetTextFromPdf(byte[] pdfBytes)
+    public string GetTextFromPdf(byte[] pdfBytes)
     {
         var loadedDocument = new PdfLoadedDocument(pdfBytes);
         

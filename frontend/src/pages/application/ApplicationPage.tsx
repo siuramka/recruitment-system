@@ -5,13 +5,14 @@ import { ApplicationStepDto } from "@/interfaces/Step/ApplicationStepDto";
 import { getApplicationSteps } from "@/services/StepService";
 import { getApplication } from "@/services/ApplicationService";
 import OfferSection from "./components/OfferSection";
-import { ApplicationDto } from "@/interfaces/Application/ApplicationDto";
 import ScreeningSection from "./components/ScreeningSection";
+import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
 import InterviewSection from "./components/InterviewSection";
+import RejectionSection from "./components/RejectionSection";
 
 const ApplicationPage = () => {
   const { applicationId } = useParams() as { applicationId: string };
-  const [application, setApplication] = useState<ApplicationDto>();
+  const [application, setApplication] = useState<ApplicationListItemDto>();
   const [steps, setSteps] = useState<ApplicationStepDto[]>([]);
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const ApplicationPage = () => {
 
   return (
     <>
-      <div className="pb-3 ">
+      <div className="pb-3">
         <ol className="flex items-center w-full p-3 shadow-sm space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg  dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
           {steps.map((stepItem) => (
             <>
@@ -77,12 +78,15 @@ const ApplicationPage = () => {
       </div>
       <div className="border rounded-md min-h-svh shadow-lg w-full p-4">
         {currentStep && currentStep.stepType == "Screening" && (
-          <ScreeningSection applicaitonId={applicationId} />
+          <ScreeningSection application={application!} />
         )}
-        {/* {currentStep && currentStep.stepType == "Intreview" && (
-          <InterviewSection internshipId={internshipId} />
-        )} */}
+        {currentStep && currentStep.stepType == "Interview" && (
+          <InterviewSection application={application!} />
+        )}
         {currentStep && currentStep.stepType == "Offer" && <OfferSection />}
+        {currentStep && currentStep.stepType == "Rejection" && (
+          <RejectionSection />
+        )}
       </div>
     </>
   );

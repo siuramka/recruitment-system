@@ -53,7 +53,7 @@ const LoginPage = () => {
           user: getUserFromTokens(tokens.accessToken, tokens.refreshToken),
         })
       );
-      navigate("/dashboard");
+      navigate("/internships");
     } else {
       alert("Login failed");
     }

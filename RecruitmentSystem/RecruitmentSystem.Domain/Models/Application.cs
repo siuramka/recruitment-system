@@ -12,4 +12,6 @@ public class Application
     public Guid InternshipStepId { get; set; }
     public InternshipStep InternshipStep { get; set; }
     public string Skills { get; set; }
+    
+    public Assessment? Assessment { get; set; }
 }

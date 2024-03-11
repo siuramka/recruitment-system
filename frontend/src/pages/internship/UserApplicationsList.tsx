@@ -35,9 +35,6 @@ export function UserApplicationsList() {
 
   return (
     <div className="flex flex-col">
-      <span className="flex justify-end">
-        <CreateInternshipDialog />
-      </span>
       <div>
         <Table>
           <TableCaption>A list of applications you have applied.</TableCaption>

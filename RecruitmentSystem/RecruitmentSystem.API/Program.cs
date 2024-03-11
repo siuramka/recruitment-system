@@ -85,7 +85,7 @@ public class Program
         builder.Services.AddScoped<DataSeeder>();
         builder.Services.AddScoped<AuthSeeder>();
         builder.Services.AddScoped<JwtService>();
-        builder.Services.AddScoped<PdfService>();
+        builder.Services.AddSingleton<PdfService>();
 
         var app = builder.Build();
 
