@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecruitmentSystem.DataAccess;
@@ -11,9 +12,11 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240314192554_ReviewsAlgorithmStuff")]
+    partial class ReviewsAlgorithmStuff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,6 +163,12 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("AiScore")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CompanyScore")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
@@ -219,15 +228,9 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("EvaluationId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId")
-                        .IsUnique();
-
-                    b.HasIndex("EvaluationId")
                         .IsUnique();
 
                     b.ToTable("Assessments");
@@ -282,11 +285,14 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("AiScore")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("ApplicationId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("EvaluationId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("CompanyScore")
+                        .HasColumnType("integer");
 
                     b.Property<byte[]>("FileContent")
                         .IsRequired()
@@ -306,38 +312,11 @@ namespace RecruitmentSystem.DataAccess.Migrations
 
                     b.HasIndex("ApplicationId");
 
-                    b.HasIndex("EvaluationId")
-                        .IsUnique();
-
                     b.HasIndex("InternshipId");
 
                     b.HasIndex("SiteUserId");
 
                     b.ToTable("Cvs");
-                });
-
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Evaluation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("AiScore")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CompanyScore")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Evaluations");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>
@@ -434,9 +413,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Property<Guid>("ApplicationId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("EvaluationId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Instructions")
                         .IsRequired()
                         .HasColumnType("text");
@@ -450,9 +426,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
-
-                    b.HasIndex("EvaluationId")
-                        .IsUnique();
 
                     b.ToTable("Interviews");
                 });
@@ -473,9 +446,8 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ReviewStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ReviewStatus")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -678,10 +650,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RecruitmentSystem.Domain.Models.Evaluation", null)
-                        .WithOne("Assessment")
-                        .HasForeignKey("RecruitmentSystem.Domain.Models.Assessment", "EvaluationId");
-
                     b.Navigation("Application");
                 });
 
@@ -692,10 +660,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("RecruitmentSystem.Domain.Models.Evaluation", null)
-                        .WithOne("Cv")
-                        .HasForeignKey("RecruitmentSystem.Domain.Models.Cv", "EvaluationId");
 
                     b.HasOne("RecruitmentSystem.Domain.Models.Internship", "Internship")
                         .WithMany()
@@ -752,10 +716,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RecruitmentSystem.Domain.Models.Evaluation", null)
-                        .WithOne("Interview")
-                        .HasForeignKey("RecruitmentSystem.Domain.Models.Interview", "EvaluationId");
-
                     b.Navigation("Application");
                 });
 
@@ -798,15 +758,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
 
                     b.Navigation("SiteUser")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Evaluation", b =>
-                {
-                    b.Navigation("Assessment");
-
-                    b.Navigation("Cv");
-
-                    b.Navigation("Interview");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>

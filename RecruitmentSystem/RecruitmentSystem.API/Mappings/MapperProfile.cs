@@ -1,8 +1,10 @@
 using AutoMapper;
 using RecruitmentSystem.Domain.Dtos.Application;
 using RecruitmentSystem.Domain.Dtos.Company;
+using RecruitmentSystem.Domain.Dtos.Evaluation;
 using RecruitmentSystem.Domain.Dtos.Internship;
 using RecruitmentSystem.Domain.Dtos.Interview;
+using RecruitmentSystem.Domain.Dtos.Screening;
 using RecruitmentSystem.Domain.Dtos.SiteUser;
 using RecruitmentSystem.Domain.Dtos.Steps;
 using RecruitmentSystem.Domain.Models;
@@ -20,7 +22,11 @@ public class MapperProfile : Profile
         CreateMap<Internship, InternshipCreateDto>().ReverseMap();
 
         CreateMap<Company, CompanyDto>().ReverseMap();
+        CreateMap<Evaluation, EvaluationDto>().ReverseMap();
+        CreateMap<Cv, CvDto>().ReverseMap();
         CreateMap<Interview, InterviewDto>().ReverseMap();
+        CreateMap<Internship, InternshipForScreeningPromptDto>().ReverseMap();
+        CreateMap<Evaluation, EvaluationCreateDto>().ReverseMap();
         
         CreateMap<Step, StepDto>()
             .ForMember(step => step.StepType, opt => opt.MapFrom(s => s.StepType.ToString()))

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
+using RecruitmentSystem.Domain.Dtos.Evaluation;
+using RecruitmentSystem.Domain.Dtos.Screening;
 using RecruitmentSystem.Domain.Models;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Parsing;
@@ -19,14 +21,18 @@ public class ScreeningController : ControllerBase
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
     private readonly PdfService _pdfService;
+    private readonly OpenAiService _openAiService;
+    private readonly ScoreService _scoreService;
 
     public ScreeningController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService)
+        PdfService pdfService, OpenAiService openAiService, ScoreService scoreService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
         _pdfService = pdfService;
+        _openAiService = openAiService;
+        _scoreService = scoreService;
     }
     
     [HttpGet]
@@ -50,8 +56,11 @@ public class ScreeningController : ControllerBase
         {
             return NotFound("Cv not found");
         }
+        //check if cv is null
 
-        return Ok();
+
+        var cvDto = _mapper.Map<CvDto>(cv);
+        return Ok(cvDto);
     }
     
     [HttpGet]
@@ -117,19 +126,19 @@ public class ScreeningController : ControllerBase
         var internship = await _db.Internships.FirstOrDefaultAsync(i => i.Id.Equals(application.InternshipId));
 
         if (application is null)
-            return BadRequest("Application not found");
+            return NotFound("Application not found");
 
         var cv = await _db.Cvs
             .FirstOrDefaultAsync(c => c.ApplicationId.Equals(applicationId));
 
         if (cv is not null)
         {
-            return NotFound("Cv already created!");
+            return Conflict("Cv already created");
         }
         
         if (cvFile.Length == 0)
         {
-            return BadRequest("Invalid file");
+            return Conflict("Invalid file");
         }
 
         var pdfBytes = await GetPdfByteArray(cvFile);
@@ -145,6 +154,15 @@ public class ScreeningController : ControllerBase
 
         _db.Cvs.Add(cv);
         await _db.SaveChangesAsync();
+        
+        var response = await _openAiService.GetScreeningScore(application.Id);
+        
+        if (response == null)
+        {
+            return BadRequest("Failed to fetch OPENAI");
+        }
+        
+        await _scoreService.UpdateScreeningAiScore(application, response.fitnessScore);
 
         return CreatedAtAction(nameof(CreateScreening), new { cv.Id });
     }

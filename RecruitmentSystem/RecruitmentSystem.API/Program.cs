@@ -85,6 +85,8 @@ public class Program
         builder.Services.AddScoped<DataSeeder>();
         builder.Services.AddScoped<AuthSeeder>();
         builder.Services.AddScoped<JwtService>();
+        builder.Services.AddScoped<ScoreService>();
+        builder.Services.AddTransient<OpenAiService>();
         builder.Services.AddSingleton<PdfService>();
 
         var app = builder.Build();
@@ -116,11 +118,10 @@ public class Program
         
         using var scope = app.Services.CreateScope();
         var authSeeder = scope.ServiceProvider.GetRequiredService<AuthSeeder>();
-        Task.WhenAll(authSeeder.SeedRoles());
-        
         var dbSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-        Task.WhenAll(dbSeeder.SeedSteps());
-        Task.WhenAll(dbSeeder.SeedInternship());
+        Task.WhenAny(authSeeder.SeedRoles());
+        Task.WhenAny(dbSeeder.SeedSteps());
+        Task.WhenAny(dbSeeder.SeedInternship());
 
         app.Run();
     }

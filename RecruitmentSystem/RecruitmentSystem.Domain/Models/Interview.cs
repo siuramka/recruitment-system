@@ -8,4 +8,7 @@ public class Interview
     public DateTime StartTime { get; set; }
     public string Instructions { get; set; }
     public int MinutesLength { get; set; }
+    
+    public Guid? EvaluationId { get; set; }
+
 }

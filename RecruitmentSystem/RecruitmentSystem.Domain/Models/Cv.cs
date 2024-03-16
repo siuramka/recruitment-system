@@ -17,5 +17,6 @@ public class Cv
     public string FileName { get; set; }
     
     public byte[] FileContent { get; set; }
-
+    
+    public Guid? EvaluationId { get; set; }
 }

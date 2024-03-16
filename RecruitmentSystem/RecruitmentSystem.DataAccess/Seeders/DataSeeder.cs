@@ -14,7 +14,9 @@ public class DataSeeder
 
     public async Task SeedInternship()
     {
-        if (_dbContext.Internships.Any())
+        var containsAny = await _dbContext.Internships.ToListAsync();
+
+        if (containsAny.Count == 0)
         {
             return;
         }
@@ -68,7 +70,9 @@ public class DataSeeder
 
     public async Task SeedSteps()
     {
-        if (_dbContext.Steps.Any())
+        var containsAny = await _dbContext.Steps.ToListAsync();
+
+        if (containsAny.Count == 0)
         {
             return;
         }

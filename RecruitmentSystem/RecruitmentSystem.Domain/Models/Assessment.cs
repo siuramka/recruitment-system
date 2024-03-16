@@ -7,4 +7,10 @@ public class Assessment
     public Application Application { get; set; }
     
     public string Content { get; set; }
+    
+    public int CompanyScore { get; set; }
+    
+    public int AiScore { get; set; }
+    
+    public Guid? EvaluationId { get; set; }
 }
