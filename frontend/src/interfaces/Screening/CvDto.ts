@@ -1,0 +1,3 @@
+interface CvDto {
+  id: string;
+}

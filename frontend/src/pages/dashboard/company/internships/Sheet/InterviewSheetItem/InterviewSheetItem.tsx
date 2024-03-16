@@ -102,7 +102,7 @@ const InterviewSheetItem = ({ application }: Props) => {
                     </FormItem>
                   )}
                 />
-              </div>{" "}
+              </div>
               <div className="flex">
                 <FormField
                   control={form.control}

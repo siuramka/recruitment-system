@@ -36,8 +36,8 @@ import { ApplicationStepDto } from "@/interfaces/Step/ApplicationStepDto";
 import { Badge } from "@/components/ui/badge";
 import { getApplication } from "@/services/ApplicationService";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
-import ScreeningSheetItem from "./ScreeningSheetItem";
-import InterviewSheetItem from "./InterviewSheetItem";
+import ScreeningSheetItem from "./ScreeningSheetItem/ScreeningSheetItem";
+import InterviewSheetItem from "./InterviewSheetItem/InterviewSheetItem";
 
 type props = {
   appId: string;

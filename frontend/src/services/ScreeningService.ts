@@ -29,7 +29,8 @@ export const getScreening = async ({ applicationId }: getScreeningParams) => {
     const response = await api.get(`applications/${applicationId}/screening`);
 
     if (response.status === 200) {
-      return {};
+      const responseData: CvDto = response.data;
+      return responseData;
     }
 
     return null;

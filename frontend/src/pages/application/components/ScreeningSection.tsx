@@ -42,6 +42,7 @@ const formSchema = z.object({
 
 const ScreeningSection = ({ application }: ScreeningSectionParams) => {
   const [hasUploadedCv, setHasUploadedCv] = useState<boolean>(false);
+  const [screening, setScreening] = useState<CvDto>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,9 +68,9 @@ const ScreeningSection = ({ application }: ScreeningSectionParams) => {
   };
 
   const getScreeningData = async () => {
-    const hasUploadedCv = await getScreening({ applicationId: application.id });
-    if (hasUploadedCv) {
-      setHasUploadedCv(true);
+    const screening = await getScreening({ applicationId: application.id });
+    if (screening) {
+      setScreening(screening);
     }
   };
 
@@ -79,7 +80,7 @@ const ScreeningSection = ({ application }: ScreeningSectionParams) => {
 
   return (
     <>
-      {hasUploadedCv ? (
+      {hasUploadedCv || screening ? (
         <>
           We've received your application!
           <Button onClick={getCvData}>Download my CV</Button>
