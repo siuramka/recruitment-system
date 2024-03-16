@@ -23,6 +23,10 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
         modelBuilder.Entity<Review>()
             .Property(a => a.ReviewStatus)
             .HasConversion<string>();
+        
+        modelBuilder.Entity<Setting>()
+            .Property(a => a.Name)
+            .HasConversion<string>();
 
         // modelBuilder.Entity<InternshipStep>()
         //     .HasKey(elo => new { elo.StepId, elo.InternshipId, elo.Id });
@@ -41,5 +45,6 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
     public DbSet<Assessment> Assessments { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Evaluation> Evaluations { get; set; }
+    public DbSet<Setting> Settings { get; set; }
 
 }

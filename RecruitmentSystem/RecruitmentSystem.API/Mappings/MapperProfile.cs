@@ -1,5 +1,6 @@
 using AutoMapper;
 using RecruitmentSystem.Domain.Dtos.Application;
+using RecruitmentSystem.Domain.Dtos.Assessment;
 using RecruitmentSystem.Domain.Dtos.Company;
 using RecruitmentSystem.Domain.Dtos.Evaluation;
 using RecruitmentSystem.Domain.Dtos.Internship;
@@ -18,25 +19,22 @@ public class MapperProfile : Profile
         CreateMap<Internship, InternshipDto>()
             .ForMember(dest => dest.CompanyDto, opt => opt.MapFrom(src => src.Company))
             .ReverseMap();
-
         CreateMap<Internship, InternshipCreateDto>().ReverseMap();
+        CreateMap<Internship, InternshipForScreeningPromptDto>().ReverseMap();
 
         CreateMap<Company, CompanyDto>().ReverseMap();
+        
         CreateMap<Evaluation, EvaluationDto>().ReverseMap();
+        CreateMap<Evaluation, EvaluationCreateDto>().ReverseMap();
+
         CreateMap<Cv, CvDto>().ReverseMap();
         CreateMap<Interview, InterviewDto>().ReverseMap();
-        CreateMap<Internship, InternshipForScreeningPromptDto>().ReverseMap();
-        CreateMap<Evaluation, EvaluationCreateDto>().ReverseMap();
+        CreateMap<Assessment, AssessmentDto>().ReverseMap();
         
         CreateMap<Step, StepDto>()
             .ForMember(step => step.StepType, opt => opt.MapFrom(s => s.StepType.ToString()))
             .ReverseMap();
 
-        CreateMap<Application, ApplicationDto>()
-            .ForMember(dest => dest.InternshipDto, opt => opt.MapFrom(src => src.Internship))
-            .ReverseMap();
-        
-        
         CreateMap<SiteUser, SiteUserDto>().ReverseMap();
         
         CreateMap<InternshipStep, ApplicationStepDto>()
@@ -48,5 +46,10 @@ public class MapperProfile : Profile
             .ForMember(app => app.StepName, opt => opt.MapFrom(src => src.InternshipStep.Step.StepType.ToString()))
             .ForMember(app => app.InternshipDto, opt => opt.MapFrom(src => src.Internship))
             .ReverseMap();
+        
+        CreateMap<Application, ApplicationDto>()
+            .ForMember(dest => dest.InternshipDto, opt => opt.MapFrom(src => src.Internship))
+            .ReverseMap();
+
     }
 }

@@ -22,17 +22,17 @@ public class ScreeningController : ControllerBase
     private readonly UserManager<SiteUser> _userManager;
     private readonly PdfService _pdfService;
     private readonly OpenAiService _openAiService;
-    private readonly ScoreService _scoreService;
+    private readonly EvaluationService _evaluationService;
 
     public ScreeningController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService, OpenAiService openAiService, ScoreService scoreService)
+        PdfService pdfService, OpenAiService openAiService, EvaluationService evaluationService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
         _pdfService = pdfService;
         _openAiService = openAiService;
-        _scoreService = scoreService;
+        _evaluationService = evaluationService;
     }
     
     [HttpGet]
@@ -162,7 +162,7 @@ public class ScreeningController : ControllerBase
             return BadRequest("Failed to fetch OPENAI");
         }
         
-        await _scoreService.UpdateScreeningAiScore(application, response.fitnessScore);
+        await _evaluationService.UpdateScreeningAiScore(application, response.fitnessScore);
 
         return CreatedAtAction(nameof(CreateScreening), new { cv.Id });
     }

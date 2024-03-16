@@ -13,7 +13,7 @@ import { downloadCv, getScreening } from "@/services/ScreeningService";
 import { Terminal } from "lucide-react";
 import { useEffect, useState } from "react";
 import ScoreAlert from "../components/ScoreAlert";
-import ScreeningEvaluateCard from "../components/ScreeningEvaluateCard";
+import ScreeningEvaluateCard from "./ScreeningEvaluateCard";
 import { getScreeningEvaluation } from "@/services/EvaluationService";
 
 type Props = {

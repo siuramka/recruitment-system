@@ -13,7 +13,7 @@ import {
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
 import { CreateInternshipDialog } from "./CreateInternshipDialog";
 import { InternshipDto } from "../../../../interfaces/Internship/InternshipDto";
-import { CompanyInternshipApplicantSheet } from "./Sheet/CompanyInternshipApplicantSheet";
+import { ApplicationSheet } from "./Sheet/ApplicantionSheet";
 import { Badge } from "@/components/ui/badge";
 
 const CompanyApplicationsList = () => {
@@ -73,7 +73,7 @@ const CompanyApplicationsList = () => {
                   <Badge variant="default">{app.stepName}</Badge>
                 </TableCell>
                 <TableCell>
-                  <CompanyInternshipApplicantSheet
+                  <ApplicationSheet
                     appId={app.id}
                     internshipId={internshipId}
                     handleRefresh={handleRefresh}

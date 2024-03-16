@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check, Terminal } from "lucide-react";
-import ScoreAlert from "./ScoreAlert";
+import ScoreAlert from "../components/ScoreAlert";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createScreening } from "@/services/ScreeningService";
 import {
-  createScreeningCompanyEvaluation,
+  createInterviewEvaluation,
+  createScreeningEvaluation,
+  getInterviewEvaluation,
   getScreeningEvaluation,
 } from "@/services/EvaluationService";
 import { useEffect, useState } from "react";
@@ -38,15 +40,19 @@ const formSchema = z.object({
   }),
 });
 
-const ScreeningEvaluateCard = ({ screeningId }: { screeningId: string }) => {
+const InterviewEvaluateCard = ({ interviewId }: { interviewId: string }) => {
   const [evaluation, setEvaluation] = useState<EvaluationDto>();
   const [hasCompanyEvaluated, setHasCompanyEvaluated] = useState(false);
+  const [hasAiEvaluated, setHasAiEvaluated] = useState(false);
 
   const getData = async () => {
-    const evaluation = await getScreeningEvaluation({ screeningId });
+    const evaluation = await getInterviewEvaluation({
+      interviewId,
+    });
     if (evaluation) {
       setEvaluation(evaluation);
       setHasCompanyEvaluated(evaluation.companyScore !== 0);
+      setHasAiEvaluated(evaluation.aiScore !== 0);
       updateDefaultValues({
         companyScore: evaluation.companyScore,
         content: evaluation.content,
@@ -70,14 +76,15 @@ const ScreeningEvaluateCard = ({ screeningId }: { screeningId: string }) => {
   };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    var evaluation = await createScreeningCompanyEvaluation({
-      screeningId,
+    var evaluation = await createInterviewEvaluation({
+      interviewId,
       evaluation: values,
     });
 
     if (evaluation) {
       setEvaluation(evaluation);
       setHasCompanyEvaluated(true);
+      setHasAiEvaluated(true);
 
       toast({
         title: "Evaluation submitted",
@@ -105,11 +112,11 @@ const ScreeningEvaluateCard = ({ screeningId }: { screeningId: string }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {evaluation && (
+        {hasAiEvaluated && evaluation && (
           <ScoreAlert
             aiScore={evaluation.aiScore}
             message={
-              "ChatGPT Large Language Model has given a fitness score of how fit the applicant is for the internship."
+              "ChatGPT Large Language Model has given a score of how fit the interviewer was for the internship."
             }
           />
         )}
@@ -160,9 +167,11 @@ const ScreeningEvaluateCard = ({ screeningId }: { screeningId: string }) => {
                 )}
               />
             </div>
-            <div className="pt-3">
-              <Button type="submit">Submit</Button>
-            </div>
+            {!evaluation && (
+              <div className="pt-3">
+                <Button type="submit">Submit</Button>
+              </div>
+            )}
           </form>
         </Form>
       </CardContent>
@@ -170,4 +179,4 @@ const ScreeningEvaluateCard = ({ screeningId }: { screeningId: string }) => {
   );
 };
 
-export default ScreeningEvaluateCard;
+export default InterviewEvaluateCard;

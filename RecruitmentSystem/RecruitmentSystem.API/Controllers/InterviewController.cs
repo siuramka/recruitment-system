@@ -56,30 +56,23 @@ public class InterviewController : ControllerBase
 
         var interview = await _db.Interviews.FirstOrDefaultAsync(i => i.ApplicationId.Equals(applicationId));
         
-        if (interview is null)
+        if (interview is not null)
         {
-            var newInterview = new Interview()
-            {
-                ApplicationId = applicationId,
-                StartTime = interviewCreateDto.StartTime.ToUniversalTime(),
-                MinutesLength = interviewCreateDto.MinutesLength,
-                Instructions = interviewCreateDto.Instructions
-            };
-            
-            await _db.Interviews.AddAsync(newInterview);
-            await _db.SaveChangesAsync();
-
-            
-            return Ok(_mapper.Map<InterviewDto>(newInterview));
+            return BadRequest("Interview already created");
         }
-
-        interview.StartTime = interviewCreateDto.StartTime.ToUniversalTime();
-        interview.MinutesLength = interviewCreateDto.MinutesLength;
-        interview.Instructions = interviewCreateDto.Instructions;
         
-        _db.Interviews.Update(interview);
+        var newInterview = new Interview()
+        {
+            ApplicationId = applicationId,
+            StartTime = interviewCreateDto.StartTime.ToUniversalTime(),
+            MinutesLength = interviewCreateDto.MinutesLength,
+            Instructions = interviewCreateDto.Instructions
+        };
+            
+        await _db.Interviews.AddAsync(newInterview);
         await _db.SaveChangesAsync();
-        
-        return Ok(_mapper.Map<InterviewDto>(interview));
+
+            
+        return Ok(_mapper.Map<InterviewDto>(newInterview));
     }
 }

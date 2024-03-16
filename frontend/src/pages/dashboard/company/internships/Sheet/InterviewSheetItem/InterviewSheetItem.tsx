@@ -29,6 +29,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 import { getFormattedDate } from "@/services/DateService";
 import { Textarea } from "@/components/ui/textarea";
+import InterviewEvaluateCard from "./InterviewEvaluateCard";
 type Props = {
   application: ApplicationListItemDto;
 };
@@ -75,85 +76,91 @@ const InterviewSheetItem = ({ application }: Props) => {
   }, []);
 
   return (
-    <Card className="mt-6">
-      <CardHeader>
-        <CardTitle>Interview step</CardTitle>
-        <CardDescription>Actions for the Interview step</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div>
-                <FormField
-                  control={form.control}
-                  name="instructions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Instructions</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          className="w-[590px]"
-                          placeholder="Instructions for the interview. Please join this google meets link..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex">
-                <FormField
-                  control={form.control}
-                  name="minutes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Interview length in minutes</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="w-[300px]"
-                          type="number"
-                          placeholder="60"
-                          defaultValue={60}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="ml-3">
-                  <div className="text-sm font-medium mb-3">
-                    Select interview date and time
-                  </div>
-                  <DateTimePicker date={date} setDate={setDate} />
-                  <Button className="ml-3" type="submit" variant="secondary">
-                    Submit
-                  </Button>
+    <div>
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Interview step</CardTitle>
+          <CardDescription>Actions for the Interview step</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="instructions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Instructions</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            className="w-[590px]"
+                            placeholder="Instructions for the interview. Please join this google meets link..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-            </form>
-          </Form>
-        </div>
-        <div className="mt-10">
-          {interview && (
-            <Alert variant="primary">
-              <Terminal className="h-4 w-4" />
-              <AlertTitle>Interview scheduled</AlertTitle>
-              <AlertDescription>
-                The interview has been scheduled at{" "}
-                <span className="font-medium">
-                  {getFormattedDate(new Date(interview.startTime))} for{" "}
-                  {interview.minutesLength} minutes
-                </span>{" "}
-                You can also update it anytime in the interview step.
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+                <div className="flex">
+                  <FormField
+                    control={form.control}
+                    name="minutes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Interview length in minutes</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-[300px]"
+                            type="number"
+                            placeholder="60"
+                            defaultValue={60}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="ml-3">
+                    <div className="text-sm font-medium mb-3">
+                      Select interview date and time
+                    </div>
+                    <DateTimePicker date={date} setDate={setDate} />
+                    <Button className="ml-3" type="submit" variant="secondary">
+                      Submit
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </Form>
+          </div>
+          <div className="mt-10">
+            {interview && (
+              <Alert variant="primary">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Interview scheduled</AlertTitle>
+                <AlertDescription>
+                  The interview has been scheduled at{" "}
+                  <span className="font-medium">
+                    {getFormattedDate(new Date(interview.startTime))} for{" "}
+                    {interview.minutesLength} minutes
+                  </span>{" "}
+                  You can also update it anytime in the interview step.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      {interview && <InterviewEvaluateCard interviewId={interview.id} />}
+    </div>
   );
 };
 

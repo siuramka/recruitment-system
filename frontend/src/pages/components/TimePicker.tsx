@@ -1,4 +1,3 @@
-//https://time.openstatus.dev/
 "use client";
 
 import * as React from "react";

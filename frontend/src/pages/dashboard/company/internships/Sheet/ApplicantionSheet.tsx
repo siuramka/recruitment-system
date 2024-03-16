@@ -38,6 +38,7 @@ import { getApplication } from "@/services/ApplicationService";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
 import ScreeningSheetItem from "./ScreeningSheetItem/ScreeningSheetItem";
 import InterviewSheetItem from "./InterviewSheetItem/InterviewSheetItem";
+import AssessmentSheetItem from "./AssessmentSheetItem/AssessmentSheetItem";
 
 type props = {
   appId: string;
@@ -45,7 +46,7 @@ type props = {
   handleRefresh: () => void;
 };
 
-export function CompanyInternshipApplicantSheet({
+export function ApplicationSheet({
   appId,
   internshipId,
   handleRefresh,
@@ -139,14 +140,17 @@ export function CompanyInternshipApplicantSheet({
             </Card>
           </div>
           <div>
-            {(() => {
-              switch (step) {
-                case "Screening":
-                  return <ScreeningSheetItem application={application!} />;
-                case "Interview":
-                  return <InterviewSheetItem application={application!} />;
-              }
-            })()}
+            {application &&
+              (() => {
+                switch (step) {
+                  case "Screening":
+                    return <ScreeningSheetItem application={application} />;
+                  case "Interview":
+                    return <InterviewSheetItem application={application} />;
+                  case "Assessment":
+                    return <AssessmentSheetItem application={application} />;
+                }
+              })()}
           </div>
         </div>
         <SheetFooter>
