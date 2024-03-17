@@ -34,6 +34,7 @@ public class StepsController : ControllerBase
         return Ok(steps.Select(_mapper.Map<StepDto>));
     }
     
+    //todo: only allow decision when all steps completed
     [HttpGet]
     [Authorize]
     [Route("/api/application/{applicationId}/steps")]
@@ -128,8 +129,7 @@ public class StepsController : ControllerBase
         {
             return NotFound("Application can't be updated to this step!");
         }
-
-
+        
         var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
 
         if (application is null)

@@ -162,7 +162,7 @@ public class ScreeningController : ControllerBase
             return BadRequest("Failed to fetch OPENAI");
         }
         
-        await _evaluationService.UpdateScreeningAiScore(application, response.fitnessScore);
+        await _evaluationService.CreateEvaluationWithAiScore(application, response.fitnessScore);
 
         return CreatedAtAction(nameof(CreateScreening), new { cv.Id });
     }

@@ -9,5 +9,5 @@ public class Review
     
     public Guid CompanyId { get; set; }
     
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
 }

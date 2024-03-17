@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecruitmentSystem.DataAccess;
@@ -11,9 +12,11 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240317113039_decision+misc")]
+    partial class decisionmisc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -353,9 +356,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Property<int>("AiScore")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ApplicationId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("CompanyScore")
                         .HasColumnType("integer");
 
@@ -367,8 +367,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId");
 
                     b.ToTable("Evaluations");
                 });
@@ -777,17 +775,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.Evaluation", b =>
-                {
-                    b.HasOne("RecruitmentSystem.Domain.Models.Application", "Application")
-                        .WithMany("Evaluations")
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Application");
-                });
-
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>
                 {
                     b.HasOne("RecruitmentSystem.Domain.Models.Company", "Company")
@@ -860,8 +847,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Application", b =>
                 {
                     b.Navigation("Assessment");
-
-                    b.Navigation("Evaluations");
 
                     b.Navigation("Review");
                 });

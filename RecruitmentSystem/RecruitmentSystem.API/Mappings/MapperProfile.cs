@@ -2,10 +2,12 @@ using AutoMapper;
 using RecruitmentSystem.Domain.Dtos.Application;
 using RecruitmentSystem.Domain.Dtos.Assessment;
 using RecruitmentSystem.Domain.Dtos.Company;
+using RecruitmentSystem.Domain.Dtos.Decision;
 using RecruitmentSystem.Domain.Dtos.Evaluation;
 using RecruitmentSystem.Domain.Dtos.Internship;
 using RecruitmentSystem.Domain.Dtos.Interview;
 using RecruitmentSystem.Domain.Dtos.Screening;
+using RecruitmentSystem.Domain.Dtos.Setting;
 using RecruitmentSystem.Domain.Dtos.SiteUser;
 using RecruitmentSystem.Domain.Dtos.Steps;
 using RecruitmentSystem.Domain.Models;
@@ -19,17 +21,30 @@ public class MapperProfile : Profile
         CreateMap<Internship, InternshipDto>()
             .ForMember(dest => dest.CompanyDto, opt => opt.MapFrom(src => src.Company))
             .ReverseMap();
-        CreateMap<Internship, InternshipCreateDto>().ReverseMap();
-        CreateMap<Internship, InternshipForScreeningPromptDto>().ReverseMap();
-
-        CreateMap<Company, CompanyDto>().ReverseMap();
         
-        CreateMap<Evaluation, EvaluationDto>().ReverseMap();
-        CreateMap<Evaluation, EvaluationCreateDto>().ReverseMap();
+        CreateMap<Internship, InternshipCreateDto>()
+            .ReverseMap();
+        
+        CreateMap<Internship, InternshipForScreeningPromptDto>()
+            .ReverseMap();
 
-        CreateMap<Cv, CvDto>().ReverseMap();
-        CreateMap<Interview, InterviewDto>().ReverseMap();
-        CreateMap<Assessment, AssessmentDto>().ReverseMap();
+        CreateMap<Company, CompanyDto>()
+            .ReverseMap();
+        
+        CreateMap<Evaluation, EvaluationDto>()
+            .ReverseMap();
+        
+        CreateMap<Evaluation, EvaluationCreateDto>()
+            .ReverseMap();
+
+        CreateMap<Cv, CvDto>()
+            .ReverseMap();
+        
+        CreateMap<Interview, InterviewDto>()
+            .ReverseMap();
+        
+        CreateMap<Assessment, AssessmentDto>()
+            .ReverseMap();
         
         CreateMap<Step, StepDto>()
             .ForMember(step => step.StepType, opt => opt.MapFrom(s => s.StepType.ToString()))
@@ -49,6 +64,13 @@ public class MapperProfile : Profile
         
         CreateMap<Application, ApplicationDto>()
             .ForMember(dest => dest.InternshipDto, opt => opt.MapFrom(src => src.Internship))
+            .ReverseMap();
+        
+        CreateMap<Setting, SettingDto>()
+            .ForMember(s => s.Name, opt => opt.MapFrom(s => s.Name.ToString()))
+            .ReverseMap();
+        
+        CreateMap<Decision, DecisionDto>()
             .ReverseMap();
 
     }

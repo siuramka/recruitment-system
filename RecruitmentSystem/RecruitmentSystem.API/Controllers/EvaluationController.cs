@@ -133,6 +133,8 @@ public class EvaluationController : ControllerBase
         {
             return NotFound("Interview not found");
         }
+        
+        var applicationId = interview.ApplicationId;
 
         var evaluation = _db.Evaluations.FirstOrDefault(e => e.Id == interview.EvaluationId);
 
@@ -141,7 +143,7 @@ public class EvaluationController : ControllerBase
             return NotFound("Evaluation already exists");
         }
 
-        var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto);
+        var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto, applicationId);
         await _evaluationService.AssignInterviewEvaluation(interviewId, createdEvaluation.Id);
         await _evaluationService.EvaluateInterviewAiScore(interviewId);
 
@@ -166,6 +168,8 @@ public class EvaluationController : ControllerBase
             return NotFound("Assessment not found");
         }
 
+        var applicationId = assessment.ApplicationId;
+
         var evaluation = _db.Evaluations.FirstOrDefault(e => e.Id == assessment.EvaluationId);
 
         if (evaluation is not null)
@@ -173,7 +177,7 @@ public class EvaluationController : ControllerBase
             return NotFound("Evaluation already exists");
         }
 
-        var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto);
+        var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto, applicationId);
         await _evaluationService.AssignAssessmentEvaluation(assessmentId, createdEvaluation.Id);
         await _evaluationService.EvaluateAssessmentAiScore(assessmentId);
 

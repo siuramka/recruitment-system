@@ -12,4 +12,7 @@ public class Evaluation
     public Cv? Cv { get; set; }
     public Interview? Interview { get; set; }
     public Assessment? Assessment { get; set; }
+    
+    public Guid ApplicationId { get; set; }
+    public Application Application { get; set; }
 }

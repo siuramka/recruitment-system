@@ -7,7 +7,7 @@ public class Assessment
     
     public Application Application { get; set; }
     
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
     
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

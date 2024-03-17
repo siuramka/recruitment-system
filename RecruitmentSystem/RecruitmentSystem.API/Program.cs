@@ -13,7 +13,7 @@ namespace RecruitmentSystem.API;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         
@@ -48,6 +48,8 @@ public class Program
                     new string[]{}
                 }
             });
+            
+
         });
         
         builder.Services.AddIdentity<SiteUser, IdentityRole>()
@@ -83,12 +85,11 @@ public class Program
             });
         
         builder.Services.AddScoped<DataSeeder>();
-        builder.Services.AddScoped<AuthSeeder>();
         builder.Services.AddScoped<JwtService>();
         builder.Services.AddTransient<OpenAiService>();
-        builder.Services.AddTransient<EvaluationService>();
-        builder.Services.AddTransient<AssessmentService>();
-        builder.Services.AddSingleton<PdfService>();
+        builder.Services.AddScoped<EvaluationService>();
+        builder.Services.AddScoped<AssessmentService>();
+        builder.Services.AddScoped<PdfService>();
 
         var app = builder.Build();
 
@@ -118,11 +119,9 @@ public class Program
         app.MapControllers();
         
         using var scope = app.Services.CreateScope();
-        var authSeeder = scope.ServiceProvider.GetRequiredService<AuthSeeder>();
+
         var dbSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-        Task.WhenAny(authSeeder.SeedRoles());
-        Task.WhenAny(dbSeeder.SeedSteps());
-        Task.WhenAny(dbSeeder.SeedInternship());
+        await dbSeeder.Seed();
 
         app.Run();
     }

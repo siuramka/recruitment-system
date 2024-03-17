@@ -8,11 +8,11 @@ public class Internship
     
     public Guid CompanyId { get; set; }
     public Company Company { get; set; }
-    public string Name { get; set; }
-    public string ContactEmail { get; set; }
-    public string Address { get; set; }
-    public string Description { get; set; }
-    public string Requirements { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string ContactEmail { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Requirements { get; set; } = string.Empty;
     public bool IsPaid { get; set; }
     public bool IsRemote { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -20,7 +20,7 @@ public class Internship
     public DateTime EndDate { get; set; }
     public int SlotsAvailable { get; set; }
     public int TakenSlots { get; set; }
-    public string Skills { get; set; }
+    public string Skills { get; set; } = string.Empty;
     
     public List<InternshipStep> InternshipSteps { get; set; }
 }

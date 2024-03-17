@@ -46,5 +46,6 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Evaluation> Evaluations { get; set; }
     public DbSet<Setting> Settings { get; set; }
+    public DbSet<Decision> Decisions { get; set; }
 
 }

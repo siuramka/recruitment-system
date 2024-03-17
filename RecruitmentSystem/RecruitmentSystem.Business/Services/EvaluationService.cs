@@ -2,7 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.DataAccess;
+using RecruitmentSystem.Domain.Dtos.Decision;
 using RecruitmentSystem.Domain.Dtos.Evaluation;
+using RecruitmentSystem.Domain.Dtos.OpenAi;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
@@ -24,6 +26,7 @@ public class EvaluationService
         _pdfService = pdfService;
         _openAiService = openAiService;
     }
+    
 
     public async Task EvaluateInterviewAiScore(Guid interviewId)
     {
@@ -52,7 +55,7 @@ public class EvaluationService
         _db.Update(evaluation);
         await _db.SaveChangesAsync();
     }
-    public async Task UpdateScreeningAiScore(Application application, int score)
+    public async Task CreateEvaluationWithAiScore(Application application, int score)
     {
         var cv = await _db.Cvs.FirstOrDefaultAsync(cv => cv.ApplicationId == application.Id);
         
@@ -60,6 +63,7 @@ public class EvaluationService
         {
             AiScore = score,
             Content = string.Empty,
+            ApplicationId = application.Id
         };
 
         _db.Evaluations.Add(evaluation);
@@ -70,10 +74,12 @@ public class EvaluationService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Evaluation> CreateEvaluation(EvaluationCreateDto evaluationCreateDto)
+    public async Task<Evaluation> CreateEvaluation(EvaluationCreateDto evaluationCreateDto, Guid applicationId)
     {
         var evaluation = new Evaluation();
         _mapper.Map(evaluationCreateDto, evaluation);
+
+        evaluation.ApplicationId = applicationId;
 
         _db.Evaluations.Add(evaluation);
         await _db.SaveChangesAsync();
@@ -111,4 +117,14 @@ public class EvaluationService
 
         await _db.SaveChangesAsync();
     }
+    
+    public async Task UpdateDecisionWithAiReview(DecisionResponse decisionResponse, Decision decision)
+    {
+        decision.AiStagesReview = decisionResponse.stagesReview;
+        decision.AiStagesScore = decisionResponse.finalDecision;
+
+        _db.Update(decision);
+        await _db.SaveChangesAsync();
+    }
+
 }
