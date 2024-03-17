@@ -11,6 +11,8 @@ import { COMPANY, SITE_USER } from "./interfaces/Auth/Roles";
 import CompanyInternships from "./pages/dashboard/company/internships/CompanyInternships";
 import CompanyApplicationsList from "./pages/dashboard/company/internships/CompanyApplicationsList";
 import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
+import SettingsList from "./pages/dashboard/company/settings/SettingsList";
+import StatisticsList from "./pages/dashboard/company/statistics/StatisticsList";
 
 function App() {
   const user = useSelector(selectUser);
@@ -63,6 +65,14 @@ function App() {
                         <Route
                           path="/company/internships/:internshipId"
                           element={<CompanyApplicationsList />}
+                        />
+                        <Route
+                          path="/company/settings"
+                          element={<SettingsList />}
+                        />
+                        <Route
+                          path="/company/statistics"
+                          element={<StatisticsList />}
                         />
                       </>
                     );

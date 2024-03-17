@@ -68,8 +68,9 @@ const stepInitialItems: StepSelectItem[] = [
   { stepType: "Screening", positionAscending: 0, removable: true },
   { stepType: "Interview", positionAscending: 1, removable: true },
   { stepType: "Assessment", positionAscending: 2, removable: true },
-  { stepType: "Offer", positionAscending: 3, removable: false },
-  { stepType: "Rejection", positionAscending: 4, removable: false },
+  { stepType: "Decision", positionAscending: 3, removable: false },
+  { stepType: "Offer", positionAscending: 4, removable: false },
+  { stepType: "Rejection", positionAscending: 5, removable: false },
 ];
 
 type props = {

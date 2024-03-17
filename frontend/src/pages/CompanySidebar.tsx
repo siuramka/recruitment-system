@@ -1,3 +1,4 @@
+import { BarChart, Pen, Settings, TestTube } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CompanySidebarProps {
@@ -23,7 +24,7 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
               </button>
               <a href="" className="flex ms-2 md:me-24">
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                  Hello
+                  Mariusoftas
                 </span>
               </a>
             </div>
@@ -43,14 +44,51 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
                 onClick={() => navigate("/company/internships")}
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
               >
-                <span className="ms-3">Internships</span>
+                <span className="ms-3 flex items-center">
+                  <TestTube className="w-4 h-4 mr-2" />
+                  Internships
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
+                onClick={() => navigate("/company/evaluations")}
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
+              >
+                <span className="ms-3 flex items-center">
+                  <Pen className="w-4 h-4 mr-2" />
+                  Evaluations
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
+                onClick={() => navigate("/company/statistics")}
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
+              >
+                <span className="ms-3 flex items-center">
+                  <BarChart className="w-4 h-4 mr-2" />
+                  Statistics
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
+                onClick={() => navigate("/company/settings")}
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
+              >
+                <span className="ms-3 flex items-center">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Settings
+                </span>
               </a>
             </li>
           </ul>
         </div>
       </aside>
-
-      <div className="pt-10">{children}</div>
+      <div className="pt-10 pl-64 ">
+        <div className="space-y-6 p-10 pb-16 md:block">{children}</div>
+      </div>
     </>
   );
 };

@@ -160,9 +160,11 @@ const ScreeningEvaluateCard = ({ screeningId }: { screeningId: string }) => {
                 )}
               />
             </div>
-            <div className="pt-3">
-              <Button type="submit">Submit</Button>
-            </div>
+            {!hasCompanyEvaluated && (
+              <div className="pt-3">
+                <Button type="submit">Submit</Button>
+              </div>
+            )}
           </form>
         </Form>
       </CardContent>

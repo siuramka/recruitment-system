@@ -166,7 +166,7 @@ const AssessmentSheetItem = ({ application }: Props) => {
                         </FormItem>
                       )}
                     />
-                    <Button className="mt-5" type="submit" variant="secondary">
+                    <Button className="mt-5" type="submit" variant="default">
                       Submit
                     </Button>
                   </div>

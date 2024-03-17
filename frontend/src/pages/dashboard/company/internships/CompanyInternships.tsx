@@ -36,12 +36,17 @@ const CompanyInternships = () => {
 
   return (
     <div className="flex flex-col">
+      <div className="space-y-0.5">
+        <h2 className="text-2xl font-bold tracking-tight">Internships</h2>
+        <p className="text-muted-foreground">
+          Information about internships at your company
+        </p>
+      </div>
       <span className="flex justify-end">
         <CreateInternshipDialog handleRefresh={handleRefresh} />
       </span>
       <div>
         <Table>
-          <TableCaption>A list of your internships.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Name</TableHead>

@@ -39,6 +39,7 @@ import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationList
 import ScreeningSheetItem from "./ScreeningSheetItem/ScreeningSheetItem";
 import InterviewSheetItem from "./InterviewSheetItem/InterviewSheetItem";
 import AssessmentSheetItem from "./AssessmentSheetItem/AssessmentSheetItem";
+import DecisionSheetItem from "./DecisionSheetItem/DecisionSheetItem";
 
 type props = {
   appId: string;
@@ -121,7 +122,7 @@ export function ApplicationSheet({
               </CardHeader>
               <CardContent>
                 <Select onValueChange={onStageChange} defaultValue={step}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder={step} />
                   </SelectTrigger>
                   <SelectContent>
@@ -136,6 +137,7 @@ export function ApplicationSheet({
                     ))}
                   </SelectContent>
                 </Select>
+                <Button className="mt-4 w-full">Next step</Button>
               </CardContent>
             </Card>
           </div>
@@ -149,6 +151,8 @@ export function ApplicationSheet({
                     return <InterviewSheetItem application={application} />;
                   case "Assessment":
                     return <AssessmentSheetItem application={application} />;
+                  case "Decision":
+                    return <DecisionSheetItem application={application} />;
                 }
               })()}
           </div>
