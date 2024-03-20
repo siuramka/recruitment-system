@@ -107,25 +107,25 @@ const DecisionSheetItem = ({ application }: Props) => {
                     </Button>
                   )}
                 </div>
-                <div>
-                  {decision && (
-                    <>
-                      <div className="my-1">
-                        <Alert variant="primary">
-                          <GraduationCap className="h-4 w-4" />
-                          <AlertTitle>
-                            Congratulations! All steps finished!
-                          </AlertTitle>
-                        </Alert>
-                      </div>
-                      <div>
-                        <Button className="my-3">Open Evaluation</Button>
-                      </div>
-                    </>
-                  )}
-                </div>
               </form>
             </Form>
+          </div>
+          <div>
+            {decision && (
+              <div className="w-[590px] mt-3">
+                <div className="my-1">
+                  <Alert variant="primary">
+                    <GraduationCap className="h-4 w-4" />
+                    <AlertTitle>
+                      Congratulations! All steps finished!
+                    </AlertTitle>
+                  </Alert>
+                </div>
+                <div>
+                  <Button className="my-3">Finalise</Button>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -92,3 +92,29 @@ export const updateApplicationStep = async ({
     return null;
   }
 };
+
+export const UpdateNextApplicationStep = async ({
+  internshipId,
+  applicationId,
+}: {
+  internshipId: string;
+  applicationId: string;
+}) => {
+  try {
+    const response = await api.post(
+      `internships/${internshipId}/application/${applicationId}/steps/next`
+    );
+
+    if (response.status === 200) {
+      toast({
+        title: "Successfully updated application step!",
+      });
+      const responseData: StepDto = response.data;
+      return responseData;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};

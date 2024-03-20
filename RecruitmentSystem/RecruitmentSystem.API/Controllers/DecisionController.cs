@@ -20,11 +20,11 @@ public class DecisionController : ControllerBase
     private readonly PdfService _pdfService;
     private readonly OpenAiService _openAiService;
     private readonly EvaluationService _evaluationService;
-
+    private readonly ApplicationService _applicationService;
 
     public DecisionController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
         PdfService pdfService, OpenAiService openAiService,
-        EvaluationService evaluationService)
+        EvaluationService evaluationService, ApplicationService applicationService)
     {
         _db = db;
         _mapper = mapper;
@@ -32,6 +32,7 @@ public class DecisionController : ControllerBase
         _pdfService = pdfService;
         _openAiService = openAiService;
         _evaluationService = evaluationService;
+        _applicationService = applicationService;
     }
     
     [HttpGet]
@@ -72,11 +73,13 @@ public class DecisionController : ControllerBase
 
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
-
+        
         if (application is null)
         {
             return NotFound("Application not found");
         }
+
+        await _applicationService.EndApplication(application);
 
         var decision = new Decision
         {
@@ -89,6 +92,8 @@ public class DecisionController : ControllerBase
 
         var decisionResponse = await _openAiService.GetFinalDecision(applicationId);
         await _evaluationService.UpdateDecisionWithAiReview(decisionResponse, decision);
+
+        var lol = await _evaluationService.CalculateFinalScore(applicationId);
 
         var decisionDto = _mapper.Map<DecisionDto>(decision);
         return CreatedAtAction(nameof(CreateDecision),decisionDto);

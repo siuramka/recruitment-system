@@ -52,12 +52,12 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
             </li>
             <li>
               <a
-                onClick={() => navigate("/company/evaluations")}
+                onClick={() => navigate("/company/decisions")}
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
               >
                 <span className="ms-3 flex items-center">
                   <Pen className="w-4 h-4 mr-2" />
-                  Evaluations
+                  Decisions
                 </span>
               </a>
             </li>

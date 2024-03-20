@@ -86,10 +86,12 @@ public class Program
         
         builder.Services.AddScoped<DataSeeder>();
         builder.Services.AddScoped<JwtService>();
+        builder.Services.AddScoped<ApplicationService>();
         builder.Services.AddTransient<OpenAiService>();
         builder.Services.AddScoped<EvaluationService>();
         builder.Services.AddScoped<AssessmentService>();
         builder.Services.AddScoped<PdfService>();
+        builder.Services.AddTransient<AuthService>();
 
         var app = builder.Build();
 

@@ -45,6 +45,27 @@ public class ApplicationController : ControllerBase
     }
     
     [HttpGet]
+    [Authorize(Roles = Roles.Company)]
+    [Route("/api/applications/decisions")]
+    public async Task<IActionResult> GetAllCompanyDecisions()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var siteUser = await _userManager.FindByIdAsync(userId);
+        
+        var applications = await _db.Applications
+            .Include(a => a.Internship)
+            .ThenInclude(i => i.Company)
+            .Where(a => a.Internship.CompanyId == siteUser.CompanyId)
+            .Include(app => app.SiteUser)
+            .Include(app => app.InternshipStep)
+            .ThenInclude(istep => istep.Step)
+            .Where(app => app.InternshipStep.Step.StepType == StepType.Decision)
+            .ToListAsync();
+
+        return Ok(applications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
+    }
+    
+    [HttpGet]
     [Authorize(Roles = Roles.SiteUser)]
     [Route("/api/applications")]
     public async Task<IActionResult> GetAllUser()

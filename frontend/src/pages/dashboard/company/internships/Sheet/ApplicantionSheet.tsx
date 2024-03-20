@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  UpdateNextApplicationStep,
   getApplicationStepsById,
   updateApplicationStep,
 } from "@/services/StepService";
@@ -76,14 +77,18 @@ export function ApplicationSheet({
 
   const onStageChange = async (value: string) => {
     setStep(value);
-    setIsUpdating(true);
-    var data = await updateApplicationStep({
+    handleRefresh();
+    setIsUpdating(false);
+  };
+
+  const handleNextStep = async () => {
+    const nextStep = await UpdateNextApplicationStep({
       internshipId,
       applicationId: appId,
-      stepType: value,
     });
 
-    if (data) {
+    if (nextStep) {
+      setStep(nextStep.stepType);
       handleRefresh();
     }
 
@@ -95,7 +100,7 @@ export function ApplicationSheet({
       <SheetTrigger onClick={getData} asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-[1000px] overflow-auto">
+      <SheetContent className="sm:max-w-[800px] overflow-auto">
         <SheetHeader>
           <SheetTitle>Application managment!</SheetTitle>
           <SheetDescription>
@@ -121,7 +126,7 @@ export function ApplicationSheet({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Select onValueChange={onStageChange} defaultValue={step}>
+                <Select onValueChange={onStageChange} value={step}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={step} />
                   </SelectTrigger>
@@ -137,7 +142,11 @@ export function ApplicationSheet({
                     ))}
                   </SelectContent>
                 </Select>
-                <Button className="mt-4 w-full">Next step</Button>
+                {application?.stepName !== "Decision" && (
+                  <Button className="mt-4 w-full" onClick={handleNextStep}>
+                    Next step
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </div>

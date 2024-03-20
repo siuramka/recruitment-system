@@ -24,16 +24,16 @@ public class StepsController : ControllerBase
         _mapper = mapper;
         _userManager = userManager;
     }
-    
+
     [HttpGet]
-    [Authorize(Roles=Roles.Company)]
+    [Authorize(Roles = Roles.Company)]
     [Route("/api/steps")]
     public async Task<IActionResult> GetAvailableSteps()
     {
         var steps = await _db.Steps.ToListAsync();
         return Ok(steps.Select(_mapper.Map<StepDto>));
     }
-    
+
     //todo: only allow decision when all steps completed
     [HttpGet]
     [Authorize]
@@ -44,7 +44,7 @@ public class StepsController : ControllerBase
             .Include(app => app.InternshipStep)
             .ThenInclude(internshipStep => internshipStep.Step)
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
-        
+
         var internshipSteps =
             await _db.InternshipSteps
                 .Include(internshipStep => internshipStep.Internship)
@@ -54,7 +54,7 @@ public class StepsController : ControllerBase
 
         if (application is null)
             return NotFound("Application not found!");
-        
+
         var currentStep = application.InternshipStep;
 
         var internshipStepDtos = internshipSteps
@@ -65,10 +65,10 @@ public class StepsController : ControllerBase
                 PositionAscending = internshipStep.PositionAscending,
                 IsCurrentStep = internshipStep.Step.Id == currentStep.Step.Id
             });
-        
+
         return Ok(internshipStepDtos);
     }
-    
+
     [HttpGet]
     [Authorize]
     [Route("/api/internships/{internshipId:guid}/application/{applicationId:guid}/steps")]
@@ -76,9 +76,53 @@ public class StepsController : ControllerBase
     {
         var internship = await _db.Internships
             .FirstOrDefaultAsync(internship => internship.Id == internshipId);
-        
+
         if (internship is null)
             return NotFound("Internship not found!");
+
+        var internshipSteps =
+            await _db.InternshipSteps
+                .Include(internshipStep => internshipStep.Internship)
+                .Include(internshipStep => internshipStep.Step)
+                .Where(internshipStep => internshipStep.InternshipId == internshipId
+                                         && internshipStep.Step.StepType != StepType.Offer
+                                         && internshipStep.Step.StepType != StepType.Rejection)
+                .ToListAsync();
+
+        var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
+
+        if (application is null)
+            return NotFound("Application not found!");
+
+        var currentStep = application.InternshipStep;
+
+        var internshipStepDtos = internshipSteps
+            .OrderBy(internshipStep => internshipStep.PositionAscending)
+            .Select(internshipStep => new ApplicationStepDto
+            {
+                StepType = internshipStep.Step.StepType.ToString(),
+                PositionAscending = internshipStep.PositionAscending,
+                IsCurrentStep = internshipStep.Step.Id == currentStep.Step.Id
+            });
+
+        return Ok(internshipStepDtos);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("/api/internships/{internshipId:guid}/application/{applicationId:guid}/steps/next")]
+    public async Task<IActionResult> NextApplicationStep(Guid internshipId, Guid applicationId)
+    {
+        var internship = await _db.Internships
+            .FirstOrDefaultAsync(internship => internship.Id == internshipId);
+
+        if (internship is null)
+            return NotFound("Internship not found!");
+
+        var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
+
+        if (application is null)
+            return NotFound("Application not found!");
 
         var internshipSteps =
             await _db.InternshipSteps
@@ -87,33 +131,32 @@ public class StepsController : ControllerBase
                 .Where(internshipStep => internshipStep.InternshipId == internshipId)
                 .ToListAsync();
 
-        var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
-
-        if (application is null)
-            return NotFound("Application not found!");
-        
         var currentStep = application.InternshipStep;
+        var nextStep = internshipSteps
+            .FirstOrDefault(internshipStep => internshipStep.PositionAscending == currentStep.PositionAscending + 1);
 
-        var internshipStepDtos = internshipSteps
-            .OrderBy(internshipStep => internshipStep.PositionAscending)
-            .Select(internshipStep => new ApplicationStepDto
-            {
-                StepType = internshipStep.Step.StepType.ToString(),
-                PositionAscending = internshipStep.PositionAscending,
-                IsCurrentStep = internshipStep.Step.Id == currentStep.Step.Id
-            });
-        
-        return Ok(internshipStepDtos);
+        if (nextStep.Step.StepType is StepType.Offer or StepType.Rejection)
+        {
+            return BadRequest("Application process has already finished");
+        }
+
+        application.InternshipStep = nextStep;
+
+        _db.Update(application);
+        await _db.SaveChangesAsync();
+
+        return Ok(new StepDto() { StepType = nextStep.Step.StepType.ToString() });
     }
-    //todo: dont allow multiple of same internships steps when creating internsihpSteps for internsihp
+
     [HttpPut]
     [Authorize]
     [Route("/api/internships/{internshipId:guid}/application/{applicationId:guid}/steps")]
-    public async Task<IActionResult> UpdateApplicationStep(Guid internshipId, Guid applicationId, [FromBody] UpdateApplicationStepDto updateApplicationStepDto)
+    public async Task<IActionResult> UpdateApplicationStep(Guid internshipId, Guid applicationId,
+        [FromBody] UpdateApplicationStepDto updateApplicationStepDto)
     {
         var internship = await _db.Internships
             .FirstOrDefaultAsync(internship => internship.Id == internshipId);
-        
+
         if (internship is null)
             return NotFound("Internship not found!");
 
@@ -124,22 +167,22 @@ public class StepsController : ControllerBase
                 .Where(internshipStep => internshipStep.InternshipId == internshipId)
                 .FirstOrDefaultAsync(internshipStep =>
                     internshipStep.Step.Name.Equals(updateApplicationStepDto.StepType));
-        
+
         if (newInternshipStep is null)
         {
             return NotFound("Application can't be updated to this step!");
         }
-        
+
         var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
 
         if (application is null)
             return NotFound("Application not found!");
-        
+
         application.InternshipStep = newInternshipStep;
 
         _db.Update(application);
         await _db.SaveChangesAsync();
-        
+
         return Ok();
     }
 }

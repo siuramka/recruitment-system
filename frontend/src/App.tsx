@@ -13,6 +13,7 @@ import CompanyApplicationsList from "./pages/dashboard/company/internships/Compa
 import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
 import SettingsList from "./pages/dashboard/company/settings/SettingsList";
 import StatisticsList from "./pages/dashboard/company/statistics/StatisticsList";
+import DecisionsList from "./pages/dashboard/decisions/DecisionsList";
 
 function App() {
   const user = useSelector(selectUser);
@@ -61,6 +62,10 @@ function App() {
                         <Route
                           path="/company/internships"
                           element={<CompanyInternships />}
+                        />
+                        <Route
+                          path="/company/decisions"
+                          element={<DecisionsList />}
                         />
                         <Route
                           path="/company/internships/:internshipId"

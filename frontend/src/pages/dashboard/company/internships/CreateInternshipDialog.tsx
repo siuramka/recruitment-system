@@ -100,9 +100,9 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
   };
 
   const handleRemoveStep = (itemToRemove: StepSelectItem) => {
-    if (selectSteps.length == 3 && itemToRemove.removable) {
+    if (selectSteps.length == 4 && itemToRemove.removable) {
       toast({
-        title: "You must have at least 1 real step",
+        title: "You must have at least 1 step",
       });
       return;
     }
@@ -139,11 +139,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
 
   const handleDownStep = (itemToMove: StepSelectItem) => {
     const currentIndex = selectSteps.findIndex((item) => item === itemToMove);
-    if (
-      currentIndex < selectSteps.length - 1 &&
-      selectSteps.length > 3 &&
-      currentIndex < 2
-    ) {
+    if (currentIndex + 1 < selectSteps.length - 3) {
       const updatedItems = [...selectSteps];
       [updatedItems[currentIndex], updatedItems[currentIndex + 1]] = [
         { ...updatedItems[currentIndex + 1], positionAscending: currentIndex },

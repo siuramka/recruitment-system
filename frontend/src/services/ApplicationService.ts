@@ -85,3 +85,18 @@ export const getAllUserApplications = async () => {
     return null;
   }
 };
+
+export const getAllDecisionApplications = async () => {
+  try {
+    const response = await api.get(`/applications/decisions`);
+
+    if (response.status === 200) {
+      const responseData: ApplicationListItemDto[] = response.data;
+      return responseData;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
