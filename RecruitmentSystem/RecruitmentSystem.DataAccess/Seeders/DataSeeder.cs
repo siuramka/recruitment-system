@@ -24,34 +24,8 @@ public class DataSeeder
         await SeedRoles();
         await SeedCompany();
         await SeedUser();
-        await SeedSetting();
         await SeedSteps();
         await SeedInternship();
-    }
-
-    private async Task SeedSetting()
-    {
-        var containsAny = await _dbContext.Settings.ToListAsync();
-        if (containsAny.Count != 0)
-        {
-            return;
-        }
-
-        await _dbContext.Settings.AddRangeAsync(new Setting
-        {
-            Name = SettingsName.AiScoreWeight,
-            Value = 1.ToString()
-        }, new Setting
-        {
-            Name = SettingsName.CompanyScoreWeight,
-            Value = 1.ToString()
-        }, new Setting
-        {
-            Name = SettingsName.TotalScoreWeight,
-            Value = 1.ToString()
-        });
-
-        await _dbContext.SaveChangesAsync();
     }
 
     private async Task SeedInternship()

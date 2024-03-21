@@ -19,7 +19,7 @@ public class SettingController : ControllerBase
     private readonly PdfService _pdfService;
     private readonly OpenAiService _openAiService;
     private readonly AssessmentService _assessmentService;
-    
+
     public SettingController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
         PdfService pdfService, OpenAiService openAiService, AssessmentService assessmentService)
     {
@@ -30,7 +30,7 @@ public class SettingController : ControllerBase
         _openAiService = openAiService;
         _assessmentService = assessmentService;
     }
-    
+
     [HttpGet]
     [Authorize(Roles = Roles.Company)]
     [Route("/api/settings")]
@@ -39,20 +39,22 @@ public class SettingController : ControllerBase
         var settings = await _db.Settings.ToListAsync();
         return Ok(_mapper.Map<List<SettingDto>>(settings));
     }
-    
+
     [HttpPut]
     [Authorize(Roles = Roles.Company)]
-    [Route("/api/settings")]
-    public async Task<IActionResult> Update([FromQuery] SettingsName settingsName, [FromBody] SettingCreateDto settingCreateDto)
+    [Route("/api/{internshipId:guid}/settings")]
+    public async Task<IActionResult> Update([FromBody] SettingCreateDto settingCreateDto, Guid internshipId)
     {
-        var setting = await _db.Settings.FirstOrDefaultAsync(s => s.Name == settingsName);
-        
+        var setting = await _db.Settings.FirstOrDefaultAsync(s => s.InternshipId == internshipId);
+
         if (setting is null)
         {
             return NotFound("Setting not found");
         }
+
+        _mapper.Map(settingCreateDto, setting);
         
-        setting.Value = settingCreateDto.Value;
+        _db.Update(setting);
         await _db.SaveChangesAsync();
 
         return Ok(_mapper.Map<SettingDto>(setting));

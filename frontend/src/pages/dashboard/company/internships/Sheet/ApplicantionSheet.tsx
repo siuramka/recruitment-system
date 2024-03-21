@@ -57,6 +57,7 @@ export function ApplicationSheet({
   const [allSteps, setAllSteps] = useState<ApplicationStepDto[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [application, setApplication] = useState<ApplicationListItemDto>();
+  const [activeStepPosition, setActiveStepPosition] = useState(0);
 
   const getData = async () => {
     var applicationData = await getApplication({ applicationId: appId });
@@ -70,6 +71,7 @@ export function ApplicationSheet({
     });
     if (dataSteps) {
       const activeStep = dataSteps.find((s) => s.isCurrentStep);
+      setActiveStepPosition(activeStep!.positionAscending);
       setStep(activeStep!.stepType);
       setAllSteps(dataSteps);
     }
@@ -88,6 +90,7 @@ export function ApplicationSheet({
     });
 
     if (nextStep) {
+      setActiveStepPosition(activeStepPosition + 1);
       setStep(nextStep.stepType);
       handleRefresh();
     }
@@ -131,10 +134,10 @@ export function ApplicationSheet({
                     <SelectValue placeholder={step} />
                   </SelectTrigger>
                   <SelectContent>
-                    {allSteps.map((s) => (
+                    {allSteps.map((s, index) => (
                       <SelectItem
                         key={s.positionAscending}
-                        disabled={isUpdating}
+                        disabled={index > activeStepPosition}
                         value={s.stepType}
                       >
                         {s.stepType}

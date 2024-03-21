@@ -19,5 +19,4 @@ public class Company
     
     public ICollection<Internship> Internships { get; set; }
     public SiteUser SiteUser { get; set; }
-    public ICollection<Review> Reviews { get; set; }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RecruitmentSystem.Business.Services;
+using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.DataAccess.Seeders;
 using RecruitmentSystem.Domain.Models;
@@ -16,9 +17,9 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Services.AddAuthorization();
-        builder.Services.AddAutoMapper(typeof(Program)); 
+        builder.Services.AddAutoMapper(typeof(Program));
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
@@ -41,24 +42,22 @@ public class Program
                     {
                         Reference = new OpenApiReference
                         {
-                            Type=ReferenceType.SecurityScheme,
-                            Id="Bearer"
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
                         }
                     },
-                    new string[]{}
+                    new string[] { }
                 }
             });
-            
-
         });
-        
+
         builder.Services.AddIdentity<SiteUser, IdentityRole>()
             .AddEntityFrameworkStores<RecruitmentDbContext>()
             .AddDefaultTokenProviders();
 
         builder.Services.AddDbContext<RecruitmentDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("RecruitmentSystem.DataAccess"));
         });
 
@@ -83,15 +82,16 @@ public class Program
 
                 // options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; needed if exp time < 5 minutes
             });
-        
+
         builder.Services.AddScoped<DataSeeder>();
         builder.Services.AddScoped<JwtService>();
         builder.Services.AddScoped<ApplicationService>();
         builder.Services.AddTransient<OpenAiService>();
         builder.Services.AddScoped<EvaluationService>();
         builder.Services.AddScoped<AssessmentService>();
+        builder.Services.AddScoped<IInternshipService, InternshipService>();
         builder.Services.AddScoped<PdfService>();
-        builder.Services.AddTransient<AuthService>();
+        builder.Services.AddTransient<IAuthService, AuthService>();
 
         var app = builder.Build();
 
@@ -117,9 +117,9 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.MapControllers();
-        
+
         using var scope = app.Services.CreateScope();
 
         var dbSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();

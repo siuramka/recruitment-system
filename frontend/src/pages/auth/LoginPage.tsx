@@ -60,44 +60,61 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="max-w-sm border border-solid w-1/2 rounded mx-auto p-5">
-      <h1 className="text-3xl font-semibold mb-4 text-left">Login</h1>
-      <p className="text-sm font-light mb-4 text-left pb-8">
-        Enter your email and password information!
-      </p>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-start">Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="saram@hotmail.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-start">Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="" type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button className="w-full" type="submit">
-            Login
-          </Button>
-        </form>
-      </Form>
+    <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="hidden h-full bg-muted lg:block" />
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Create an account
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your email below to create your account
+            </p>
+          </div>
+
+          <h1 className="text-3xl font-semibold mb-4 text-left">Login</h1>
+          <p className="text-sm font-light mb-4 text-left pb-8">
+            Enter your email and password information!
+          </p>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-start">Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="saram@hotmail.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-start">Password</FormLabel>
+                    <FormControl>
+                      <Input placeholder="" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button className="w-full" type="submit">
+                Login
+              </Button>
+            </form>
+          </Form>
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            By clicking continue, you agree to our{" "}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

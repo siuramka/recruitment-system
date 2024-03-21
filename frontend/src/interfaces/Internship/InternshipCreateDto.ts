@@ -1,4 +1,5 @@
 import { InternshipCreateStepDto } from "../Step/InternshipCreateStepDto";
+import { SettingCreateDto } from "../Setting/SettingCreate";
 
 export interface InternshipCreateDto {
   name: string;
@@ -11,4 +12,5 @@ export interface InternshipCreateDto {
   slotsAvailable: number;
   skills: string;
   internshipStepDtos: InternshipCreateStepDto[];
+  settingCreateDto: SettingCreateDto;
 }

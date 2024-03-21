@@ -20,6 +20,7 @@ public class MapperProfile : Profile
     {
         CreateMap<Internship, InternshipDto>()
             .ForMember(dest => dest.CompanyDto, opt => opt.MapFrom(src => src.Company))
+            .ForMember(dest => dest.SettingDto, opt => opt.MapFrom(src => src.Setting))
             .ReverseMap();
         
         CreateMap<Internship, InternshipCreateDto>()
@@ -67,7 +68,9 @@ public class MapperProfile : Profile
             .ReverseMap();
         
         CreateMap<Setting, SettingDto>()
-            .ForMember(s => s.Name, opt => opt.MapFrom(s => s.Name.ToString()))
+            .ReverseMap();
+        
+        CreateMap<Setting, SettingCreateDto>()
             .ReverseMap();
         
         CreateMap<Decision, DecisionDto>()

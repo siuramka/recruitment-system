@@ -11,9 +11,9 @@ import { COMPANY, SITE_USER } from "./interfaces/Auth/Roles";
 import CompanyInternships from "./pages/dashboard/company/internships/CompanyInternships";
 import CompanyApplicationsList from "./pages/dashboard/company/internships/CompanyApplicationsList";
 import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
-import SettingsList from "./pages/dashboard/company/settings/SettingsList";
 import StatisticsList from "./pages/dashboard/company/statistics/StatisticsList";
 import DecisionsList from "./pages/dashboard/decisions/DecisionsList";
+import RegisterPage from "./pages/auth/RegisterPage";
 
 function App() {
   const user = useSelector(selectUser);
@@ -72,10 +72,6 @@ function App() {
                           element={<CompanyApplicationsList />}
                         />
                         <Route
-                          path="/company/settings"
-                          element={<SettingsList />}
-                        />
-                        <Route
                           path="/company/statistics"
                           element={<StatisticsList />}
                         />
@@ -90,6 +86,7 @@ function App() {
         <Routes>
           <Route path="*" element={<Navigate to="/sign-in" replace />} />
           <Route path="/sign-in" element={<LoginPage />} />
+          <Route path="/sign-up" element={<RegisterPage />} />
         </Routes>
       )}
     </>

@@ -1,3 +1,5 @@
 export interface SettingCreateDto {
-  value: string;
+  aiScoreWeight: number;
+  companyScoreWeight: number;
+  totalScoreWeight: number;
 }

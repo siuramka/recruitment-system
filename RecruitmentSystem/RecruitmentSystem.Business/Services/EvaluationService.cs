@@ -90,9 +90,6 @@ public class EvaluationService
         var finalDecision = await GetFinalDecision(applicationId);
         var finalDecisonScore = finalDecision.AiStagesScore;
 
-        var aiScoreWeight = int.Parse((await GetSettingByName(SettingsName.AiScoreWeight))!.Value);
-        var companyScoreWeight =  int.Parse((await GetSettingByName(SettingsName.CompanyScoreWeight))!.Value);
-        var totalScoreWeight =  int.Parse((await GetSettingByName(SettingsName.TotalScoreWeight))!.Value);
 
         var totalAiScore = evaluations.Sum(e => e.AiScoreForCandidateInStep);
         totalAiScore += finalDecisonScore;
@@ -101,11 +98,12 @@ public class EvaluationService
 
         var timeCoefficient = await GetApplicationAverageTimeCoefficient(applicationId);
 
-        var finalScore =
-            (aiScoreWeight * totalAiScore + companyScoreWeight * totalCompanyScore +
-             totalScoreWeight * timeCoefficient) / (aiScoreWeight + companyScoreWeight + totalScoreWeight);
+        // var finalScore =
+        //     (aiScoreWeight * totalAiScore + companyScoreWeight * totalCompanyScore +
+        //      totalScoreWeight * timeCoefficient) / (aiScoreWeight + companyScoreWeight + totalScoreWeight);
         
-        return (int)MapToScale(finalScore, 0, 100, 1, 5);;
+       // return (int)MapToScale(finalScore, 0, 100, 1, 5);;
+       return 1;
     }
 
     private double MapToScale(double value, double fromMin, double fromMax, double toMin, double toMax)
@@ -164,12 +162,6 @@ public class EvaluationService
         }
 
         return 0;
-    }
-
-
-    private async Task<Setting?> GetSettingByName(SettingsName name)
-    {
-        return await _db.Settings.FirstOrDefaultAsync(s => s.Name.Equals(name));
     }
 
     public async Task EvaluateInterviewAiScore(Guid interviewId)

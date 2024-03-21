@@ -21,6 +21,7 @@ public class Internship
     public int SlotsAvailable { get; set; }
     public int TakenSlots { get; set; }
     public string Skills { get; set; } = string.Empty;
-    
     public List<InternshipStep> InternshipSteps { get; set; }
+    
+    public Setting? Setting { get; set; }
 }

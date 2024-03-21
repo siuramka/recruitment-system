@@ -93,8 +93,6 @@ public class DecisionController : ControllerBase
         var decisionResponse = await _openAiService.GetFinalDecision(applicationId);
         await _evaluationService.UpdateDecisionWithAiReview(decisionResponse, decision);
 
-        var lol = await _evaluationService.CalculateFinalScore(applicationId);
-
         var decisionDto = _mapper.Map<DecisionDto>(decision);
         return CreatedAtAction(nameof(CreateDecision),decisionDto);
     }

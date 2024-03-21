@@ -10,7 +10,7 @@ import {
 import { InternshipDto } from "@/interfaces/Internship/InternshipDto";
 import { getAllInternships } from "@/services/InternshipService";
 import { useEffect, useState } from "react";
-import { CreateInternshipDialog } from "./CreateInternshipDialog";
+import { CreateInternshipDialog } from "./Dialog/CreateInternshipDialog";
 import { useNavigate } from "react-router-dom";
 
 const CompanyInternships = () => {

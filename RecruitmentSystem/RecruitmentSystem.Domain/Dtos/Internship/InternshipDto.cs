@@ -1,4 +1,5 @@
 using RecruitmentSystem.Domain.Dtos.Company;
+using RecruitmentSystem.Domain.Dtos.Setting;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Domain.Dtos.Internship;
@@ -8,6 +9,7 @@ public class InternshipDto
     public Guid Id { get; set; }
     
     public CompanyDto CompanyDto { get; set; }
+    public SettingDto SettingDto { get; set; }
     public string Name { get; set; }
     public string ContactEmail { get; set; }
     public string Address { get; set; }

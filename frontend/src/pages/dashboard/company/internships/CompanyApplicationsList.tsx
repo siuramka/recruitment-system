@@ -11,7 +11,7 @@ import {
   Table,
 } from "@/components/ui/table";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
-import { CreateInternshipDialog } from "./CreateInternshipDialog";
+import { CreateInternshipDialog } from "./Dialog/CreateInternshipDialog";
 import { InternshipDto } from "../../../../interfaces/Internship/InternshipDto";
 import { ApplicationSheet } from "./Sheet/ApplicantionSheet";
 import { Badge } from "@/components/ui/badge";

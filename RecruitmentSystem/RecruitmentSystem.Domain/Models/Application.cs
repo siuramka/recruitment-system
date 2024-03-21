@@ -21,8 +21,6 @@ public class Application
     
     public Assessment? Assessment { get; set; }
     
-    public Review? Review { get; set; }
-    
     public int Score { get; set; }
     
     public DateTime EndTime { get; set; }

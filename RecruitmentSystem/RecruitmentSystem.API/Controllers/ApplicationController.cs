@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Application;
@@ -17,12 +18,14 @@ public class ApplicationController : ControllerBase
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
+    private readonly IAuthService _authService;
 
-    public ApplicationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager)
+    public ApplicationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager, IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
+        _authService = authService;
     }
     
     [HttpGet]
@@ -30,6 +33,11 @@ public class ApplicationController : ControllerBase
     [Route("/api/applications/{applicationId:guid}")]
     public async Task<IActionResult> GetById(Guid applicationId)
     {
+        var authorized = await _authService
+            .AuthorizeApplicationCreatorOrCompany(applicationId, User.FindFirstValue(ClaimTypes.NameIdentifier));
+        
+        if (!authorized) return Forbid();
+        
         var application = await _db.Applications
             .Include(app => app.Internship)
             .ThenInclude(i => i.Company)
@@ -90,6 +98,11 @@ public class ApplicationController : ControllerBase
     [Route("/api/internships/{internshipId:guid}/applications")]
     public async Task<IActionResult> GetAll(Guid internshipId)
     {
+        var authorized = await _authService
+            .AuthorizeInternshipCompany(internshipId, User.FindFirstValue(ClaimTypes.NameIdentifier));
+        
+        if (!authorized) return Forbid();
+        
         var internship = await _db.Internships
             .Include(i => i.InternshipSteps)
             .FirstOrDefaultAsync(internship => internship.Id == internshipId);
@@ -111,9 +124,8 @@ public class ApplicationController : ControllerBase
         return Ok(internshipApplications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
     }
     
-    
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = Roles.SiteUser)]
     [Route("/api/internships/{internshipId:guid}/applications")]
     public async Task<IActionResult> Create(Guid internshipId)
     {

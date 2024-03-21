@@ -36,9 +36,12 @@ import {
 } from "@/components/ui/table";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { StepSelectItem } from "@/interfaces/Step/StepSelectItem";
-import { createInternship } from "../../../../services/InternshipService";
+import { createInternship } from "../../../../../services/InternshipService";
 import { InternshipCreateDto } from "@/interfaces/Internship/InternshipCreateDto";
 import { InternshipCreateStepDto } from "@/interfaces/Step/InternshipCreateStepDto";
+import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
+import { SettingCreateDto } from "@/interfaces/Setting/SettingCreate";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -62,6 +65,9 @@ const formSchema = z.object({
   isPaid: z.boolean().optional().default(false),
   isRemote: z.boolean().optional().default(false),
   slotsAvailable: z.coerce.number().min(1).default(1),
+  aiScoreWeight: z.coerce.number().int().min(0).max(100),
+  companyScoreWeight: z.coerce.number().int().min(0).max(100),
+  totalScoreWeight: z.coerce.number().int().min(0).max(100),
 });
 
 const stepInitialItems: StepSelectItem[] = [
@@ -86,6 +92,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
   const [savedData, setSavedDate] = useState<z.infer<typeof formSchema> | null>(
     null
   );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -96,7 +103,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
       title: "Saved internship data",
       description: "You can update data anytime in the creation process!",
     });
-    setActiveTab("steps");
+    setActiveTab("settings");
   };
 
   const handleRemoveStep = (itemToRemove: StepSelectItem) => {
@@ -152,6 +159,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
 
   const handleCreate = async () => {
     if (!savedData) {
+      toast({ title: "Please save the internship data before creating." });
       return;
     }
 
@@ -159,9 +167,16 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
       (item) => item as InternshipCreateStepDto
     );
 
+    var settingCreateDto: SettingCreateDto = {
+      aiScoreWeight: savedData.aiScoreWeight,
+      companyScoreWeight: savedData.companyScoreWeight,
+      totalScoreWeight: savedData.totalScoreWeight,
+    };
+
     var internshipCreateDto: InternshipCreateDto = {
       ...savedData,
       internshipStepDtos,
+      settingCreateDto,
     };
 
     var createdInternship = await createInternship(internshipCreateDto);
@@ -170,10 +185,18 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
     }
   };
 
+  const initializeSliders = () => {
+    form.setValue("aiScoreWeight", 100);
+    form.setValue("companyScoreWeight", 100);
+    form.setValue("totalScoreWeight", 100);
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create </Button>
+        <Button variant="outline" onClick={initializeSliders}>
+          Create{" "}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[1000px] flex justify-center overflow-auto h-5/6">
         <Tabs
@@ -181,14 +204,14 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
           value={activeTab}
           onValueChange={() => {
             activeTab === "internship"
-              ? setActiveTab("steps")
+              ? setActiveTab("settings")
               : setActiveTab("internship");
           }}
           className="w-[800px]"
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="internship">Internship</TabsTrigger>
-            <TabsTrigger value="steps">Steps</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="internship">
             <CardHeader>
@@ -364,14 +387,83 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
                       </FormItem>
                     )}
                   />
+                  <Separator className="my-4" />
+                  <div className="grid grid-cols-3 gap-4">
+                    <FormField
+                      name="AiScoreWeight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex justify-between">
+                            <span>Ai Score Weight</span>
+                            <span>{form.watch("aiScoreWeight")}</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="mt-3">
+                              <Slider
+                                value={[form.watch("aiScoreWeight")]}
+                                onValueChange={(value: number[]) =>
+                                  form.setValue("aiScoreWeight", value[0])
+                                }
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="CompanyScoreWeight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex justify-between">
+                            <span>Company Score Weight</span>
+                            <span>{form.watch("companyScoreWeight")}</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="mt-3">
+                              <Slider
+                                value={[form.watch("companyScoreWeight")]}
+                                onValueChange={(value: number[]) =>
+                                  form.setValue("companyScoreWeight", value[0])
+                                }
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="TotalScoreWeight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex justify-between">
+                            <span>Total Score Weight</span>
+                            <span>{form.watch("totalScoreWeight")}</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="mt-3">
+                              <Slider
+                                value={[form.watch("totalScoreWeight")]}
+                                onValueChange={(value: number[]) =>
+                                  form.setValue("totalScoreWeight", value[0])
+                                }
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                   <Button type="submit">Save</Button>
                 </form>
               </Form>
             </CardContent>
           </TabsContent>
-          <TabsContent value="steps">
+          <TabsContent value="settings">
             <CardHeader>
-              <CardTitle>Steps</CardTitle>
+              <CardTitle>Settings</CardTitle>
               <CardDescription>
                 Choose steps required for the recruiment process.
               </CardDescription>
