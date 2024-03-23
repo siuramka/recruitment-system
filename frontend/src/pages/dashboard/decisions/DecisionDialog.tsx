@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
 import { DecisionDto } from "@/interfaces/Decision/DecisionDto";
+import { DecisionScoreDto } from "@/interfaces/Decision/DecisionScoreDto";
 import { getDecision } from "@/services/DecisionService";
 import { useEffect, useState } from "react";
 
@@ -20,7 +21,7 @@ const DecisionDialog = ({
 }: {
   application: ApplicationListItemDto;
 }) => {
-  const [decision, setDecision] = useState<DecisionDto>();
+  const [decision, setDecision] = useState<DecisionScoreDto>();
 
   const getData = async () => {
     var decisionData = await getDecision({ applicationId: application.id });
@@ -45,7 +46,7 @@ const DecisionDialog = ({
             </DialogTitle>
             <DialogDescription>
               Finalise your decision for the candidate.
-              {decision?.aiStagesReview}
+              {decision?.decision.aiStagesReview}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>

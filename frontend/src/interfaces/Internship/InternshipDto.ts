@@ -1,4 +1,4 @@
-import { CompanyDto } from "../Company/CompanyDto";
+import { CompanyDto } from "../CompanyDto";
 import { SettingDto } from "../Setting/SettingDto";
 
 export interface InternshipDto {

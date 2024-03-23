@@ -1,9 +1,9 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
-import { InterviewDto } from "@/interfaces/Interview/InterviewDto";
+import { AssessmentDto } from "@/interfaces/Assessment/AssessmentDto";
+import { getAssessment } from "@/services/AssessmentService";
 import { getFormattedDate } from "@/services/DateService";
-import { getInterview } from "@/services/InterviewService";
 import { Terminal } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -11,12 +11,14 @@ type Props = {
   application: ApplicationListItemDto;
 };
 const AssessmentSection = ({ application }: Props) => {
-  const [interview, setInterview] = useState<InterviewDto>();
+  const [assessment, setAssessment] = useState<AssessmentDto>();
 
   const getData = async () => {
-    const interviewData = await getInterview({ applicationId: application.id });
-    if (interviewData) {
-      setInterview(interviewData);
+    const assessmentdata = await getAssessment({
+      applicationId: application.id,
+    });
+    if (assessmentdata) {
+      setAssessment(assessmentdata);
     }
   };
 
@@ -26,34 +28,30 @@ const AssessmentSection = ({ application }: Props) => {
 
   return (
     <div className="flex">
-      {interview ? (
+      {assessment ? (
         <div>
-          <Alert variant="primary">
+          <Alert variant="primary" className="my-3">
             <Terminal className="h-4 w-4" />
-            <AlertTitle>Interview scheduled</AlertTitle>
+            <AlertTitle>Complete the assessments</AlertTitle>
             <AlertDescription>
-              The interview has been scheduled at{" "}
+              Please finish these assessments. You have time until{" "}
               <span className="font-medium">
-                {getFormattedDate(new Date(interview.startTime))} for{" "}
-                {interview.minutesLength} minutes
-              </span>{" "}
-              You can also update it anytime in the interview step.
+                {getFormattedDate(new Date(assessment.endTime))}
+              </span>
             </AlertDescription>
           </Alert>
-          <Card>
-            <CardHeader>
-              <CardTitle>Follow the instructions</CardTitle>
-            </CardHeader>
-            <CardContent>{interview.instructions}</CardContent>
-          </Card>
+          <CardHeader>
+            <CardTitle>Follow the instructions</CardTitle>
+          </CardHeader>
+          <CardContent>{assessment.content}</CardContent>
         </div>
       ) : (
         <Alert>
           <Terminal className="h-4 w-4" />
-          <AlertTitle>Waiting for interview</AlertTitle>
+          <AlertTitle>Waiting for assessment</AlertTitle>
           <AlertDescription>
-            Your interview has not yet been scheduled. Please wait to receive
-            the instructions.
+            Your assessment has not been created yet. Please wait for the
+            instructions for you to complete the assessment.
           </AlertDescription>
         </Alert>
       )}

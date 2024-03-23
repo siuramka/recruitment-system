@@ -21,11 +21,11 @@ public class Application
     
     public Assessment? Assessment { get; set; }
     
-    public int Score { get; set; }
-    
     public DateTime EndTime { get; set; }
     
     public ScoreStatus ScoreStatus { get; set; }
     
     public List<Evaluation> Evaluations { get; set; }
+    
+    public FinalScore? FinalScore { get; set; }
 }

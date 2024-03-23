@@ -24,7 +24,7 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
               </button>
               <a href="" className="flex ms-2 md:me-24">
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                  Mariusoftas
+                  Internship selection system
                 </span>
               </a>
             </div>
@@ -41,8 +41,8 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
           <ul className="space-y-2 font-medium">
             <li>
               <a
-                onClick={() => navigate("/company/internships")}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
+                onClick={() => navigate("/internships")}
+                className="py-3 flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
               >
                 <span className="ms-3 flex items-center">
                   <TestTube className="w-4 h-4 mr-2" />
@@ -52,34 +52,12 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
             </li>
             <li>
               <a
-                onClick={() => navigate("/company/decisions")}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
+                onClick={() => navigate("/decisions")}
+                className="py-3 flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
               >
                 <span className="ms-3 flex items-center">
                   <Pen className="w-4 h-4 mr-2" />
                   Decisions
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => navigate("/company/statistics")}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
-              >
-                <span className="ms-3 flex items-center">
-                  <BarChart className="w-4 h-4 mr-2" />
-                  Statistics
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => navigate("/company/settings")}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:cursor-pointer"
-              >
-                <span className="ms-3 flex items-center">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
                 </span>
               </a>
             </li>

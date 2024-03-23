@@ -11,9 +11,9 @@ import { COMPANY, SITE_USER } from "./interfaces/Auth/Roles";
 import CompanyInternships from "./pages/dashboard/company/internships/CompanyInternships";
 import CompanyApplicationsList from "./pages/dashboard/company/internships/CompanyApplicationsList";
 import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
-import StatisticsList from "./pages/dashboard/company/statistics/StatisticsList";
 import DecisionsList from "./pages/dashboard/decisions/DecisionsList";
 import RegisterPage from "./pages/auth/RegisterPage";
+import DecisionPage from "./pages/dashboard/decisions/DecisionPage";
 
 function App() {
   const user = useSelector(selectUser);
@@ -55,25 +55,20 @@ function App() {
                       <>
                         <Route
                           path="*"
-                          element={
-                            <Navigate to="/company/internships" replace />
-                          }
+                          element={<Navigate to="/internships" replace />}
                         />
                         <Route
-                          path="/company/internships"
+                          path="/internships"
                           element={<CompanyInternships />}
                         />
+                        <Route path="/decisions" element={<DecisionsList />} />
                         <Route
-                          path="/company/decisions"
-                          element={<DecisionsList />}
+                          path="/decisions/:applicationId"
+                          element={<DecisionPage />}
                         />
                         <Route
-                          path="/company/internships/:internshipId"
+                          path="/internships/:internshipId"
                           element={<CompanyApplicationsList />}
-                        />
-                        <Route
-                          path="/company/statistics"
-                          element={<StatisticsList />}
                         />
                       </>
                     );

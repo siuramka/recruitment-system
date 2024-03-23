@@ -47,7 +47,7 @@ public class EvaluationService
         return "";
     }
 
-    private async Task<List<Evaluation>> GetApplicationEvaluations(Guid applicationId)
+    public async Task<List<Evaluation>> GetApplicationEvaluations(Guid applicationId)
     {
         return await _db.Evaluations
             .Include(e => e.Cv)
@@ -57,7 +57,7 @@ public class EvaluationService
             .ToListAsync();
     }
 
-    private async Task<List<StepEvaluation>> GetStepEvaluations(Guid applicationId)
+    public async Task<List<StepEvaluation>> GetStepEvaluations(Guid applicationId)
     {
         var evaluations = await GetApplicationEvaluations(applicationId);
 
@@ -79,89 +79,109 @@ public class EvaluationService
         return stepEvaluations;
     }
 
-    private async Task<Decision?> GetFinalDecision(Guid applicationId)
+    public async Task<Decision?> GetFinalDecision(Guid applicationId)
     {
         return await _db.Decisions.FirstOrDefaultAsync(d => d.ApplicationId == applicationId);
     }
 
-    public async Task<int> CalculateFinalScore(Guid applicationId)
+    private static double CalculateCorrelation(int[] aiScores, int[] companyScores)
     {
+        if (aiScores.Length != companyScores.Length)
+            throw new Exception("Scores dont match");
+
+        var aiArray = aiScores.ToArray();
+        var companyArray = companyScores.ToArray();
+
+        long n = aiScores.Length;
+        long sumAi = 0;
+        long sumCompany = 0;
+        long sumAiSquared = 0;
+        long sumCompanySquared = 0;
+        long sumAiCompany = 0;
+
+        Parallel.For(0, n, i =>
+        {
+            sumAi += aiArray[i];
+            sumCompany += companyArray[i];
+            sumAiSquared += aiArray[i] * aiArray[i];
+            sumCompanySquared += companyArray[i] * companyArray[i];
+            sumAiCompany += aiArray[i] * companyArray[i];
+        });
+
+        var correlationR = (n * sumAiCompany - sumAi * sumCompany) /
+                           Math.Sqrt((n * sumAiSquared - sumAi * sumAi) *
+                                     (n * sumCompanySquared - sumCompany * sumCompany));
+
+        return correlationR;
+    }
+
+    private static int[] GetCompanyScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
+    {
+        var companyScores = new int[stepEvaluations.Count + 1];
+
+        for (int i = 0; i < stepEvaluations.Count; i++)
+        {
+            companyScores[i] = (int)stepEvaluations[i].CompanyScoreForCandidateInStep;
+        }
+
+        companyScores[stepEvaluations.Count] = finalDecision.CompanyStagesScores;
+
+        return companyScores;
+    }
+
+    private static int[] GetAiScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
+    {
+        var aiScores = new int[stepEvaluations.Count + 1];
+
+        for (int i = 0; i < stepEvaluations.Count; i++)
+        {
+            aiScores[i] = (int)stepEvaluations[i].AiScoreForCandidateInStep;
+        }
+
+        aiScores[stepEvaluations.Count] = finalDecision.AiStagesScore;
+
+        return aiScores;
+    }
+
+    public async Task CreateFinalScore(FinalScore finalScore)
+    {
+        _db.FinalScores.Add(finalScore);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<FinalScore> CalculateFinalScore(Guid applicationId)
+    {
+        const int maxScore = 100;
+        const double normalize = maxScore / 5;
+
         var evaluations = await GetStepEvaluations(applicationId);
         var finalDecision = await GetFinalDecision(applicationId);
-        var finalDecisonScore = finalDecision.AiStagesScore;
+        var weights = await GetApplicationInternshipSetting(applicationId);
 
+        var companyScores = GetCompanyScores(evaluations, finalDecision);
+        var aiScores = GetAiScores(evaluations, finalDecision);
+        var correlation = CalculateCorrelation(aiScores, companyScores);
 
-        var totalAiScore = evaluations.Sum(e => e.AiScoreForCandidateInStep);
-        totalAiScore += finalDecisonScore;
-        
-        var totalCompanyScore = evaluations.Sum(e => e.CompanyScoreForCandidateInStep);
+        var aiScoreX1 = aiScores.Average() * normalize * (weights.AiScoreWeight / maxScore);
+        var companyScoreX2 = companyScores.Average() * normalize * (weights.CompanyScoreWeight / maxScore);
 
-        var timeCoefficient = await GetApplicationAverageTimeCoefficient(applicationId);
+        var finalScore = (aiScoreX1 + companyScoreX2) / 2 * ((1 + correlation) * (weights.TotalScoreWeight / maxScore));
 
-        // var finalScore =
-        //     (aiScoreWeight * totalAiScore + companyScoreWeight * totalCompanyScore +
-        //      totalScoreWeight * timeCoefficient) / (aiScoreWeight + companyScoreWeight + totalScoreWeight);
-        
-       // return (int)MapToScale(finalScore, 0, 100, 1, 5);;
-       return 1;
-    }
+        if (finalScore > maxScore) finalScore = maxScore;
 
-    private double MapToScale(double value, double fromMin, double fromMax, double toMin, double toMax)
-    {
-        return (value - fromMin) * (toMax - toMin) / (fromMax - fromMin) + toMin;
-    }
-
-    private async Task<List<Application>> GetOfferedApplications()
-    {
-        return await _db.Applications
-            .Include(a => a.InternshipStep)
-            .ThenInclude(istep => istep.Step)
-           // .Where(a => a.InternshipStep.Step.StepType == StepType.Offer)
-            .ToListAsync();
-    }
-
-    private static async Task<TimeSpan> GetAverageTimeSpan(List<Application> applications)
-    {
-        return TimeSpan.FromTicks((long)applications.Average(x => (x.EndTime - x.CreatedOn).Ticks));
-    }
-
-    private async Task<double> GetApplicationAverageTimeCoefficient(Guid applicationId)
-    {
-        var applications = await GetOfferedApplications();
-        var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
-
-        if (application == null || applications.Count == 0) return 0;
-
-        var averageTimeSpan = await GetAverageTimeSpan(applications);
-        var applicationTimeSpan = application.EndTime - application.CreatedOn;
-
-        return CalculateScore(applicationTimeSpan, averageTimeSpan);
-    }
-
-    private static double CalculateScore(TimeSpan applicationTimeSpan, TimeSpan averageTimeSpan)
-    {
-        const double percentileThreshold = 0.1;
-
-        var applicationDays = applicationTimeSpan.TotalDays;
-        var averageDays = averageTimeSpan.TotalDays;
-
-        // Calculate the percentile of the application time compared to the average time
-        var percentile = applicationDays / averageDays;
-
-        // If application time is closer to the average than the given threshold, give a better score
-        if (percentile <= 1 + percentileThreshold && percentile >= 1 - percentileThreshold)
+        return new FinalScore
         {
-            // Normalize score between 0 and 100 based on the percentile
-            return (1 - Math.Abs(1 - percentile)) * 100;
-        }
+            Score = Math.Round(finalScore, 2),
+            AiScoreX1 = Math.Round(aiScoreX1, 2),
+            CompanyScoreX2 = Math.Round(companyScoreX2, 2),
+            Correlation = Math.Round(correlation, 2)
+        };
+    }
 
-        // If the application time is greater than the average, give score based on the difference
-        if (applicationDays > averageDays)
-        {
-            return averageDays / applicationDays * 100;
-        }
-
-        return 0;
+    private async Task<Setting> GetApplicationInternshipSetting(Guid applicaitonId)
+    {
+        var application = await _db.Applications.FindAsync(applicaitonId);
+        return await _db.Settings.FirstOrDefaultAsync(s => s.InternshipId == application.InternshipId);
     }
 
     public async Task EvaluateInterviewAiScore(Guid interviewId)

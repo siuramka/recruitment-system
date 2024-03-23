@@ -205,7 +205,8 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-4-1106-preview",
+            //Model = "gpt-4-1106-preview",
+            Model = "gpt-3.5-turbo-1106",
             Temperature = 1,
             MaxTokens = 312,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -213,7 +214,7 @@ public class OpenAiService
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "No yapping in the responese. You're an AI exert tasked with making a final decision on a candidate for an internship. Candidate can go thru multiple steps: screening, interview, assessment. For each step, Recruiter - Company leaves a review and a score, also the data gets sent to a chat GPT API and also receives a chat gpt score for the step. You will receive the following data from completed steps: AiScore, CompanyScore and Company review, also the description about the internship itself. You will also receive the most important data input: the final review of the candidate from the company. Your task is to evaluate the candidate's performance based on the provided review and task details and assign a final decision. The final decision should be in the range of 1 (indicating poor performance) to 5 (indicating excellent performance), also write your decision as text in the end of the summary. You must consider everything in the recruiter's review and how well the candidate fulfilled the requirements of the assigned tasks, the decision should mostly come from the final recruiter review, but also take into account the previous steps as stated before. Also write a review or summary of all the stages and how the candidate did. Provide output in valid JSON format. The JSON should be in this format: {\n  \"finalDecision\": {finalDecisionScore},\n  \"stagesReview\": {stages review text}\n}"),
+                    "No yapping in the response. You're an AI exert tasked with making a final decision on a candidate for an internship. Candidate can go thru multiple steps: screening, interview, assessment. For each step, Recruiter - Company leaves a review and a score, also the data gets sent to a chat GPT API and also receives a chat gpt score for the step. You will receive the following data from completed steps: AiScore, CompanyScore and Company review, also the description about the internship itself. You will also receive the most important data input: the final review of the candidate from the company. Your task is to evaluate the candidate's performance based on the provided review and task details and assign a final decision. The final decision should be in the range of 1 (indicating poor performance) to 5 (indicating excellent performance), also write your decision as text in the end of the summary. You must consider everything in the recruiter's review and how well the candidate fulfilled the requirements of the assigned tasks, the decision should mostly come from the final recruiter review, but also take into account the previous steps as stated before. Also write a review or summary of all the stages and how the candidate did. Provide output in valid JSON format. The JSON should be in this format: {\n  \"finalDecision\": {finalDecisionScore},\n  \"stagesReview\": {stages review text}\n}"),
                 new ChatMessage(ChatMessageRole.User, prompt)
             }
         };

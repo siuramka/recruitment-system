@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecruitmentSystem.DataAccess;
@@ -11,9 +12,11 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240323125225_stuff")]
+    partial class stuff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,6 +174,9 @@ namespace RecruitmentSystem.DataAccess.Migrations
 
                     b.Property<Guid>("InternshipStepId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ScoreStatus")
                         .IsRequired()
@@ -371,39 +377,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.HasIndex("ApplicationId");
 
                     b.ToTable("Evaluations");
-                });
-
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.FinalScore", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("AiScoreX1")
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid>("ApplicationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("CompanyScoreX2")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Correlation")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Review")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId")
-                        .IsUnique();
-
-                    b.ToTable("FinalScores");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>
@@ -798,17 +771,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("RecruitmentSystem.Domain.Models.FinalScore", b =>
-                {
-                    b.HasOne("RecruitmentSystem.Domain.Models.Application", "Application")
-                        .WithOne("FinalScore")
-                        .HasForeignKey("RecruitmentSystem.Domain.Models.FinalScore", "ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Application");
-                });
-
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>
                 {
                     b.HasOne("RecruitmentSystem.Domain.Models.Company", "Company")
@@ -879,8 +841,6 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Navigation("Assessment");
 
                     b.Navigation("Evaluations");
-
-                    b.Navigation("FinalScore");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Company", b =>

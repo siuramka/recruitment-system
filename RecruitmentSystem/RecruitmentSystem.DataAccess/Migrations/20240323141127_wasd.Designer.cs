@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecruitmentSystem.DataAccess;
@@ -11,9 +12,11 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240323141127_wasd")]
+    partial class wasd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -379,14 +382,8 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("AiScoreX1")
-                        .HasColumnType("double precision");
-
                     b.Property<Guid>("ApplicationId")
                         .HasColumnType("uuid");
-
-                    b.Property<double>("CompanyScoreX2")
-                        .HasColumnType("double precision");
 
                     b.Property<double>("Correlation")
                         .HasColumnType("double precision");
@@ -395,15 +392,15 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("Score")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Score")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId")
                         .IsUnique();
 
-                    b.ToTable("FinalScores");
+                    b.ToTable("FinalScore");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Internship", b =>

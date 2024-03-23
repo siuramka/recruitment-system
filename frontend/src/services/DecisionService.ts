@@ -1,6 +1,7 @@
 import { DecisionDto } from "@/interfaces/Decision/DecisionDto";
 import api from "./Api";
 import { DecisionCreateDto } from "@/interfaces/Decision/DecisionCreateDto";
+import { DecisionScoreDto } from "@/interfaces/Decision/DecisionScoreDto";
 
 export const getDecision = async ({
   applicationId,
@@ -11,7 +12,7 @@ export const getDecision = async ({
     const response = await api.get(`applications/${applicationId}/decision`);
 
     if (response.status === 200) {
-      const responseData: DecisionDto = response.data;
+      const responseData: DecisionScoreDto = response.data;
       return responseData;
     }
 

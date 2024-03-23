@@ -8,6 +8,7 @@ using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Decision;
+using RecruitmentSystem.Domain.Dtos.FinalScore;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.API.Controllers;
@@ -34,7 +35,7 @@ public class DecisionController : ControllerBase
         _evaluationService = evaluationService;
         _applicationService = applicationService;
     }
-    
+
     [HttpGet]
     [Authorize(Roles = Roles.Company)]
     [Route("/api/applications/{applicationId}/decision")]
@@ -58,11 +59,17 @@ public class DecisionController : ControllerBase
             return NotFound("Decision not found");
         }
 
-        var decisionDto = _mapper.Map<DecisionDto>(decision);
+        var finalScore = await _db.FinalScores.FirstOrDefaultAsync(fs => fs.ApplicationId == applicationId);
+        
+        var decisionScoreDto = new DecisionScoreDto
+        {
+            Decision = _mapper.Map<DecisionDto>(decision),
+            FinalScore = _mapper.Map<FinalScoreDto>(finalScore),
+        };
 
-        return Ok(decisionDto);
+        return Ok(decisionScoreDto);
     }
-    
+
     [HttpPost]
     [Authorize(Roles = Roles.Company)]
     [Route("/api/applications/{applicationId}/decision")]
@@ -73,7 +80,7 @@ public class DecisionController : ControllerBase
 
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
-        
+
         if (application is null)
         {
             return NotFound("Application not found");
@@ -93,8 +100,12 @@ public class DecisionController : ControllerBase
         var decisionResponse = await _openAiService.GetFinalDecision(applicationId);
         await _evaluationService.UpdateDecisionWithAiReview(decisionResponse, decision);
 
+        var finalScore = await _evaluationService.CalculateFinalScore(applicationId);
+        finalScore.ApplicationId = applicationId;
+
+        await _evaluationService.CreateFinalScore(finalScore);
+
         var decisionDto = _mapper.Map<DecisionDto>(decision);
-        return CreatedAtAction(nameof(CreateDecision),decisionDto);
+        return CreatedAtAction(nameof(CreateDecision), decisionDto);
     }
-    
 }

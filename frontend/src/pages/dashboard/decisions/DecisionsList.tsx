@@ -11,11 +11,13 @@ import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationList
 import { getAllDecisionApplications } from "@/services/ApplicationService";
 import { useEffect, useState } from "react";
 import DecisionDialog from "./DecisionDialog";
+import { useNavigate } from "react-router-dom";
 
 const DecisionsList = () => {
   const [applications, setApplications] = useState<ApplicationListItemDto[]>(
     []
   );
+  const navigate = useNavigate();
 
   const getData = async () => {
     var data = await getAllDecisionApplications();
@@ -44,12 +46,15 @@ const DecisionsList = () => {
               <TableHead className="w-[100px]">Position</TableHead>
               <TableHead className="w-[100px]">Email</TableHead>
               <TableHead className="w-[100px]">Step</TableHead>
-              <TableHead className="w-[100px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {applications.map((app) => (
-              <TableRow key={app.id} className="hover:cursor-pointer">
+              <TableRow
+                key={app.id}
+                className="hover:cursor-pointer"
+                onClick={() => navigate(`/decisions/${app.id}`)}
+              >
                 <TableCell className="font-medium">
                   <div>
                     {app.siteUserDto.firstName} {app.siteUserDto.lastName}
@@ -64,9 +69,6 @@ const DecisionsList = () => {
                 </TableCell>
                 <TableCell>
                   <Badge variant="default">{app.stepName}</Badge>
-                </TableCell>
-                <TableCell>
-                  <DecisionDialog application={app} />
                 </TableCell>
               </TableRow>
             ))}

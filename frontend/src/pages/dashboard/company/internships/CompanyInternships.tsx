@@ -56,9 +56,7 @@ const CompanyInternships = () => {
             {internships.map((internship) => (
               <TableRow
                 key={internship.id}
-                onClick={() =>
-                  navigate(`/company/internships/${internship.id}`)
-                }
+                onClick={() => navigate(`/internships/${internship.id}`)}
                 className="hover:cursor-pointer"
               >
                 <TableCell className="font-medium">{internship.name}</TableCell>

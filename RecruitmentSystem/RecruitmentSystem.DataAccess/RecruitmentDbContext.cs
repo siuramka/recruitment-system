@@ -38,5 +38,6 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
     public DbSet<Evaluation> Evaluations { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<Decision> Decisions { get; set; }
+    public DbSet<FinalScore> FinalScores { get; set; }
 
 }

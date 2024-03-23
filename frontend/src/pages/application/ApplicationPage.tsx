@@ -9,6 +9,8 @@ import ScreeningSection from "./components/ScreeningSection";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
 import InterviewSection from "./components/InterviewSection";
 import RejectionSection from "./components/RejectionSection";
+import AssessmentSection from "./components/AssessmentSection";
+import DecisionSection from "./components/DecisionSection";
 
 const ApplicationPage = () => {
   const { applicationId } = useParams() as { applicationId: string };
@@ -77,16 +79,26 @@ const ApplicationPage = () => {
         </ol>
       </div>
       <div className="border rounded-md min-h-svh shadow-lg w-full p-4">
-        {currentStep && currentStep.stepType == "Screening" && (
-          <ScreeningSection application={application!} />
-        )}
-        {currentStep && currentStep.stepType == "Interview" && (
-          <InterviewSection application={application!} />
-        )}
-        {currentStep && currentStep.stepType == "Offer" && <OfferSection />}
-        {currentStep && currentStep.stepType == "Rejection" && (
-          <RejectionSection />
-        )}
+        <>
+          {application &&
+            currentStep &&
+            (() => {
+              switch (currentStep.stepType) {
+                case "Screening":
+                  return <ScreeningSection application={application} />;
+                case "Interview":
+                  return <InterviewSection application={application} />;
+                case "Assessment":
+                  return <AssessmentSection application={application} />;
+                case "Decision":
+                  return <DecisionSection />;
+                case "Offer":
+                  return <OfferSection />;
+                case "Rejection":
+                  return <RejectionSection />;
+              }
+            })()}
+        </>
       </div>
     </>
   );
