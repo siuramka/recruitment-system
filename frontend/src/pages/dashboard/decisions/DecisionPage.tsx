@@ -4,9 +4,13 @@ import { getApplication } from "@/services/ApplicationService";
 import { getDecision } from "@/services/DecisionService";
 import { useParams } from "react-router-dom";
 import DecisionLineChart from "./components/DecisionLineChart";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { DecisionScoreDto } from "@/interfaces/Decision/DecisionScoreDto";
 import DecisionCombinedChart from "./components/DecisionCombinedChart";
+import { Badge } from "@/components/ui/badge";
+import DecisionPieChart from "./components/DecisionPieChart";
+import { Separator } from "@/components/ui/separator";
+import DecisionAlertDialog from "./components/DecisionAlertDialog";
 
 const DecisionPage = () => {
   const [application, setApplication] = useState<ApplicationListItemDto>();
@@ -46,20 +50,45 @@ const DecisionPage = () => {
             </h2>
             <p className="text-muted-foreground">
               Make a final decision for cadidate{" "}
-              {application.siteUserDto.firstName}{" "}
-              {application.siteUserDto.lastName}
+              <span className="font-medium text-black">
+                {application.siteUserDto.firstName}{" "}
+                {application.siteUserDto.lastName}
+              </span>
             </p>
+          </div>
+          <div className="py-3">
+            <Card>
+              <CardContent className="grid grid-cols-4">
+                <div className="space-y-0.5 mb-3 pt-6">
+                  <h2 className="text-2xl font-medium tracking-tight">
+                    Total score:
+                    <span className="px-3">
+                      <Badge variant="default" className="text-base">
+                        {decision.finalScore.score} / 100
+                      </Badge>
+                    </span>
+                  </h2>
+                </div>
+                <div>
+                  <DecisionAlertDialog />
+                </div>
+              </CardContent>
+            </Card>
           </div>
           <div className="grid grid-cols-2 gap-x-10">
             <Card>
-              <div className="pb-3">
+              <div>
+                <DecisionPieChart finalScoreDto={decision.finalScore} />
+              </div>
+              <Separator className="my-3" />
+              <div>
                 <DecisionLineChart applicationId={application.id} />
               </div>
-              <div className="pb-3">
+              <Separator className="my-3" />
+              <div>
                 <DecisionCombinedChart applicationId={application.id} />
               </div>
             </Card>
-            <Card></Card>
           </div>
         </div>
       )}
@@ -68,4 +97,3 @@ const DecisionPage = () => {
 };
 
 export default DecisionPage;
-//comapre with other candidates in the decition step for the same position

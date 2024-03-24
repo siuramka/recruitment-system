@@ -10,7 +10,13 @@ public class FinalScoreDto
     
     public double AiScoreX1 { get; set; }
     
+    public double X1X2Average { get; set; }
+    
     public double Correlation { get; set; }
+    
+    public double CorrelationBoostValue { get; set; }
+    
+    public double CorrelationBoostModifer { get; set; }
     
     public string Review { get; set; } = string.Empty;
 }

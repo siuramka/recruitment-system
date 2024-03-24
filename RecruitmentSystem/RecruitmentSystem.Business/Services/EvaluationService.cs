@@ -165,8 +165,14 @@ public class EvaluationService
         var aiScoreX1 = aiScores.Average() * normalize * (weights.AiScoreWeight / maxScore);
         var companyScoreX2 = companyScores.Average() * normalize * (weights.CompanyScoreWeight / maxScore);
 
-        var finalScore = (aiScoreX1 + companyScoreX2) / 2 * ((1 + correlation) * (weights.TotalScoreWeight / maxScore));
+        var x1x2Average = (aiScoreX1 + companyScoreX2) / 2;
 
+        var correlationBoostModifer = (1 + correlation) * (weights.TotalScoreWeight / maxScore);
+
+        var finalScore = x1x2Average * correlationBoostModifer;
+
+        var correlationBoostValue = finalScore - x1x2Average;
+        
         if (finalScore > maxScore) finalScore = maxScore;
 
         return new FinalScore
@@ -174,7 +180,10 @@ public class EvaluationService
             Score = Math.Round(finalScore, 2),
             AiScoreX1 = Math.Round(aiScoreX1, 2),
             CompanyScoreX2 = Math.Round(companyScoreX2, 2),
-            Correlation = Math.Round(correlation, 2)
+            Correlation = Math.Round(correlation, 2),
+            X1X2Average = Math.Round(x1x2Average, 2),
+            CorrelationBoostValue = Math.Round(correlationBoostValue, 2),
+            CorrelationBoostModifer = Math.Round(correlationBoostModifer, 2),
         };
     }
 

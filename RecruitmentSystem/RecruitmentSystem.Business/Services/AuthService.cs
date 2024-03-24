@@ -40,5 +40,18 @@ public class AuthService : IAuthService
         
         return internship.CompanyId == siteUser.CompanyId;
     }
-    
+
+    public async Task<bool> AuthorizeApplicationCompany(Guid applicationId, string userId)
+    {
+        var siteUser = await _userManager.FindByIdAsync(userId);
+        
+        var application = await _db.Applications
+            .Include(ap => ap.SiteUser)
+            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
+        
+        var internship = await _db.Internships
+            .FirstOrDefaultAsync(i => i.Id.Equals(application.InternshipId));
+
+        return internship.CompanyId == siteUser.CompanyId;
+    }
 }

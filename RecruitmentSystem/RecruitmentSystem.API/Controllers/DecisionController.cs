@@ -108,4 +108,20 @@ public class DecisionController : ControllerBase
         var decisionDto = _mapper.Map<DecisionDto>(decision);
         return CreatedAtAction(nameof(CreateDecision), decisionDto);
     }
+
+    [HttpPost]
+    [Authorize(Roles = Roles.Company)]
+    [Route("/api/applications/{applicationId}/decision/hire")]
+    public async Task<IActionResult> DecisionHire(Guid applicationId)
+    {
+        return Ok();
+    }
+    
+    [HttpPost]
+    [Authorize(Roles = Roles.Company)]
+    [Route("/api/applications/{applicationId}/decision/hire")]
+    public async Task<IActionResult> DecisionReject(Guid applicationId)
+    {
+        return Ok();
+    }
 }
