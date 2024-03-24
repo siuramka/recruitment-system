@@ -438,7 +438,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex justify-between">
-                            <span>Total Score Weight</span>
+                            <span>Correlation Boost Weight</span>
                             <span>{form.watch("totalScoreWeight")}</span>
                           </FormLabel>
                           <FormControl>

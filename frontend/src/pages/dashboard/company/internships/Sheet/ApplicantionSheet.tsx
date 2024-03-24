@@ -103,7 +103,7 @@ export function ApplicationSheet({
       <SheetTrigger onClick={getData} asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-[800px] overflow-auto">
+      <SheetContent className="sm:max-w-[900px] overflow-auto">
         <SheetHeader>
           <SheetTitle>Application managment!</SheetTitle>
           <SheetDescription>

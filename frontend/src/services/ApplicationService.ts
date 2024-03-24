@@ -100,3 +100,43 @@ export const getAllDecisionApplications = async () => {
     return null;
   }
 };
+
+export const applicationOffer = async ({
+  applicationId,
+}: {
+  applicationId: string;
+}) => {
+  try {
+    const response = await api.post(
+      `applications/${applicationId}/decision/offer`
+    );
+
+    if (response.status === 200) {
+      return {};
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+export const applicationReject = async ({
+  applicationId,
+}: {
+  applicationId: string;
+}) => {
+  try {
+    const response = await api.post(
+      `applications/${applicationId}/decision/reject`
+    );
+
+    if (response.status === 200) {
+      return {};
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};

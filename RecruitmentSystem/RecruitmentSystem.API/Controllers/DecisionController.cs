@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Business.Services;
+using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Decision;
@@ -22,10 +23,11 @@ public class DecisionController : ControllerBase
     private readonly OpenAiService _openAiService;
     private readonly EvaluationService _evaluationService;
     private readonly ApplicationService _applicationService;
+    private readonly IAuthService _authService;
 
     public DecisionController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
         PdfService pdfService, OpenAiService openAiService,
-        EvaluationService evaluationService, ApplicationService applicationService)
+        EvaluationService evaluationService, ApplicationService applicationService, IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
@@ -34,6 +36,7 @@ public class DecisionController : ControllerBase
         _openAiService = openAiService;
         _evaluationService = evaluationService;
         _applicationService = applicationService;
+        _authService = authService;
     }
 
     [HttpGet]
@@ -42,7 +45,9 @@ public class DecisionController : ControllerBase
     public async Task<IActionResult> GetDecision(Guid applicationId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
+        
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
+        if (!authorized) return Forbid();
 
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
@@ -60,7 +65,7 @@ public class DecisionController : ControllerBase
         }
 
         var finalScore = await _db.FinalScores.FirstOrDefaultAsync(fs => fs.ApplicationId == applicationId);
-        
+
         var decisionScoreDto = new DecisionScoreDto
         {
             Decision = _mapper.Map<DecisionDto>(decision),
@@ -76,7 +81,9 @@ public class DecisionController : ControllerBase
     public async Task<IActionResult> CreateDecision(Guid applicationId, [FromBody] DecisionCreateDto decisionCreateDto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
+        
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
+        if (!authorized) return Forbid();
 
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
@@ -111,17 +118,67 @@ public class DecisionController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = Roles.Company)]
-    [Route("/api/applications/{applicationId}/decision/hire")]
+    [Route("/api/applications/{applicationId}/decision/offer")]
     public async Task<IActionResult> DecisionHire(Guid applicationId)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
+        if (!authorized) return Forbid();
+
+        var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
+
+        if (application is null)
+            return NotFound("Application not found!");
+
+        var internshipSteps =
+            await _db.InternshipSteps
+                .Include(internshipStep => internshipStep.Internship)
+                .Include(internshipStep => internshipStep.Step)
+                .Where(internshipStep => internshipStep.InternshipId == application.InternshipId)
+                .ToListAsync();
+
+        var nextStep = internshipSteps
+            .FirstOrDefault(internshipStep => internshipStep.Step.StepType == StepType.Offer);
+
+        application.InternshipStep = nextStep;
+
+        _db.Update(application);
+        await _db.SaveChangesAsync();
+
         return Ok();
     }
-    
+
     [HttpPost]
     [Authorize(Roles = Roles.Company)]
-    [Route("/api/applications/{applicationId}/decision/hire")]
+    [Route("/api/applications/{applicationId}/decision/reject")]
     public async Task<IActionResult> DecisionReject(Guid applicationId)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
+        if (!authorized) return Forbid();
+
+        var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
+
+        if (application is null)
+            return NotFound("Application not found!");
+
+        var internshipSteps =
+            await _db.InternshipSteps
+                .Include(internshipStep => internshipStep.Internship)
+                .Include(internshipStep => internshipStep.Step)
+                .Where(internshipStep => internshipStep.InternshipId == application.InternshipId)
+                .ToListAsync();
+
+        var nextStep = internshipSteps
+            .FirstOrDefault(internshipStep => internshipStep.Step.StepType == StepType.Rejection);
+
+        application.InternshipStep = nextStep;
+
+        _db.Update(application);
+        await _db.SaveChangesAsync();
+
         return Ok();
     }
 }

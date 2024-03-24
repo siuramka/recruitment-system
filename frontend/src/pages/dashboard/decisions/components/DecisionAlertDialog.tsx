@@ -8,15 +8,34 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import {
+  applicationOffer,
+  applicationReject,
+} from "@/services/ApplicationService";
+import { useDispatch } from "react-redux";
+import { showLoader } from "@/features/GlobalLoaderSlice";
 
-const DecisionAlertDialog = () => {
+const DecisionAlertDialog = ({
+  applicationId,
+  refetch,
+}: {
+  applicationId: string;
+  refetch: () => void;
+}) => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleHire = () => {
+  const handleHire = async () => {
+    dispatch(showLoader());
+
+    await applicationOffer({ applicationId });
     setOpen(false);
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
+    dispatch(showLoader());
+
+    await applicationReject({ applicationId });
     setOpen(false);
   };
 

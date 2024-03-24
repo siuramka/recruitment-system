@@ -1,5 +1,5 @@
 import "./App.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "./features/AuthSlice";
 import LayoutManager from "./layouts/LayoutManager";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -14,12 +14,21 @@ import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
 import DecisionsList from "./pages/dashboard/decisions/DecisionsList";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DecisionPage from "./pages/dashboard/decisions/DecisionPage";
+import { LinearProgress } from "@mui/material";
+import { selectIsLoading } from "./features/GlobalLoaderSlice";
 
 function App() {
   const user = useSelector(selectUser);
+  const isLoading = useSelector(selectIsLoading);
 
   return (
     <>
+      {isLoading && (
+        <div className="fixed top-0 z-[1000] w-full">
+          <LinearProgress />
+        </div>
+      )}
+
       <Toaster />
       {user ? (
         <LayoutManager role={user.role}>

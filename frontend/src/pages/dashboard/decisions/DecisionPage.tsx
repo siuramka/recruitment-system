@@ -11,11 +11,15 @@ import { Badge } from "@/components/ui/badge";
 import DecisionPieChart from "./components/DecisionPieChart";
 import { Separator } from "@/components/ui/separator";
 import DecisionAlertDialog from "./components/DecisionAlertDialog";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
 
 const DecisionPage = () => {
   const [application, setApplication] = useState<ApplicationListItemDto>();
   const [decision, setDecision] = useState<DecisionScoreDto>();
   const { applicationId } = useParams() as { applicationId: string };
+
+  const dispatch = useDispatch();
 
   const getDecisionData = async ({
     applicationId,
@@ -26,9 +30,11 @@ const DecisionPage = () => {
     if (decisionData) {
       setDecision(decisionData);
     }
+    dispatch(hideLoader());
   };
 
   const getData = async () => {
+    dispatch(showLoader());
     var data = await getApplication({ applicationId });
     if (data) {
       setApplication(data);
@@ -59,7 +65,7 @@ const DecisionPage = () => {
           <div className="py-3">
             <Card>
               <CardContent className="grid grid-cols-4">
-                <div className="space-y-0.5 mb-3 pt-6">
+                <div className="space-y-0.5 mb-3 pt-8">
                   <h2 className="text-2xl font-medium tracking-tight">
                     Total score:
                     <span className="px-3">
@@ -69,8 +75,11 @@ const DecisionPage = () => {
                     </span>
                   </h2>
                 </div>
-                <div>
-                  <DecisionAlertDialog />
+                <div className="pt-8">
+                  <DecisionAlertDialog
+                    applicationId={applicationId}
+                    refetch={getData}
+                  />
                 </div>
               </CardContent>
             </Card>
