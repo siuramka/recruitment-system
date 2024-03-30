@@ -109,8 +109,9 @@ public class DecisionController : ControllerBase
 
         var finalScore = await _evaluationService.CalculateFinalScore(applicationId);
         finalScore.ApplicationId = applicationId;
-
-        await _evaluationService.CreateFinalScore(finalScore);
+        
+        _db.FinalScores.Add(finalScore);
+        await _db.SaveChangesAsync();
 
         var decisionDto = _mapper.Map<DecisionDto>(decision);
         return CreatedAtAction(nameof(CreateDecision), decisionDto);

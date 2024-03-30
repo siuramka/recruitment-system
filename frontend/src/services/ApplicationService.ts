@@ -22,8 +22,8 @@ export const createApplication = async ({
     return undefined;
   } catch (e) {
     toast({
-      title: `Error`,
-      variant: "destructive",
+      title: `Already applied!`,
+      variant: "default",
     });
     return undefined;
   }

@@ -56,40 +56,11 @@ public class ScreeningController : ControllerBase
         {
             return NotFound("Cv not found");
         }
-        //check if cv is null
-
 
         var cvDto = _mapper.Map<CvDto>(cv);
         return Ok(cvDto);
     }
     
-    [HttpGet]
-    [Authorize]
-    [Route("/api/applications/{applicationId:guid}/skills")]
-    public async Task<IActionResult> GetSkills(Guid applicationId)
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId);
-
-        var application = await _db.Applications
-            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
-
-        if (application is null)
-            return BadRequest("Application not found");
-
-        var cv = await _db.Cvs
-            .FirstOrDefaultAsync(c => c.ApplicationId == application.Id);
-
-        if (cv is null)
-        {
-            return NotFound("Cv not found");
-        }
-
-        var pdfString = _pdfService.GetTextFromPdf(cv.FileContent);
-
-        return Ok();
-    }
-
     [HttpGet]
     [Authorize]
     [Route("/api/applications/{applicationId:guid}/screening/cv")]

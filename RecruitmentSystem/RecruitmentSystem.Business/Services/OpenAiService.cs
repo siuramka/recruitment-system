@@ -174,7 +174,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-3.5-turbo-1106",
+            Model = "gpt-4-0125-preview",
             Temperature = 1,
             MaxTokens = 256,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -205,8 +205,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            //Model = "gpt-4-1106-preview",
-            Model = "gpt-3.5-turbo-1106",
+            Model = "gpt-4-0125-preview",
             Temperature = 1,
             MaxTokens = 312,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -232,7 +231,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-3.5-turbo-1106",
+            Model = "gpt-4-0125-preview",
             Temperature = 1,
             MaxTokens = 256,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -264,7 +263,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-3.5-turbo-1106",
+            Model = "gpt-4-0125-preview",
             Temperature = 1,
             MaxTokens = 256,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,

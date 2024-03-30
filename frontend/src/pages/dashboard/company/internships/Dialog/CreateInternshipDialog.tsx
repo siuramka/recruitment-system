@@ -42,6 +42,8 @@ import { InternshipCreateStepDto } from "@/interfaces/Step/InternshipCreateStepD
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { SettingCreateDto } from "@/interfaces/Setting/SettingCreate";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -85,6 +87,7 @@ type props = {
 
 export function CreateInternshipDialog({ handleRefresh }: props) {
   const [activeTab, setActiveTab] = useState("internship");
+  const dispatch = useDispatch();
 
   const [selectSteps, setSelectSteps] =
     useState<StepSelectItem[]>(stepInitialItems);
@@ -163,6 +166,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
       return;
     }
 
+    dispatch(showLoader());
     var internshipStepDtos = selectSteps.map(
       (item) => item as InternshipCreateStepDto
     );
@@ -183,6 +187,8 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
     if (createdInternship) {
       handleRefresh();
     }
+    
+    dispatch(hideLoader());
   };
 
   const initializeSliders = () => {
@@ -303,10 +309,10 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-start">
-                          Requirements (separated by a comma)
+                          Requirements
                         </FormLabel>
                         <FormControl>
-                          <Input
+                          <Textarea
                             {...field}
                             placeholder="Communication skills, Team Leading skills, 7 years of hiring experience"
                           />
@@ -321,10 +327,10 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-start">
-                          Nice To Have Skills (separated by a comma)
+                          Nice To Have Skills
                         </FormLabel>
                         <FormControl>
-                          <Input
+                          <Textarea
                             {...field}
                             placeholder="Experience with Excel, Japanese language proficiency"
                           />

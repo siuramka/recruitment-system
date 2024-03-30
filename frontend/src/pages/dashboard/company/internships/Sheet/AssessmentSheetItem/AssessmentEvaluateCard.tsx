@@ -23,9 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createAssessmentEvaluation,
-  createInterviewEvaluation,
   getAssessmentEvaluation,
-  getInterviewEvaluation,
 } from "@/services/EvaluationService";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";

@@ -15,6 +15,9 @@ import { CreateInternshipDialog } from "./Dialog/CreateInternshipDialog";
 import { InternshipDto } from "../../../../interfaces/Internship/InternshipDto";
 import { ApplicationSheet } from "./Sheet/ApplicantionSheet";
 import { Badge } from "@/components/ui/badge";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
+import NoDataAlert from "@/pages/not-found/NoDataAlert";
 
 const CompanyApplicationsList = () => {
   const [applications, setApplications] = useState<ApplicationListItemDto[]>(
@@ -22,7 +25,9 @@ const CompanyApplicationsList = () => {
   );
   const [internship, setInternsihp] = useState<InternshipDto>();
   const [refreshState, setRefreshState] = useState(false);
+  const [noData, setNoData] = useState(false);
   const { internshipId } = useParams() as { internshipId: string };
+  const dispatch = useDispatch();
 
   const handleRefresh = () => {
     setRefreshState((prevRefreshState) => !prevRefreshState);
@@ -30,65 +35,73 @@ const CompanyApplicationsList = () => {
 
   const getData = async () => {
     var data = await getAllInternshipApplications({ internshipId });
+    if (data?.length === 0) {
+      setNoData(true);
+      dispatch(hideLoader());
+      return;
+    }
+
     if (data) {
       setApplications(data);
       setInternsihp(data[0].internshipDto);
     }
+    dispatch(hideLoader());
   };
 
   useEffect(() => {
+    dispatch(showLoader());
     getData();
   }, [refreshState]);
 
   return (
     <div className="flex flex-col">
+      <div className="space-y-0.5">
+        <h2 className="text-2xl font-bold tracking-tight">Applications </h2>
+      </div>
       <div>
-        <Table>
-          <TableCaption>A list of applications at your company.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Candidate</TableHead>
-              <TableHead className="w-[100px]">Position</TableHead>
-              <TableHead className="w-[100px]">Email</TableHead>
-              <TableHead className="w-[100px]">Step</TableHead>
-              <TableHead className="w-[100px]">Settings</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {applications.map((app) => (
-              <TableRow key={app.id} className="hover:cursor-pointer">
-                <TableCell className="font-medium">
-                  <div>
-                    {app.siteUserDto.firstName} {app.siteUserDto.lastName}
-                  </div>
-                  <div>{app.siteUserDto.location}</div>
-                </TableCell>
-                <TableCell className="font-medium">
-                  {internship?.name}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {app.siteUserDto.email}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="default">{app.stepName}</Badge>
-                </TableCell>
-                <TableCell>
-                  <ApplicationSheet
-                    appId={app.id}
-                    internshipId={internshipId}
-                    handleRefresh={handleRefresh}
-                  />
-                </TableCell>
+        {noData ? (
+          <NoDataAlert />
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Candidate</TableHead>
+                <TableHead className="w-[100px]">Position</TableHead>
+                <TableHead className="w-[100px]">Email</TableHead>
+                <TableHead className="w-[100px]">Step</TableHead>
+                <TableHead className="w-[100px]">Settings</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-          {/* <TableFooter>
-            <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
-              <TableCell className="text-right">$2,500.00</TableCell>
-            </TableRow>
-          </TableFooter> */}
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {applications.map((app) => (
+                <TableRow key={app.id} className="hover:cursor-pointer">
+                  <TableCell className="font-medium">
+                    <div>
+                      {app.siteUserDto.firstName} {app.siteUserDto.lastName}
+                    </div>
+                    <div>{app.siteUserDto.location}</div>
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {internship?.name}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {app.siteUserDto.email}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="default">{app.stepName}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <ApplicationSheet
+                      appId={app.id}
+                      internshipId={internshipId}
+                      handleRefresh={handleRefresh}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

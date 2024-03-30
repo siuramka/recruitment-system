@@ -12,10 +12,15 @@ import { getAllInternships } from "@/services/InternshipService";
 import { useEffect, useState } from "react";
 import { CreateInternshipDialog } from "./Dialog/CreateInternshipDialog";
 import { useNavigate } from "react-router-dom";
+import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
+import { useDispatch } from "react-redux";
+import NoDataAlert from "@/pages/not-found/NoDataAlert";
 
 const CompanyInternships = () => {
   const [internships, setInternships] = useState<InternshipDto[]>([]);
   const [refreshState, setRefreshState] = useState(false);
+  const [noData, setNoData] = useState(false);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -24,9 +29,16 @@ const CompanyInternships = () => {
   };
 
   const getData = async () => {
+    dispatch(showLoader());
     const internshipsData = await getAllInternships();
+    if (internshipsData?.length === 0) {
+      setNoData(true);
+      dispatch(hideLoader());
+      return;
+    }
     if (internshipsData) {
       setInternships(internshipsData);
+      dispatch(hideLoader());
     }
   };
 
@@ -46,33 +58,34 @@ const CompanyInternships = () => {
         <CreateInternshipDialog handleRefresh={handleRefresh} />
       </span>
       <div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Name</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {internships.map((internship) => (
-              <TableRow
-                key={internship.id}
-                onClick={() => navigate(`/internships/${internship.id}`)}
-                className="hover:cursor-pointer"
-              >
-                <TableCell className="font-medium">{internship.name}</TableCell>
-                <TableCell className="font-medium">
-                  {internship.description}
-                </TableCell>
+        {noData ? (
+          <NoDataAlert />
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Name</TableHead>
+                <TableHead className="w-[100px]">Created At</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-          {/* <TableFooter>
-            <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
-              <TableCell className="text-right">$2,500.00</TableCell>
-            </TableRow>
-          </TableFooter> */}
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {internships.map((internship) => (
+                <TableRow
+                  key={internship.id}
+                  onClick={() => navigate(`/internships/${internship.id}`)}
+                  className="hover:cursor-pointer"
+                >
+                  <TableCell className="font-medium">
+                    {internship.name}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {new Date(internship.createdAt).toDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

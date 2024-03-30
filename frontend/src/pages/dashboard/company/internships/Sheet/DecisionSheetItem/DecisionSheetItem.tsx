@@ -25,6 +25,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { createDecision, getDecision } from "@/services/DecisionService";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
 import { DecisionDto } from "@/interfaces/Decision/DecisionDto";
 
 type Props = {
@@ -37,14 +39,17 @@ const formSchema = z.object({
 
 const DecisionSheetItem = ({ application }: Props) => {
   const [decision, setDecision] = useState<DecisionDto>();
+  const dispatch = useDispatch();
 
   const getData = async () => {
+    dispatch(showLoader());
     var decisionData = await getDecision({ applicationId: application.id });
 
     if (decisionData) {
-      setDecision(decisionData);
-      form.setValue("companySummary", decisionData.companySummary);
+      setDecision(decisionData.decision);
+      form.setValue("companySummary", decisionData.decision.companySummary);
     }
+    dispatch(hideLoader());
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,6 +57,7 @@ const DecisionSheetItem = ({ application }: Props) => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    dispatch(showLoader());
     const response = await createDecision({
       applicationId: application.id,
       decisionCreateDto: values,
@@ -61,6 +67,7 @@ const DecisionSheetItem = ({ application }: Props) => {
       toast({ title: "Decision created" });
       setDecision(response);
     }
+    dispatch(hideLoader());
   }
 
   useEffect(() => {

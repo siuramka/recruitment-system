@@ -98,6 +98,9 @@ const DecisionPage = () => {
                 <DecisionCombinedChart applicationId={application.id} />
               </div>
             </Card>
+            <Card className="p-6">
+              <div></div>
+            </Card>
           </div>
         </div>
       )}

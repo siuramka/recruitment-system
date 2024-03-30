@@ -145,8 +145,7 @@ public class EvaluationService
 
     public async Task CreateFinalScore(FinalScore finalScore)
     {
-        _db.FinalScores.Add(finalScore);
-        await _db.SaveChangesAsync();
+
     }
 
     public async Task<FinalScore> CalculateFinalScore(Guid applicationId)
