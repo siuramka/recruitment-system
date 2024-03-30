@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Business.Services;
+using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Evaluation;
 using RecruitmentSystem.Domain.Models;
@@ -20,10 +21,11 @@ public class EvaluationController : ControllerBase
     private readonly PdfService _pdfService;
     private readonly OpenAiService _openAiService;
     private readonly EvaluationService _evaluationService;
+    private readonly IAuthService _authService;
 
     public EvaluationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
         PdfService pdfService, OpenAiService openAiService,
-        EvaluationService evaluationService)
+        EvaluationService evaluationService, IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
@@ -31,7 +33,9 @@ public class EvaluationController : ControllerBase
         _pdfService = pdfService;
         _openAiService = openAiService;
         _evaluationService = evaluationService;
+        _authService = authService;
     }
+    
 
     [HttpGet]
     [Authorize]

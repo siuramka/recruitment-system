@@ -1,5 +1,5 @@
 import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectUser } from "./features/AuthSlice";
 import LayoutManager from "./layouts/LayoutManager";
 import { Navigate, Route, Routes } from "react-router-dom";

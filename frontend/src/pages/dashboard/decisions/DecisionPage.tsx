@@ -75,6 +75,16 @@ const DecisionPage = () => {
                     </span>
                   </h2>
                 </div>
+                <div className="space-y-0.5 mb-3 pt-8">
+                  <h2 className="text-2xl font-medium tracking-tight">
+                    Correlation:
+                    <span className="px-3">
+                      <Badge variant="default" className="text-base">
+                        {decision.finalScore.correlation}
+                      </Badge>
+                    </span>
+                  </h2>
+                </div>
                 <div className="pt-8">
                   <DecisionAlertDialog
                     applicationId={applicationId}
