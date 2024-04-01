@@ -14,7 +14,6 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table";
-import { CreateInternshipDialog } from "../dashboard/internships/Dialog/CreateInternshipDialog";
 import { useNavigate } from "react-router-dom";
 
 export function UserApplicationsList() {

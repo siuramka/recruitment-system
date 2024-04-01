@@ -84,9 +84,7 @@ public class StepsController : ControllerBase
             await _db.InternshipSteps
                 .Include(internshipStep => internshipStep.Internship)
                 .Include(internshipStep => internshipStep.Step)
-                .Where(internshipStep => internshipStep.InternshipId == internshipId
-                                         && internshipStep.Step.StepType != StepType.Offer
-                                         && internshipStep.Step.StepType != StepType.Rejection)
+                .Where(internshipStep => internshipStep.InternshipId == internshipId)
                 .ToListAsync();
 
         var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);

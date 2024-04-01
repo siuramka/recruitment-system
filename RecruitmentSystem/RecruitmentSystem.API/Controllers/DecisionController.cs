@@ -45,7 +45,7 @@ public class DecisionController : ControllerBase
     public async Task<IActionResult> GetDecision(Guid applicationId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+
         var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
         if (!authorized) return Forbid();
 
@@ -81,7 +81,7 @@ public class DecisionController : ControllerBase
     public async Task<IActionResult> CreateDecision(Guid applicationId, [FromBody] DecisionCreateDto decisionCreateDto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+
         var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
         if (!authorized) return Forbid();
 
@@ -99,17 +99,31 @@ public class DecisionController : ControllerBase
         {
             ApplicationId = applicationId,
             CompanySummary = decisionCreateDto.CompanySummary,
+            CompanyStagesScores = decisionCreateDto.CompanyScore,
         };
 
         await _db.Decisions.AddAsync(decision);
         await _db.SaveChangesAsync();
 
-        var decisionResponse = await _openAiService.GetFinalDecision(applicationId);
-        await _evaluationService.UpdateDecisionWithAiReview(decisionResponse, decision);
+        var decisionPrompt = await _openAiService.GenerateDecisionPrompt(applicationId);
+        var decisionTask = _openAiService.GetFinalDecision(decisionPrompt);
+
+        var candidateReviewTaskPrompt = await _openAiService.GenerateScreeningPrompt(applicationId);
+        var candidateReviewTask = _openAiService.GetFitReview(candidateReviewTaskPrompt);
+
+        await Task.WhenAll(decisionTask, candidateReviewTask);
+
+        if (decisionTask.Result == null || candidateReviewTask.Result == null)
+        {
+            return BadRequest("AI service failed to return a result");
+        }
+
+        await _evaluationService.UpdateDecisionWithAiReview(decisionTask.Result, decision);
+        await _evaluationService.UpdateDecisionWithFitnessReview(candidateReviewTask.Result, decision);
 
         var finalScore = await _evaluationService.CalculateFinalScore(applicationId);
         finalScore.ApplicationId = applicationId;
-        
+
         _db.FinalScores.Add(finalScore);
         await _db.SaveChangesAsync();
 

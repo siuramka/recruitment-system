@@ -47,6 +47,9 @@ const InterviewSheetItem = ({ application }: Props) => {
     const interviewData = await getInterview({ applicationId: application.id });
     if (interviewData) {
       setInterview(interviewData);
+      form.setValue("minutes", interviewData.minutesLength);
+      form.setValue("instructions", interviewData.instructions);
+      setDate(new Date(interviewData.startTime));
     }
   };
 
@@ -151,8 +154,7 @@ const InterviewSheetItem = ({ application }: Props) => {
                   <span className="font-medium">
                     {getFormattedDate(new Date(interview.startTime))} for{" "}
                     {interview.minutesLength} minutes
-                  </span>{" "}
-                  You can also update it anytime in the interview step.
+                  </span>
                 </AlertDescription>
               </Alert>
             )}

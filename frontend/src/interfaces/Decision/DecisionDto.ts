@@ -3,4 +3,5 @@ export interface DecisionDto {
   aiStagesReview: string;
   aiCandidateSummary: string;
   companySummary: string;
+  companyScore: number;
 }

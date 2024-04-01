@@ -41,6 +41,7 @@ import ScreeningSheetItem from "./ScreeningSheetItem/ScreeningSheetItem";
 import InterviewSheetItem from "./InterviewSheetItem/InterviewSheetItem";
 import AssessmentSheetItem from "./AssessmentSheetItem/AssessmentSheetItem";
 import DecisionSheetItem from "./DecisionSheetItem/DecisionSheetItem";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 
 type props = {
   appId: string;
@@ -103,7 +104,7 @@ export function ApplicationSheet({
       <SheetTrigger onClick={getData} asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-[900px] overflow-auto">
+      <SheetContent className="sm:max-w-[1000px] overflow-auto">
         <SheetHeader>
           <SheetTitle>Application managment!</SheetTitle>
           <SheetDescription>
@@ -145,11 +146,13 @@ export function ApplicationSheet({
                     ))}
                   </SelectContent>
                 </Select>
-                {application?.stepName !== "Decision" && (
-                  <Button className="mt-4 w-full" onClick={handleNextStep}>
-                    Next step
-                  </Button>
-                )}
+                {application?.stepName !== "Decision" &&
+                  application?.stepName !== "Offer" &&
+                  application?.stepName !== "Rejection" && (
+                    <Button className="mt-4 w-full" onClick={handleNextStep}>
+                      Next step
+                    </Button>
+                  )}
               </CardContent>
             </Card>
           </div>
@@ -165,6 +168,12 @@ export function ApplicationSheet({
                     return <AssessmentSheetItem application={application} />;
                   case "Decision":
                     return <DecisionSheetItem application={application} />;
+                  default:
+                    return (
+                      <Alert variant="primary" className="my-4">
+                        <AlertTitle>All steps finished!</AlertTitle>
+                      </Alert>
+                    );
                 }
               })()}
           </div>

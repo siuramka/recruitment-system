@@ -1,4 +1,6 @@
+import { RegisterUser } from "@/interfaces/Auth/RegisterUser";
 import api from "./Api";
+import { RegisterCompany } from "@/interfaces/Auth/RegisterCompany";
 
 type refreshParams = {
   accessToken: string;
@@ -44,15 +46,16 @@ export const login = async ({ email, password }: authParams) => {
 };
 
 export const registerUser = async ({
-  email,
-  password,
-}: authParams): Promise<LoginResponse | null> => {
+  registerUser,
+}: {
+  registerUser: RegisterUser;
+}) => {
+  console.log(registerUser);
   try {
-    const response = await api.post("auth/register/user", { email, password });
+    const response = await api.post("auth/register/user", { ...registerUser });
 
     if (response.status === 200) {
-      const responseData: LoginResponse = response.data;
-      return responseData;
+      return {};
     }
 
     return null;
@@ -62,22 +65,21 @@ export const registerUser = async ({
 };
 
 export const registerCompany = async ({
-  email,
-  password,
-}: authParams): Promise<LoginResponse | undefined> => {
+  registerComapny,
+}: {
+  registerComapny: RegisterCompany;
+}) => {
   try {
     const response = await api.post("auth/register/company", {
-      email,
-      password,
+      ...registerComapny,
     });
 
     if (response.status === 200) {
-      const responseData: LoginResponse = response.data;
-      return responseData;
+      return {};
     }
 
-    return undefined;
+    return null;
   } catch {
-    return undefined;
+    return null;
   }
 };

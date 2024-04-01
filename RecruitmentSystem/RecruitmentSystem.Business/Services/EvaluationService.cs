@@ -291,4 +291,12 @@ public class EvaluationService
         _db.Update(decision);
         await _db.SaveChangesAsync();
     }
+    
+    public async Task UpdateDecisionWithFitnessReview(FintessReviewResponse fintessReviewResponse, Decision decision)
+    {
+        decision.AiCandidateSummary = fintessReviewResponse.fitnessReview;
+
+        _db.Update(decision);
+        await _db.SaveChangesAsync();
+    }
 }

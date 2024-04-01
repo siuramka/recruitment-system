@@ -76,6 +76,7 @@ public class MapperProfile : Profile
             .ReverseMap();
 
         CreateMap<Decision, DecisionDto>()
+            .ForMember(dest => dest.CompanyScore, opt => opt.MapFrom( x => x.CompanyStagesScores))
             .ReverseMap();
 
         CreateMap<StepEvaluation, LineStatisticsDto>()

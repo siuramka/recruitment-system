@@ -19,6 +19,12 @@ public class OpenAiService
     private PdfService _pdfService;
     private IMapper _mapper;
 
+    private const string MODEL_4 = "gpt-4-0125-preview";
+    private const string MODEL_3 = "gpt-3.5-turbo-0125";
+
+    private const string MODEL = MODEL_4;
+
+
     public OpenAiService(IConfiguration configuration, RecruitmentDbContext db,
         PdfService pdfService, IMapper mapper)
     {
@@ -28,7 +34,7 @@ public class OpenAiService
         _mapper = mapper;
     }
 
-    private async Task<string> GenerateScreeningPrompt(Guid applicaitonId)
+    public async Task<string> GenerateScreeningPrompt(Guid applicaitonId)
     {
         var cv = await _db.Cvs.FirstOrDefaultAsync(cv => cv.ApplicationId.Equals(applicaitonId));
 
@@ -115,7 +121,7 @@ public class OpenAiService
         return stepEvaluations;
     }
 
-    private async Task<string> GenerateDecisionPrompt(Guid applicationId)
+    public async Task<string> GenerateDecisionPrompt(Guid applicationId)
     {
         var internshipDescription = await GenerateScreeningPromptDescription(applicationId);
         var stepEvaluations = JsonConvert.SerializeObject(await GetStepEvaluations(applicationId));
@@ -174,7 +180,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-4-0125-preview",
+            Model = MODEL,
             Temperature = 1,
             MaxTokens = 256,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -197,15 +203,41 @@ public class OpenAiService
         return JsonConvert.DeserializeObject<ScreeningScoreResponse>(result.ToString());
     }
 
-    public async Task<DecisionResponse?> GetFinalDecision(Guid applicationId)
+
+    public async Task<FintessReviewResponse?> GetFitReview(string prompt)
     {
         var api = new OpenAIAPI(_configuration["OPENAI_SECRET"]);
 
-        var prompt = await GenerateDecisionPrompt(applicationId);
+        var chatRequest = new ChatRequest
+        {
+            Model = MODEL,
+            Temperature = 1,
+            MaxTokens = 512,
+            ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
+            TopP = 1,
+            Messages = new[]
+            {
+                new ChatMessage(ChatMessageRole.System,
+                    "You're an AI expert tasked in resume grading tasked with comparing how well the USER's CV matches a" +
+                    " given internship description. You will receive internship details for which you'll compare the user's " +
+                    "CV. The data provided to you, will be in JSON format.  Your task is to assess how fit the internship postion and the candidate it. You must provide a review and your opinion on how fit the candidate is for the internship. Pay great detail attention to the requirements and provide detailed report and reasoning behind your review. Provide output in valid JSON. The JSON should be in this format:" +
+                    " {\"fitnessReview\": \"Your generated review\" }"),
+                new ChatMessage(ChatMessageRole.User, prompt)
+            }
+        };
+
+        var result = await api.Chat.CreateChatCompletionAsync(chatRequest);
+
+        return JsonConvert.DeserializeObject<FintessReviewResponse?>(result.ToString());
+    }
+
+    public async Task<DecisionResponse?> GetFinalDecision(string prompt)
+    {
+        var api = new OpenAIAPI(_configuration["OPENAI_SECRET"]);
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-4-0125-preview",
+            Model = MODEL,
             Temperature = 1,
             MaxTokens = 312,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -213,7 +245,7 @@ public class OpenAiService
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "No yapping in the response. You're an AI exert tasked with making a final decision on a candidate for an internship. Candidate can go thru multiple steps: screening, interview, assessment. For each step, Recruiter - Company leaves a review and a score, also the data gets sent to a chat GPT API and also receives a chat gpt score for the step. You will receive the following data from completed steps: AiScore, CompanyScore and Company review, also the description about the internship itself. You will also receive the most important data input: the final review of the candidate from the company. Your task is to evaluate the candidate's performance based on the provided review and task details and assign a final decision. The final decision should be in the range of 1 (indicating poor performance) to 5 (indicating excellent performance), also write your decision as text in the end of the summary. You must consider everything in the recruiter's review and how well the candidate fulfilled the requirements of the assigned tasks, the decision should mostly come from the final recruiter review, but also take into account the previous steps as stated before. Also write a review or summary of all the stages and how the candidate did. Provide output in valid JSON format. The JSON should be in this format: {\n  \"finalDecision\": {finalDecisionScore},\n  \"stagesReview\": {stages review text}\n}"),
+                    "No yapping in the response. You're an AI exert tasked with making a final decision on a candidate for an internship. Candidate can go thru multiple steps: screening, interview, assessment. For each step, Recruiter - Company leaves a review and a score, also the data gets sent to a chat GPT API and also receives a chat gpt score for the step. You will receive the following data from completed steps: AiScore, CompanyScore and Company review, also the description about the internship itself. You will also receive the most important data input: the final review of the candidate from the company. Your task is to evaluate the candidate's performance based on the provided review and task details and assign a final decision. The final decision should be in the range of 1 (indicating poor performance) to 5 (indicating excellent performance), also write your decision as text in the end of the summary. You must consider everything in the recruiter's review and how well the candidate fulfilled the requirements of the assigned tasks, the decision should mostly come from the final recruiter review, but also take into account the previous steps as stated before. Also write a review or summary of all the stages and how the candidate did. Provide output in valid JSON format. The JSON should be in this format: {  \"finalDecision\": {finalDecisionScore},  \"stagesReview\": {stages review text}}"),
                 new ChatMessage(ChatMessageRole.User, prompt)
             }
         };
@@ -231,7 +263,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-4-0125-preview",
+            Model = MODEL,
             Temperature = 1,
             MaxTokens = 256,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
@@ -263,7 +295,7 @@ public class OpenAiService
 
         var chatRequest = new ChatRequest
         {
-            Model = "gpt-4-0125-preview",
+            Model = MODEL,
             Temperature = 1,
             MaxTokens = 256,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,

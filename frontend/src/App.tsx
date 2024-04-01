@@ -12,10 +12,12 @@ import CompanyInternships from "./pages/dashboard/company/internships/CompanyInt
 import CompanyApplicationsList from "./pages/dashboard/company/internships/CompanyApplicationsList";
 import { UserApplicationsList } from "./pages/internship/UserApplicationsList";
 import DecisionsList from "./pages/dashboard/decisions/DecisionsList";
-import RegisterPage from "./pages/auth/RegisterPage";
+import RegisterPage from "./pages/auth/RegisterUserPage";
 import DecisionPage from "./pages/dashboard/decisions/DecisionPage";
 import { LinearProgress } from "@mui/material";
 import { selectIsLoading } from "./features/GlobalLoaderSlice";
+import RegisterUserPage from "./pages/auth/RegisterUserPage";
+import RegisterCompanyPage from "./pages/auth/RegisterCompanyPage";
 
 function App() {
   const user = useSelector(selectUser);
@@ -90,7 +92,8 @@ function App() {
         <Routes>
           <Route path="*" element={<Navigate to="/sign-in" replace />} />
           <Route path="/sign-in" element={<LoginPage />} />
-          <Route path="/sign-up" element={<RegisterPage />} />
+          <Route path="/sign-up/user" element={<RegisterUserPage />} />
+          <Route path="/sign-up/company" element={<RegisterCompanyPage />} />
         </Routes>
       )}
     </>

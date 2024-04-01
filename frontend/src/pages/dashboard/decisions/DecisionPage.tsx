@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import DecisionAlertDialog from "./components/DecisionAlertDialog";
 import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const DecisionPage = () => {
   const [application, setApplication] = useState<ApplicationListItemDto>();
@@ -109,7 +110,27 @@ const DecisionPage = () => {
               </div>
             </Card>
             <Card className="p-6">
-              <div></div>
+              <h2 className="text-2xl font-bold tracking-tight">AI Report</h2>
+              <p className="text-muted-foreground mb-3">
+                All data is calculated by artificial intelligence.
+              </p>
+              <div className="space-y-4">
+                {/* Steps Review */}
+                <Alert variant="primary">
+                  <AlertTitle>Steps Review</AlertTitle>
+                  <AlertDescription>
+                    {decision.decision.aiStagesReview}
+                  </AlertDescription>
+                </Alert>
+
+                {/* Candidate Review */}
+                <Alert variant="primary">
+                  <AlertTitle>Candidate Review</AlertTitle>
+                  <AlertDescription>
+                    {decision.decision.aiCandidateSummary}
+                  </AlertDescription>
+                </Alert>
+              </div>
             </Card>
           </div>
         </div>

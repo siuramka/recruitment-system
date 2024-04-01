@@ -14,6 +14,8 @@ import {
 } from "@/services/ApplicationService";
 import { useDispatch } from "react-redux";
 import { showLoader } from "@/features/GlobalLoaderSlice";
+import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const DecisionAlertDialog = ({
   applicationId,
@@ -24,12 +26,16 @@ const DecisionAlertDialog = ({
 }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleHire = async () => {
     dispatch(showLoader());
 
     await applicationOffer({ applicationId });
     setOpen(false);
+
+    toast({ title: "Offer sent!" });
+    navigate("/internships");
   };
 
   const handleReject = async () => {
@@ -37,6 +43,9 @@ const DecisionAlertDialog = ({
 
     await applicationReject({ applicationId });
     setOpen(false);
+
+    toast({ title: "Candidate rejected!" });
+    navigate("/internships");
   };
 
   return (

@@ -1,4 +1,4 @@
-import CompanySidebar from "@/pages/CompanySidebar";
+import CompanySidebar from "@/pages/dashboard/CompanySidebar";
 
 interface LayoutProps {
   children: React.ReactNode;

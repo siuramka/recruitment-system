@@ -23,23 +23,31 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GraduationCap } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { createDecision, getDecision } from "@/services/DecisionService";
 import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "@/features/GlobalLoaderSlice";
 import { DecisionDto } from "@/interfaces/Decision/DecisionDto";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 type Props = {
   application: ApplicationListItemDto;
 };
 
 const formSchema = z.object({
-  companySummary: z.string(),
+  companySummary: z.string().min(20, {
+    message: "Summary must be at least 20 characters.",
+  }),
+  companyScore: z.coerce.number().int().min(1).max(5).default(5),
 });
 
 const DecisionSheetItem = ({ application }: Props) => {
   const [decision, setDecision] = useState<DecisionDto>();
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const getData = async () => {
     dispatch(showLoader());
@@ -48,6 +56,7 @@ const DecisionSheetItem = ({ application }: Props) => {
     if (decisionData) {
       setDecision(decisionData.decision);
       form.setValue("companySummary", decisionData.decision.companySummary);
+      form.setValue("companyScore", decisionData.decision.companyScore);
     }
     dispatch(hideLoader());
   };
@@ -58,6 +67,7 @@ const DecisionSheetItem = ({ application }: Props) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     dispatch(showLoader());
+    setLoading(true);
     const response = await createDecision({
       applicationId: application.id,
       decisionCreateDto: values,
@@ -67,6 +77,7 @@ const DecisionSheetItem = ({ application }: Props) => {
       toast({ title: "Decision created" });
       setDecision(response);
     }
+    setLoading(false);
     dispatch(hideLoader());
   }
 
@@ -82,6 +93,14 @@ const DecisionSheetItem = ({ application }: Props) => {
           <CardDescription>Actions for the Decision step</CardDescription>
         </CardHeader>
         <CardContent>
+          {loading && (
+            <Alert variant="primary" className="my-3">
+              <AlertTitle className="flex">
+                Evaluating with ChatGPT <CircularProgress color="inherit" />
+              </AlertTitle>
+              <AlertDescription>This might take a while...</AlertDescription>
+            </Alert>
+          )}
           <div className="flex">
             <Form {...form}>
               <form
@@ -99,9 +118,37 @@ const DecisionSheetItem = ({ application }: Props) => {
                           <FormControl>
                             <Textarea
                               className="w-[590px]"
-                              placeholder="After considering all the factors, provide a final review of the candidate. Ai will also evaluate the candidate."
+                              placeholder="After considering all the factors, provide a final review of the candidate. 
+                              Ai will evaluate the candidade based on the all steps and the final review."
                               {...field}
                             />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="pt-3">
+                    <FormField
+                      control={form.control}
+                      name="companyScore"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-start">
+                            Score
+                          </FormLabel>
+                          <FormControl>
+                            <div className="flex max-w-sm items-center space-x-2">
+                              <Input
+                                className="w-32"
+                                type="number"
+                                max={5}
+                                min={1}
+                                placeholder="5"
+                                defaultValue={5}
+                                {...field}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -129,7 +176,14 @@ const DecisionSheetItem = ({ application }: Props) => {
                   </Alert>
                 </div>
                 <div>
-                  <Button className="my-3">Finalise</Button>
+                  {application.stepName === "Decision" && (
+                    <Button
+                      className="my-3"
+                      onClick={() => navigate(`/decisions/${application.id}`)}
+                    >
+                      Finalise
+                    </Button>
+                  )}
                 </div>
               </div>
             )}

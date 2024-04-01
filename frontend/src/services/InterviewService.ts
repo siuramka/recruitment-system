@@ -1,6 +1,7 @@
 import { InterviewDto } from "@/interfaces/Interview/InterviewDto";
 import api from "./Api";
 import { InterviewCreateDto } from "@/interfaces/Interview/InterviewCreateDto";
+import { toast } from "@/components/ui/use-toast";
 
 type createInterviewParams = {
   applicationId: string;
@@ -23,6 +24,7 @@ export const createInterview = async ({
 
     return null;
   } catch {
+    toast({ title: "Interview already created!" });
     return null;
   }
 };

@@ -36,8 +36,7 @@ const InterviewSection = ({ application }: Props) => {
               <span className="font-medium">
                 {getFormattedDate(new Date(interview.startTime))} for{" "}
                 {interview.minutesLength} minutes
-              </span>{" "}
-              You can also update it anytime in the interview step.
+              </span>
             </AlertDescription>
           </Alert>
           <Card>
