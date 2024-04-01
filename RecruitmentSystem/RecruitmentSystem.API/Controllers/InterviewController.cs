@@ -42,7 +42,6 @@ public class InterviewController : ControllerBase
 
         return Ok(_mapper.Map<InterviewDto>(interview));
     }
-    //todo: positon ascending in internshipssteps bug (not here)
     [HttpPost]
     [Authorize]
     [Route("/api/applications/{applicationId:guid}/interview")]

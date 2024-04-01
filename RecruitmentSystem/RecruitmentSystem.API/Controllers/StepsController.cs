@@ -34,7 +34,6 @@ public class StepsController : ControllerBase
         return Ok(steps.Select(_mapper.Map<StepDto>));
     }
 
-    //todo: only allow decision when all steps completed
     [HttpGet]
     [Authorize]
     [Route("/api/application/{applicationId}/steps")]

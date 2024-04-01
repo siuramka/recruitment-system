@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
@@ -18,14 +19,16 @@ public class ApplicationController : ControllerBase
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
+    private readonly ApplicationService _applicationService;
     private readonly IAuthService _authService;
 
-    public ApplicationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager, IAuthService authService)
+    public ApplicationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager, IAuthService authService, ApplicationService applicationService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
         _authService = authService;
+        _applicationService = applicationService;
     }
     
     [HttpGet]
@@ -37,14 +40,8 @@ public class ApplicationController : ControllerBase
             .AuthorizeApplicationCreatorOrCompany(applicationId, User.FindFirstValue(ClaimTypes.NameIdentifier));
         
         if (!authorized) return Forbid();
-        
-        var application = await _db.Applications
-            .Include(app => app.Internship)
-            .ThenInclude(i => i.Company)
-            .Include(app => app.SiteUser)
-            .Include(app => app.InternshipStep)
-            .ThenInclude(istep => istep.Step)
-            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
+
+        var application = await _applicationService.GetApplicaitonById(applicationId);
         
         if (application is null)
             return NotFound("Application not found!");
@@ -59,16 +56,8 @@ public class ApplicationController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var siteUser = await _userManager.FindByIdAsync(userId);
-        
-        var applications = await _db.Applications
-            .Include(a => a.Internship)
-            .ThenInclude(i => i.Company)
-            .Where(a => a.Internship.CompanyId == siteUser.CompanyId)
-            .Include(app => app.SiteUser)
-            .Include(app => app.InternshipStep)
-            .ThenInclude(istep => istep.Step)
-            .Where(app => app.InternshipStep.Step.StepType == StepType.Decision)
-            .ToListAsync();
+
+        var applications = await _applicationService.GetDecisionApplications(siteUser.CompanyId);
 
         return Ok(applications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
     }
@@ -81,14 +70,7 @@ public class ApplicationController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var siteUser = await _userManager.FindByIdAsync(userId);
         
-        var applications = await _db.Applications
-            .Include(app => app.Internship)
-            .ThenInclude(i => i.Company)
-            .Include(app => app.SiteUser)
-            .Include(app => app.InternshipStep)
-            .ThenInclude(istep => istep.Step)
-            .Where(app => app.SiteUser == siteUser)
-            .ToListAsync();
+        var applications = await _applicationService.GetUserApplications(siteUser);
 
         return Ok(applications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
     }
@@ -112,14 +94,7 @@ public class ApplicationController : ControllerBase
             return NotFound("Internship not found");
         }
         
-        var internshipApplications = await _db.Applications
-            .Where(app => app.InternshipId == internshipId)
-            .Include(app => app.Internship)
-            .ThenInclude(i => i.Company)
-            .Include(app => app.SiteUser)
-            .Include(app => app.InternshipStep)
-            .ThenInclude(istep => istep.Step)
-            .ToListAsync();
+        var internshipApplications = await _applicationService.GetInternshipApplications(internshipId);
 
         return Ok(internshipApplications.Select(dto => _mapper.Map<ApplicationListItemDto>(dto)));
     }
@@ -140,12 +115,8 @@ public class ApplicationController : ControllerBase
         
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var siteUser = await _userManager.FindByIdAsync(userId);
-        
-        var existingApplication = await _db.Applications
-            .Include(ap => ap.Internship)
-            .Include(ap => ap.SiteUser)
-            .FirstOrDefaultAsync(ap => ap.SiteUser.Id == siteUser.Id 
-                                       && ap.Internship.Id == internshipId );
+
+        var existingApplication = await _applicationService.IsApplicationCreated(internshipId, userId);
 
         if (existingApplication is not null)
             return BadRequest("Already applied!");
@@ -159,8 +130,7 @@ public class ApplicationController : ControllerBase
             Skills = ""
         };
 
-        _db.Applications.Add(application);
-        await _db.SaveChangesAsync();
+        await _applicationService.CreateApplication(application);
 
         return CreatedAtAction(nameof(Create), _mapper.Map<ApplicationDto>(application));
     }

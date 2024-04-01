@@ -29,7 +29,7 @@ public class InternshipService : IInternshipService
         internship.Company = company;
         internship.CreatedAt = DateTime.Now.ToUniversalTime();
         internship.StartDate = DateTime.Now.ToUniversalTime();
-        internship.EndDate = DateTime.Now.ToUniversalTime(); //TODO: DELETE THES UNECESSSARY FUCKED SHADCN DATE PICKER
+        internship.EndDate = DateTime.Now.ToUniversalTime(); 
 
         _db.Internships.Add(internship);
         await _db.SaveChangesAsync();
