@@ -7,22 +7,18 @@ using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
 
-public class AssessmentService
+public interface IAssessmentService
+{
+    Task<Assessment> CreateAssessment(Guid applicationId, AssessmentCreateDto assessmentCreateDto);
+}
+
+public class AssessmentService : IAssessmentService
 {
     private RecruitmentDbContext _db;
-    private readonly IMapper _mapper;
-    private readonly UserManager<SiteUser> _userManager;
-    private readonly PdfService _pdfService;
-    private readonly OpenAiService _openAiService;
     
-    public AssessmentService(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService, OpenAiService openAiService )
+    public AssessmentService(RecruitmentDbContext db)
     {
         _db = db;
-        _mapper = mapper;
-        _userManager = userManager;
-        _pdfService = pdfService;
-        _openAiService = openAiService;
     }
 
     public async Task<Assessment> CreateAssessment(Guid applicationId, AssessmentCreateDto assessmentCreateDto)

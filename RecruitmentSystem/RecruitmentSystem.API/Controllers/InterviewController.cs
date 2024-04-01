@@ -13,13 +13,10 @@ public class InterviewController : ControllerBase
 {
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
-    private readonly UserManager<SiteUser> _userManager;
-
-    public InterviewController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager)
+    public InterviewController(RecruitmentDbContext db, IMapper mapper)
     {
         _db = db;
         _mapper = mapper;
-        _userManager = userManager;
     }
     
     [HttpGet]

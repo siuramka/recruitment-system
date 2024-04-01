@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RecruitmentSystem.Business.Services;
-using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.DataAccess.Seeders;
 using RecruitmentSystem.Domain.Models;
@@ -84,6 +83,7 @@ public class Program
             });
 
         builder.Services.AddScoped<DataSeeder>();
+        builder.Services.AddScoped<StepsService>();
         builder.Services.AddScoped<JwtService>();
         builder.Services.AddScoped<ApplicationService>();
         builder.Services.AddScoped<OpenAiService>();
@@ -91,7 +91,7 @@ public class Program
         builder.Services.AddScoped<AssessmentService>();
         builder.Services.AddScoped<IInternshipService, InternshipService>();
         builder.Services.AddScoped<PdfService>();
-        builder.Services.AddScoped<IStatisticService, StatisticsService>();
+        builder.Services.AddScoped<IStatisticsService, StatisticsService>();
         builder.Services.AddTransient<IAuthService, AuthService>();
 
         var app = builder.Build();

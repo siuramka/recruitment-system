@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Business.Services;
-using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Evaluation;
 using RecruitmentSystem.Domain.Models;
@@ -18,24 +17,17 @@ public class EvaluationController : ControllerBase
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
-    private readonly PdfService _pdfService;
-    private readonly OpenAiService _openAiService;
-    private readonly EvaluationService _evaluationService;
-    private readonly IAuthService _authService;
+    private readonly IEvaluationService _evaluationService;
 
     public EvaluationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService, OpenAiService openAiService,
-        EvaluationService evaluationService, IAuthService authService)
+        IEvaluationService evaluationService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
-        _pdfService = pdfService;
-        _openAiService = openAiService;
         _evaluationService = evaluationService;
-        _authService = authService;
     }
-    
+
 
     [HttpGet]
     [Authorize]
@@ -137,7 +129,7 @@ public class EvaluationController : ControllerBase
         {
             return NotFound("Interview not found");
         }
-        
+
         var applicationId = interview.ApplicationId;
 
         var evaluation = _db.Evaluations.FirstOrDefault(e => e.Id == interview.EvaluationId);

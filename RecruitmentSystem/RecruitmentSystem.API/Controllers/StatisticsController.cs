@@ -1,17 +1,17 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecruitmentSystem.Business.Services.Interfaces;
+using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.Domain.Constants;
 
 namespace RecruitmentSystem.API.Controllers;
 
 public class StatisticsController : ControllerBase
 {
-    private readonly IStatisticService _statisticService;
+    private readonly IStatisticsService _statisticService;
     private readonly IAuthService _authService;
 
-    public StatisticsController(IStatisticService statisticService, IAuthService authService)
+    public StatisticsController(IStatisticsService statisticService, IAuthService authService)
     {
         _statisticService = statisticService;
         _authService = authService;

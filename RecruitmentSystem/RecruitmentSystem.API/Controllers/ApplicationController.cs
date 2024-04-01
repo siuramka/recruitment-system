@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Business.Services;
-using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Application;
@@ -19,10 +18,12 @@ public class ApplicationController : ControllerBase
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
-    private readonly ApplicationService _applicationService;
+    private readonly IApplicationService _applicationService;
     private readonly IAuthService _authService;
 
-    public ApplicationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager, IAuthService authService, ApplicationService applicationService)
+    public ApplicationController(RecruitmentDbContext db, IMapper mapper,
+        UserManager<SiteUser> userManager, IAuthService authService,
+        IApplicationService applicationService)
     {
         _db = db;
         _mapper = mapper;

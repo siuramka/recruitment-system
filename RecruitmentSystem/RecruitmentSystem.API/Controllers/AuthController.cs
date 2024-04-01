@@ -16,11 +16,11 @@ namespace RecruitmentSystem.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<SiteUser> _userManager;
-    private readonly JwtService _jwtService;
+    private readonly IJwtService _jwtService;
     private readonly IConfiguration _configuration;
     private readonly RecruitmentDbContext _db;
 
-    public AuthController(UserManager<SiteUser> userManager, JwtService jwtService, IConfiguration configuration,
+    public AuthController(UserManager<SiteUser> userManager, IJwtService jwtService, IConfiguration configuration,
         RecruitmentDbContext db)
     {
         _userManager = userManager;

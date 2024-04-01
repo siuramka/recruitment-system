@@ -4,7 +4,19 @@ using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
 
-public class ApplicationService
+public interface IApplicationService
+{
+    Task EndApplication(Application application);
+    Task<List<Application>> GetUserApplications( SiteUser siteUser);
+    Task<List<Application>> GetInternshipApplications(Guid internshipId);
+    Task<List<Application>> GetDecisionApplications(Guid? companyId);
+    Task<Application?> GetApplicaitonById(Guid applicationId);
+    Task<Application?> IsApplicationCreated(Guid internshipId, string siteUserId);
+    Task CreateApplication(Application application);
+    Task UpdateApplication(Application application);
+}
+
+public class ApplicationService : IApplicationService
 {
     private RecruitmentDbContext _db;
 
@@ -78,6 +90,12 @@ public class ApplicationService
     public async Task CreateApplication(Application application)
     {
         _db.Applications.Add(application);
+        await _db.SaveChangesAsync();
+    }
+    
+    public async Task UpdateApplication(Application application)
+    {
+        _db.Update(application);
         await _db.SaveChangesAsync();
     }
 }

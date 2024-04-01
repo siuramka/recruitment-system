@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
+
+public interface IAuthService
+{
+    Task<bool> AuthorizeApplicationCreatorOrCompany(Guid applicationId, string userId);
+    Task<bool> AuthorizeInternshipCompany(Guid internshipId, string userId);
+    Task<bool> AuthorizeApplicationCompany(Guid applicationId, string userId);
+}
 
 public class AuthService : IAuthService
 {

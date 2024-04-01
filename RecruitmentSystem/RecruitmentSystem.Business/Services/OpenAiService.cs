@@ -12,11 +12,22 @@ using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
 
-public class OpenAiService
+public interface IOpenAiService
+{
+    Task<string> GenerateScreeningPrompt(Guid applicaitonId);
+    Task<string> GenerateDecisionPrompt(Guid applicationId);
+    Task<ScreeningScoreResponse?> GetScreeningScore(Guid applicationId);
+    Task<FintessReviewResponse?> GetFitReview(string prompt);
+    Task<DecisionResponse?> GetFinalDecision(string prompt);
+    Task<InterviewScoreResponse?> GetInterviewScore(Guid interviewId);
+    Task<AssessmentScoreResponse?> GetAssessmentScore(Guid assessmentId);
+}
+
+public class OpenAiService : IOpenAiService
 {
     private IConfiguration _configuration;
     private RecruitmentDbContext _db;
-    private PdfService _pdfService;
+    private IPdfService _pdfService;
     private IMapper _mapper;
 
     private const string MODEL_4 = "gpt-4-0125-preview";
@@ -26,7 +37,7 @@ public class OpenAiService
 
 
     public OpenAiService(IConfiguration configuration, RecruitmentDbContext db,
-        PdfService pdfService, IMapper mapper)
+        IPdfService pdfService, IMapper mapper)
     {
         _configuration = configuration;
         _db = db;

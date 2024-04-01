@@ -3,7 +3,12 @@ using Syncfusion.Pdf.Parsing;
 
 namespace RecruitmentSystem.Business.Services;
 
-public class PdfService
+public interface IPdfService
+{
+    string GetTextFromPdf(byte[] pdfBytes);
+}
+
+public class PdfService : IPdfService
 {
     public string GetTextFromPdf(byte[] pdfBytes)
     {

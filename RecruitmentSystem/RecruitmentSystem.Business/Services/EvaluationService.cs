@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Decision;
@@ -9,21 +8,35 @@ using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
 
-public class EvaluationService
+public interface IEvaluationService
+{
+    Task<List<Evaluation>> GetApplicationEvaluations(Guid applicationId);
+    Task<List<StepEvaluation>> GetStepEvaluations(Guid applicationId);
+    Task<Decision?> GetFinalDecision(Guid applicationId);
+    Task CreateFinalScore(FinalScore finalScore);
+    Task<FinalScore> CalculateFinalScore(Guid applicationId);
+    Task EvaluateInterviewAiScore(Guid interviewId);
+    Task EvaluateAssessmentAiScore(Guid assessmentId);
+    Task UpdateEvaluationAiScore(Evaluation evaluation, int score);
+    Task CreateEvaluationWithAiScore(Application application, int score);
+    Task<Evaluation> CreateEvaluation(EvaluationCreateDto evaluationCreateDto, Guid applicationId);
+    Task AssignAssessmentEvaluation(Guid assessmentId, Guid evaluationId);
+    Task AssignInterviewEvaluation(Guid interviewId, Guid evaluationId);
+    Task UpdateScreeningCompanyEvaluation(Guid? evaluationId, EvaluationCreateDto evaluationCreateDto);
+    Task UpdateDecisionWithAiReview(DecisionResponse decisionResponse, Decision decision);
+    Task UpdateDecisionWithFitnessReview(FintessReviewResponse fintessReviewResponse, Decision decision);
+}
+
+public class EvaluationService : IEvaluationService
 {
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
-    private readonly UserManager<SiteUser> _userManager;
-    private readonly PdfService _pdfService;
-    private readonly OpenAiService _openAiService;
+    private readonly IOpenAiService _openAiService;
 
-    public EvaluationService(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService, OpenAiService openAiService)
+    public EvaluationService(RecruitmentDbContext db, IMapper mapper, IOpenAiService openAiService)
     {
         _db = db;
         _mapper = mapper;
-        _userManager = userManager;
-        _pdfService = pdfService;
         _openAiService = openAiService;
     }
 

@@ -1,11 +1,9 @@
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentSystem.Business.Services;
-using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Decision;
@@ -18,21 +16,16 @@ public class DecisionController : ControllerBase
 {
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
-    private readonly UserManager<SiteUser> _userManager;
-    private readonly PdfService _pdfService;
-    private readonly OpenAiService _openAiService;
-    private readonly EvaluationService _evaluationService;
-    private readonly ApplicationService _applicationService;
+    private readonly IOpenAiService _openAiService;
+    private readonly IEvaluationService _evaluationService;
+    private readonly IApplicationService _applicationService;
     private readonly IAuthService _authService;
 
-    public DecisionController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService, OpenAiService openAiService,
-        EvaluationService evaluationService, ApplicationService applicationService, IAuthService authService)
+    public DecisionController(RecruitmentDbContext db, IMapper mapper, IOpenAiService openAiService,
+        IEvaluationService evaluationService, IApplicationService applicationService, IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
-        _userManager = userManager;
-        _pdfService = pdfService;
         _openAiService = openAiService;
         _evaluationService = evaluationService;
         _applicationService = applicationService;

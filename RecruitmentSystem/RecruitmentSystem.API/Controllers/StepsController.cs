@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;
 using RecruitmentSystem.Domain.Dtos.Application;
@@ -16,13 +16,16 @@ public class StepsController : ControllerBase
 {
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
-    private readonly UserManager<SiteUser> _userManager;
-
-    public StepsController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager)
+    private IStepsService _stepsService;
+    private IApplicationService _applicationService;
+    
+    public StepsController(RecruitmentDbContext db, IMapper mapper, IStepsService stepsService,
+        IApplicationService applicationService)
     {
         _db = db;
         _mapper = mapper;
-        _userManager = userManager;
+        _stepsService = stepsService;
+        _applicationService = applicationService;
     }
 
     [HttpGet]
@@ -39,20 +42,13 @@ public class StepsController : ControllerBase
     [Route("/api/application/{applicationId}/steps")]
     public async Task<IActionResult> Get(Guid applicationId)
     {
-        var application = await _db.Applications
-            .Include(app => app.InternshipStep)
-            .ThenInclude(internshipStep => internshipStep.Step)
-            .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
-
-        var internshipSteps =
-            await _db.InternshipSteps
-                .Include(internshipStep => internshipStep.Internship)
-                .Include(internshipStep => internshipStep.Step)
-                .Where(internshipStep => internshipStep.InternshipId == application.InternshipId)
-                .ToListAsync();
-
+        var application = await _applicationService.GetApplicaitonById(applicationId);
+        
         if (application is null)
             return NotFound("Application not found!");
+
+        var internshipSteps =
+            await _stepsService.GetInternshipSteps(application.InternshipId);
 
         var currentStep = application.InternshipStep;
 
@@ -80,11 +76,7 @@ public class StepsController : ControllerBase
             return NotFound("Internship not found!");
 
         var internshipSteps =
-            await _db.InternshipSteps
-                .Include(internshipStep => internshipStep.Internship)
-                .Include(internshipStep => internshipStep.Step)
-                .Where(internshipStep => internshipStep.InternshipId == internshipId)
-                .ToListAsync();
+            await _stepsService.GetInternshipSteps(internshipId);
 
         var application = await _db.Applications.FirstOrDefaultAsync(app => app.Id == applicationId);
 
@@ -122,11 +114,7 @@ public class StepsController : ControllerBase
             return NotFound("Application not found!");
 
         var internshipSteps =
-            await _db.InternshipSteps
-                .Include(internshipStep => internshipStep.Internship)
-                .Include(internshipStep => internshipStep.Step)
-                .Where(internshipStep => internshipStep.InternshipId == internshipId)
-                .ToListAsync();
+            await _stepsService.GetInternshipSteps(internshipId);
 
         var currentStep = application.InternshipStep;
         var nextStep = internshipSteps
@@ -158,12 +146,7 @@ public class StepsController : ControllerBase
             return NotFound("Internship not found!");
 
         var newInternshipStep =
-            await _db.InternshipSteps
-                .Include(internshipStep => internshipStep.Internship)
-                .Include(internshipStep => internshipStep.Step)
-                .Where(internshipStep => internshipStep.InternshipId == internshipId)
-                .FirstOrDefaultAsync(internshipStep =>
-                    internshipStep.Step.Name.Equals(updateApplicationStepDto.StepType));
+            await _stepsService.GetInternshpStepByType(internshipId, updateApplicationStepDto.StepType);
 
         if (newInternshipStep is null)
         {
@@ -177,8 +160,7 @@ public class StepsController : ControllerBase
 
         application.InternshipStep = newInternshipStep;
 
-        _db.Update(application);
-        await _db.SaveChangesAsync();
+        await _applicationService.UpdateApplication(application);
 
         return Ok();
     }

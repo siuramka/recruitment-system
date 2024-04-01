@@ -7,7 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace RecruitmentSystem.Business.Services;
 
-public class JwtService
+public interface IJwtService
+{
+    string CreateAccessToken(string userName, string userId, IEnumerable<string> userRoles);
+    string CreateRefreshToken();
+    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+}
+
+public class JwtService : IJwtService
 {
     private readonly SymmetricSecurityKey _authSigningKey;
     private readonly string _issuer;

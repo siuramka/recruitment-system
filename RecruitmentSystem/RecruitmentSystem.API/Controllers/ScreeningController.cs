@@ -20,21 +20,19 @@ public class ScreeningController : ControllerBase
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
-    private readonly PdfService _pdfService;
-    private readonly OpenAiService _openAiService;
-    private readonly EvaluationService _evaluationService;
+    private readonly IOpenAiService _openAiService;
+    private readonly IEvaluationService _evaluationService;
 
     public ScreeningController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        PdfService pdfService, OpenAiService openAiService, EvaluationService evaluationService)
+        IOpenAiService openAiService, IEvaluationService evaluationService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
-        _pdfService = pdfService;
         _openAiService = openAiService;
         _evaluationService = evaluationService;
     }
-    
+
     [HttpGet]
     [Authorize]
     [Route("/api/applications/{applicationId:guid}/screening")]
@@ -60,7 +58,7 @@ public class ScreeningController : ControllerBase
         var cvDto = _mapper.Map<CvDto>(cv);
         return Ok(cvDto);
     }
-    
+
     [HttpGet]
     [Authorize]
     [Route("/api/applications/{applicationId:guid}/screening/cv")]
@@ -106,7 +104,7 @@ public class ScreeningController : ControllerBase
         {
             return Conflict("Cv already created");
         }
-        
+
         if (cvFile.Length == 0)
         {
             return Conflict("Invalid file");
@@ -125,14 +123,14 @@ public class ScreeningController : ControllerBase
 
         _db.Cvs.Add(cv);
         await _db.SaveChangesAsync();
-        
+
         var response = await _openAiService.GetScreeningScore(application.Id);
-        
+
         if (response == null)
         {
             return BadRequest("Failed to fetch OPENAI");
         }
-        
+
         await _evaluationService.CreateEvaluationWithAiScore(application, response.fitnessScore);
 
         return CreatedAtAction(nameof(CreateScreening), new { cv.Id });

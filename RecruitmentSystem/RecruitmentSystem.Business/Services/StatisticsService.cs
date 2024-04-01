@@ -1,19 +1,25 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using RecruitmentSystem.Business.Services.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Decision;
 using RecruitmentSystem.Domain.Dtos.Statistics;
 namespace RecruitmentSystem.Business.Services;
 
-public class StatisticsService : IStatisticService
+public interface IStatisticsService
+{
+    Task<List<StepEvaluation>> GetEvaluationsAsync(Guid applicationId);
+    Task<List<LineStatisticsDto>> GetApplicationLineChartDataAsync(Guid applicationId);
+    Task<List<CombinedStatisticsDto>> GetApplicationCombinedChartDataAsync(Guid applicationId);
+}
+
+public class StatisticsService : IStatisticsService
 {
     private RecruitmentDbContext _db;
-    private EvaluationService _evaluationService;
+    private IEvaluationService _evaluationService;
     private readonly IMapper _mapper;
 
     public StatisticsService(IMapper mapper, RecruitmentDbContext db,
-        EvaluationService evaluationService)
+        IEvaluationService evaluationService)
     {
         _mapper = mapper;
         _db = db;
