@@ -83,14 +83,14 @@ public class Program
             });
 
         builder.Services.AddScoped<DataSeeder>();
-        builder.Services.AddScoped<StepsService>();
-        builder.Services.AddScoped<JwtService>();
-        builder.Services.AddScoped<ApplicationService>();
-        builder.Services.AddScoped<OpenAiService>();
-        builder.Services.AddScoped<EvaluationService>();
-        builder.Services.AddScoped<AssessmentService>();
+        builder.Services.AddScoped<IStepsService, StepsService>();
+        builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddScoped<IApplicationService, ApplicationService>();
+        builder.Services.AddScoped<IOpenAiService, OpenAiService>();
+        builder.Services.AddScoped<IEvaluationService, EvaluationService>();
+        builder.Services.AddScoped<IAssessmentService, AssessmentService>();
         builder.Services.AddScoped<IInternshipService, InternshipService>();
-        builder.Services.AddScoped<PdfService>();
+        builder.Services.AddScoped<IPdfService, PdfService>();
         builder.Services.AddScoped<IStatisticsService, StatisticsService>();
         builder.Services.AddTransient<IAuthService, AuthService>();
 

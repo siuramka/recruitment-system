@@ -6,6 +6,10 @@ namespace RecruitmentSystem.DataAccess;
 
 public class RecruitmentDbContext : IdentityDbContext<SiteUser>
 {
+    public RecruitmentDbContext()
+    {
+    }
+    
     public RecruitmentDbContext(DbContextOptions<RecruitmentDbContext> options) : base(options)
     {
     }
@@ -26,18 +30,18 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
         base.OnModelCreating(modelBuilder);
     }
 
-    public DbSet<SiteUser> SiteUsers { get; set; }
-    public DbSet<Step> Steps { get; set; }
-    public DbSet<Application> Applications { get; set; }
-    public DbSet<Cv> Cvs { get; set; }
-    public DbSet<Company> Companys { get; set; }
-    public DbSet<Internship> Internships { get; set; }
-    public DbSet<InternshipStep> InternshipSteps { get; set; }
-    public DbSet<Interview> Interviews { get; set; }
-    public DbSet<Assessment> Assessments { get; set; }
-    public DbSet<Evaluation> Evaluations { get; set; }
-    public DbSet<Setting> Settings { get; set; }
-    public DbSet<Decision> Decisions { get; set; }
-    public DbSet<FinalScore> FinalScores { get; set; }
+    public virtual DbSet<SiteUser> SiteUsers { get; set; }
+    public virtual DbSet<Step> Steps { get; set; }
+    public virtual DbSet<Application> Applications { get; set; }
+    public virtual DbSet<Cv> Cvs { get; set; }
+    public virtual DbSet<Company> Companys { get; set; }
+    public virtual DbSet<Internship> Internships { get; set; }
+    public virtual DbSet<InternshipStep> InternshipSteps { get; set; }
+    public virtual DbSet<Interview> Interviews { get; set; }
+    public virtual DbSet<Assessment> Assessments { get; set; }
+    public virtual DbSet<Evaluation> Evaluations { get; set; }
+    public virtual DbSet<Setting> Settings { get; set; }
+    public virtual DbSet<Decision> Decisions { get; set; }
+    public virtual DbSet<FinalScore> FinalScores { get; set; }
 
 }

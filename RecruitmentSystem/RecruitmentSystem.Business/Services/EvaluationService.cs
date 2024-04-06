@@ -13,7 +13,6 @@ public interface IEvaluationService
     Task<List<Evaluation>> GetApplicationEvaluations(Guid applicationId);
     Task<List<StepEvaluation>> GetStepEvaluations(Guid applicationId);
     Task<Decision?> GetFinalDecision(Guid applicationId);
-    Task CreateFinalScore(FinalScore finalScore);
     Task<FinalScore> CalculateFinalScore(Guid applicationId);
     Task EvaluateInterviewAiScore(Guid interviewId);
     Task EvaluateAssessmentAiScore(Guid assessmentId);
@@ -25,6 +24,11 @@ public interface IEvaluationService
     Task UpdateScreeningCompanyEvaluation(Guid? evaluationId, EvaluationCreateDto evaluationCreateDto);
     Task UpdateDecisionWithAiReview(DecisionResponse decisionResponse, Decision decision);
     Task UpdateDecisionWithFitnessReview(FintessReviewResponse fintessReviewResponse, Decision decision);
+    Task<string> GetEvaluationStepName(Evaluation evaluation);
+    double CalculateCorrelation(int[] aiScores, int[] companyScores);
+    int[] GetCompanyScores(List<StepEvaluation> stepEvaluations, Decision finalDecision);
+    int[] GetAiScores(List<StepEvaluation> stepEvaluations, Decision finalDecision);
+    Task<Setting> GetApplicationInternshipSetting(Guid applicaitonId);
 }
 
 public class EvaluationService : IEvaluationService
@@ -40,7 +44,7 @@ public class EvaluationService : IEvaluationService
         _openAiService = openAiService;
     }
 
-    private static async Task<string> GetEvaluationStepName(Evaluation evaluation)
+    public async Task<string> GetEvaluationStepName(Evaluation evaluation)
     {
         if (evaluation.Cv != null)
         {
@@ -97,7 +101,7 @@ public class EvaluationService : IEvaluationService
         return await _db.Decisions.FirstOrDefaultAsync(d => d.ApplicationId == applicationId);
     }
 
-    private static double CalculateCorrelation(int[] aiScores, int[] companyScores)
+    public double CalculateCorrelation(int[] aiScores, int[] companyScores)
     {
         if (aiScores.Length != companyScores.Length)
             throw new Exception("Scores dont match");
@@ -128,11 +132,11 @@ public class EvaluationService : IEvaluationService
         return correlationR;
     }
 
-    private static int[] GetCompanyScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
+    public int[] GetCompanyScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
     {
         var companyScores = new int[stepEvaluations.Count + 1];
 
-        for (int i = 0; i < stepEvaluations.Count; i++)
+        for (var i = 0; i < stepEvaluations.Count; i++)
         {
             companyScores[i] = (int)stepEvaluations[i].CompanyScoreForCandidateInStep;
         }
@@ -142,7 +146,7 @@ public class EvaluationService : IEvaluationService
         return companyScores;
     }
 
-    private static int[] GetAiScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
+    public int[] GetAiScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
     {
         var aiScores = new int[stepEvaluations.Count + 1];
 
@@ -154,11 +158,6 @@ public class EvaluationService : IEvaluationService
         aiScores[stepEvaluations.Count] = finalDecision.AiStagesScore;
 
         return aiScores;
-    }
-
-    public async Task CreateFinalScore(FinalScore finalScore)
-    {
-
     }
 
     public async Task<FinalScore> CalculateFinalScore(Guid applicationId)
@@ -199,7 +198,7 @@ public class EvaluationService : IEvaluationService
         };
     }
 
-    private async Task<Setting> GetApplicationInternshipSetting(Guid applicaitonId)
+    public async Task<Setting> GetApplicationInternshipSetting(Guid applicaitonId)
     {
         var application = await _db.Applications.FindAsync(applicaitonId);
         return await _db.Settings.FirstOrDefaultAsync(s => s.InternshipId == application.InternshipId);

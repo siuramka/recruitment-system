@@ -36,8 +36,11 @@ public class OpenAiService : IOpenAiService
     private const string MODEL = MODEL_4;
 
 
-    public OpenAiService(IConfiguration configuration, RecruitmentDbContext db,
-        IPdfService pdfService, IMapper mapper)
+    public OpenAiService(
+        IConfiguration configuration,
+        RecruitmentDbContext db,
+        IPdfService pdfService,
+        IMapper mapper)
     {
         _configuration = configuration;
         _db = db;

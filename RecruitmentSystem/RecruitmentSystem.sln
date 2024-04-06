@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecruitmentSystem.Domain", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecruitmentSystem.DataAccess", "RecruitmentSystem.DataAccess\RecruitmentSystem.DataAccess.csproj", "{58BA955B-C394-40E2-A661-9CA926A0EDB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecruitmentSystem.Tests", "RecruitmentSystem.Tests\RecruitmentSystem.Tests.csproj", "{351575A5-6B92-4EC8-88B1-94D2EE308454}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{58BA955B-C394-40E2-A661-9CA926A0EDB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58BA955B-C394-40E2-A661-9CA926A0EDB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58BA955B-C394-40E2-A661-9CA926A0EDB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{351575A5-6B92-4EC8-88B1-94D2EE308454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{351575A5-6B92-4EC8-88B1-94D2EE308454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{351575A5-6B92-4EC8-88B1-94D2EE308454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{351575A5-6B92-4EC8-88B1-94D2EE308454}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
