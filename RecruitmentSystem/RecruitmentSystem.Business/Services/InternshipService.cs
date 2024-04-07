@@ -67,8 +67,7 @@ public class InternshipService : IInternshipService
 
         return internship;
     }
-
-
+    
     public async Task<List<InternshipDto>> GetAllInternshipsAsDtoAsync()
     {
         return await _db.Internships
