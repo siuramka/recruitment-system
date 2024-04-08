@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,18 @@ public class AssessmentController : ControllerBase
     private RecruitmentDbContext _db;
     private readonly IMapper _mapper;
     private readonly IAssessmentService _assessmentService;
+    private IAuthService _authService;
     
-    public AssessmentController(RecruitmentDbContext db, IMapper mapper, IAssessmentService assessmentService)
+    public AssessmentController(
+        RecruitmentDbContext db,
+        IMapper mapper,
+        IAssessmentService assessmentService,
+        IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
         _assessmentService = assessmentService;
+        _authService = authService;
     }
     
     [HttpGet]
@@ -26,6 +33,11 @@ public class AssessmentController : ControllerBase
     [Route("/api/applications/{applicationId:guid}/assessment")]
     public async Task<IActionResult> Get(Guid applicationId)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCreatorOrCompany(applicationId, userId);
+        if (!authorized) return Forbid();
+        
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
 
@@ -47,6 +59,11 @@ public class AssessmentController : ControllerBase
     [Route("/api/applications/{applicationId:guid}/assessment")]
     public async Task<IActionResult> CreateAssessment(Guid applicationId, [FromBody] AssessmentCreateDto assessmentCreateDto)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
+        if (!authorized) return Forbid();
+        
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
 

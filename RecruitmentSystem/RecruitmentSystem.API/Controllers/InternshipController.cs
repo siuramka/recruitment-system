@@ -15,7 +15,9 @@ public class InternshipController : ControllerBase
     private readonly IMapper _mapper;
     private IInternshipService _internshipService;
 
-    public InternshipController(IMapper mapper, IInternshipService internshipService)
+    public InternshipController(
+        IMapper mapper,
+        IInternshipService internshipService)
     {
         _mapper = mapper;
         _internshipService = internshipService;

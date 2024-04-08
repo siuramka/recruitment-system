@@ -21,8 +21,13 @@ public class DecisionController : ControllerBase
     private readonly IApplicationService _applicationService;
     private readonly IAuthService _authService;
 
-    public DecisionController(RecruitmentDbContext db, IMapper mapper, IOpenAiService openAiService,
-        IEvaluationService evaluationService, IApplicationService applicationService, IAuthService authService)
+    public DecisionController(
+        RecruitmentDbContext db,
+        IMapper mapper,
+        IOpenAiService openAiService,
+        IEvaluationService evaluationService,
+        IApplicationService applicationService,
+        IAuthService authService)
     {
         _db = db;
         _mapper = mapper;

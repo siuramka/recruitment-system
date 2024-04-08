@@ -21,8 +21,11 @@ public class ApplicationController : ControllerBase
     private readonly IApplicationService _applicationService;
     private readonly IAuthService _authService;
 
-    public ApplicationController(RecruitmentDbContext db, IMapper mapper,
-        UserManager<SiteUser> userManager, IAuthService authService,
+    public ApplicationController(
+        RecruitmentDbContext db,
+        IMapper mapper,
+        UserManager<SiteUser> userManager,
+        IAuthService authService,
         IApplicationService applicationService)
     {
         _db = db;
@@ -105,6 +108,11 @@ public class ApplicationController : ControllerBase
     [Route("/api/internships/{internshipId:guid}/applications")]
     public async Task<IActionResult> Create(Guid internshipId)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeInternshipCompany(internshipId, userId);
+        if (!authorized) return Forbid();
+        
         var internship = await _db.Internships
             .Include(i => i.InternshipSteps)
             .FirstOrDefaultAsync(internship => internship.Id == internshipId);
@@ -114,7 +122,6 @@ public class ApplicationController : ControllerBase
             return NotFound("Internship not found");
         }
         
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var siteUser = await _userManager.FindByIdAsync(userId);
 
         var existingApplication = await _applicationService.IsApplicationCreated(internshipId, userId);

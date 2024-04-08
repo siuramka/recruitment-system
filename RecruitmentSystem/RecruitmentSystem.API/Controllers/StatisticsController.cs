@@ -11,7 +11,9 @@ public class StatisticsController : ControllerBase
     private readonly IStatisticsService _statisticService;
     private readonly IAuthService _authService;
 
-    public StatisticsController(IStatisticsService statisticService, IAuthService authService)
+    public StatisticsController(
+        IStatisticsService statisticService,
+        IAuthService authService)
     {
         _statisticService = statisticService;
         _authService = authService;

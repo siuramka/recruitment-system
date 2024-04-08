@@ -18,14 +18,20 @@ public class EvaluationController : ControllerBase
     private readonly IMapper _mapper;
     private readonly UserManager<SiteUser> _userManager;
     private readonly IEvaluationService _evaluationService;
+    private IAuthService _authService;
 
-    public EvaluationController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        IEvaluationService evaluationService)
+    public EvaluationController(
+        RecruitmentDbContext db,
+        IMapper mapper,
+        UserManager<SiteUser> userManager,
+        IEvaluationService evaluationService,
+        IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
         _evaluationService = evaluationService;
+        _authService = authService;
     }
 
 
@@ -34,9 +40,6 @@ public class EvaluationController : ControllerBase
     [Route("/api/screening/{screeningId}/evaluation")]
     public async Task<IActionResult> GetScreeningEvaluation(Guid screeningId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
-
         var cv = await _db.Cvs
             .FirstOrDefaultAsync(c => c.Id == screeningId);
 
@@ -51,6 +54,11 @@ public class EvaluationController : ControllerBase
         {
             return Conflict("Evaluation not found");
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        if (!authorized) return Forbid();
 
         var evaluationDto = _mapper.Map<EvaluationDto>(evaluation);
 
@@ -63,9 +71,6 @@ public class EvaluationController : ControllerBase
     public async Task<IActionResult> CreateCompanyScreeningEvaluation(Guid screeningId,
         [FromBody] EvaluationCreateDto evaluationCreateDto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
-
         var cv = await _db.Cvs.FirstOrDefaultAsync(c => c.Id == screeningId);
 
         if (cv is null)
@@ -79,6 +84,11 @@ public class EvaluationController : ControllerBase
         {
             return NotFound("Evaluation not found");
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        if (!authorized) return Forbid();
 
         await _evaluationService.UpdateScreeningCompanyEvaluation(cv.EvaluationId, evaluationCreateDto);
 
@@ -91,9 +101,6 @@ public class EvaluationController : ControllerBase
     [Route("/api/interview/{interviewId}/evaluation")]
     public async Task<IActionResult> GetInterviewEvaluation(Guid interviewId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
-
         var interview = await _db.Interviews
             .FirstOrDefaultAsync(c => c.Id == interviewId);
 
@@ -108,6 +115,11 @@ public class EvaluationController : ControllerBase
         {
             return NotFound("Evaluation not found");
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        if (!authorized) return Forbid();
 
         var evaluationDto = _mapper.Map<EvaluationDto>(evaluation);
         return Ok(evaluationDto);
@@ -119,8 +131,6 @@ public class EvaluationController : ControllerBase
     public async Task<IActionResult> CreateInterviewEvaluation(Guid interviewId,
         [FromBody] EvaluationCreateDto evaluationCreateDto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
 
         var interview = await _db.Interviews
             .FirstOrDefaultAsync(c => c.Id == interviewId);
@@ -133,14 +143,21 @@ public class EvaluationController : ControllerBase
         var applicationId = interview.ApplicationId;
 
         var evaluation = _db.Evaluations.FirstOrDefault(e => e.Id == interview.EvaluationId);
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        if (!authorized) return Forbid();
 
         if (evaluation is not null)
         {
             return NotFound("Evaluation already exists");
         }
-
+        
         var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto, applicationId);
+        
         await _evaluationService.AssignInterviewEvaluation(interviewId, createdEvaluation.Id);
+        
         await _evaluationService.EvaluateInterviewAiScore(interviewId);
 
         var evaluationDto = _mapper.Map<EvaluationDto>(createdEvaluation);
@@ -153,9 +170,6 @@ public class EvaluationController : ControllerBase
     public async Task<IActionResult> CreateAssessmentEvaluation(Guid assessmentId,
         [FromBody] EvaluationCreateDto evaluationCreateDto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
-
         var assessment = await _db.Assessments
             .FirstOrDefaultAsync(c => c.Id == assessmentId);
 
@@ -172,6 +186,11 @@ public class EvaluationController : ControllerBase
         {
             return NotFound("Evaluation already exists");
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        if (!authorized) return Forbid();
 
         var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto, applicationId);
         await _evaluationService.AssignAssessmentEvaluation(assessmentId, createdEvaluation.Id);
@@ -186,9 +205,6 @@ public class EvaluationController : ControllerBase
     [Route("/api/assessment/{assessmentId}/evaluation")]
     public async Task<IActionResult> GetAssessmentEvaluation(Guid assessmentId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
-
         var assessment = await _db.Assessments
             .FirstOrDefaultAsync(c => c.Id == assessmentId);
 
@@ -203,6 +219,11 @@ public class EvaluationController : ControllerBase
         {
             return NotFound("Evaluation not found");
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        if (!authorized) return Forbid();
 
         var evaluationDto = _mapper.Map<EvaluationDto>(evaluation);
 

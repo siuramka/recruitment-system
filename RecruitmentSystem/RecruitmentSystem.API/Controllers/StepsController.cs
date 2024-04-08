@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,20 @@ public class StepsController : ControllerBase
     private readonly IMapper _mapper;
     private IStepsService _stepsService;
     private IApplicationService _applicationService;
+    private IAuthService _authService;
     
-    public StepsController(RecruitmentDbContext db, IMapper mapper, IStepsService stepsService,
-        IApplicationService applicationService)
+    public StepsController(
+        RecruitmentDbContext db,
+        IMapper mapper,
+        IStepsService stepsService,
+        IApplicationService applicationService,
+        IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
         _stepsService = stepsService;
         _applicationService = applicationService;
+        _authService = authService;
     }
 
     [HttpGet]
@@ -134,11 +141,16 @@ public class StepsController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize]
+    [Authorize(Roles = Roles.Company)]
     [Route("/api/internships/{internshipId:guid}/application/{applicationId:guid}/steps")]
     public async Task<IActionResult> UpdateApplicationStep(Guid internshipId, Guid applicationId,
         [FromBody] UpdateApplicationStepDto updateApplicationStepDto)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
+        if (!authorized) return Forbid();
+        
         var internship = await _db.Internships
             .FirstOrDefaultAsync(internship => internship.Id == internshipId);
 

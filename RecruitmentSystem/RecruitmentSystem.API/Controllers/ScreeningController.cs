@@ -22,15 +22,22 @@ public class ScreeningController : ControllerBase
     private readonly UserManager<SiteUser> _userManager;
     private readonly IOpenAiService _openAiService;
     private readonly IEvaluationService _evaluationService;
+    private IAuthService _authService;
 
-    public ScreeningController(RecruitmentDbContext db, IMapper mapper, UserManager<SiteUser> userManager,
-        IOpenAiService openAiService, IEvaluationService evaluationService)
+    public ScreeningController(
+        RecruitmentDbContext db,
+        IMapper mapper,
+        UserManager<SiteUser> userManager,
+        IOpenAiService openAiService,
+        IEvaluationService evaluationService,
+        IAuthService authService)
     {
         _db = db;
         _mapper = mapper;
         _userManager = userManager;
         _openAiService = openAiService;
         _evaluationService = evaluationService;
+        _authService = authService;
     }
 
     [HttpGet]
@@ -39,7 +46,9 @@ public class ScreeningController : ControllerBase
     public async Task<IActionResult> Get(Guid applicationId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var siteUser = await _userManager.FindByIdAsync(userId!);
+
+        var authorized = await _authService.AuthorizeApplicationCreatorOrCompany(applicationId, userId);
+        if (!authorized) return Forbid();
 
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
@@ -64,6 +73,11 @@ public class ScreeningController : ControllerBase
     [Route("/api/applications/{applicationId:guid}/screening/cv")]
     public async Task<IActionResult> GetCv(Guid applicationId)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCreatorOrCompany(applicationId, userId);
+        if (!authorized) return Forbid();
+        
         var application = await _db.Applications
             .FirstOrDefaultAsync(ap => ap.Id.Equals(applicationId));
 
@@ -87,6 +101,10 @@ public class ScreeningController : ControllerBase
     public async Task<IActionResult> CreateScreening(IFormFile cvFile, Guid applicationId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var authorized = await _authService.AuthorizeApplicationCreator(applicationId, userId);
+        if (!authorized) return Forbid();
+        
         var siteUser = await _userManager.FindByIdAsync(userId);
 
         var application = await _db.Applications
