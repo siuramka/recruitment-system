@@ -12,8 +12,6 @@ public class Cv
     public Guid ApplicationId { get; set; }
     public Application Application { get; set; }
 
-    public SiteUser SiteUser { get; set; }
-
     public string FileName { get; set; } = string.Empty;
 
     public byte[] FileContent { get; set; }

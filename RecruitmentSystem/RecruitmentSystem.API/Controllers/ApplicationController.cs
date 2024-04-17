@@ -109,9 +109,6 @@ public class ApplicationController : ControllerBase
     public async Task<IActionResult> Create(Guid internshipId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var authorized = await _authService.AuthorizeInternshipCompany(internshipId, userId);
-        if (!authorized) return Forbid();
         
         var internship = await _db.Internships
             .Include(i => i.InternshipSteps)

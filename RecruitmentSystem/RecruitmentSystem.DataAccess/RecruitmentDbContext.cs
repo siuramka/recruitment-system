@@ -20,10 +20,6 @@ public class RecruitmentDbContext : IdentityDbContext<SiteUser>
             .Property(a => a.StepType)
             .HasConversion<string>();
         
-        modelBuilder.Entity<Application>()
-            .Property(a => a.ScoreStatus)
-            .HasConversion<string>();
-        
         // modelBuilder.Entity<InternshipStep>()
         //     .HasKey(elo => new { elo.StepId, elo.InternshipId, elo.Id });
 

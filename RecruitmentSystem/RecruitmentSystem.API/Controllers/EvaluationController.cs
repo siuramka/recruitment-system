@@ -86,8 +86,8 @@ public class EvaluationController : ControllerBase
         }
         
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        var applicationId = cv.ApplicationId;
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
         if (!authorized) return Forbid();
 
         await _evaluationService.UpdateScreeningCompanyEvaluation(cv.EvaluationId, evaluationCreateDto);
@@ -131,7 +131,6 @@ public class EvaluationController : ControllerBase
     public async Task<IActionResult> CreateInterviewEvaluation(Guid interviewId,
         [FromBody] EvaluationCreateDto evaluationCreateDto)
     {
-
         var interview = await _db.Interviews
             .FirstOrDefaultAsync(c => c.Id == interviewId);
 
@@ -146,7 +145,7 @@ public class EvaluationController : ControllerBase
         
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
         if (!authorized) return Forbid();
 
         if (evaluation is not null)
@@ -189,7 +188,7 @@ public class EvaluationController : ControllerBase
         
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var authorized = await _authService.AuthorizeEvaluationCompany(evaluation.Id, userId);
+        var authorized = await _authService.AuthorizeApplicationCompany(applicationId, userId);
         if (!authorized) return Forbid();
 
         var createdEvaluation = await _evaluationService.CreateEvaluation(evaluationCreateDto, applicationId);

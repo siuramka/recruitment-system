@@ -136,9 +136,15 @@ const InterviewSheetItem = ({ application }: Props) => {
                       Select interview date and time
                     </div>
                     <DateTimePicker date={date} setDate={setDate} />
-                    <Button className="ml-3" type="submit" variant="secondary">
-                      Submit
-                    </Button>
+                    {!interview && application.stepName !== "Interview" && (
+                      <Button
+                        className="ml-3"
+                        type="submit"
+                        variant="secondary"
+                      >
+                        Submit
+                      </Button>
+                    )}
                   </div>
                 </div>
               </form>

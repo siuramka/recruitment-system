@@ -134,7 +134,6 @@ public class ScreeningController : ControllerBase
         {
             Internship = internship,
             Application = application,
-            SiteUser = siteUser,
             FileName = siteUser.FirstName + "-" + siteUser.LastName + "-" + DateTime.Now.Date,
             FileContent = pdfBytes
         };

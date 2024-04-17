@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecruitmentSystem.DataAccess;
@@ -11,9 +12,11 @@ using RecruitmentSystem.DataAccess;
 namespace RecruitmentSystem.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240414102930_BugFixes")]
+    partial class BugFixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -277,6 +280,9 @@ namespace RecruitmentSystem.DataAccess.Migrations
                     b.Property<Guid>("InternshipId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SiteUserId")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
@@ -285,6 +291,8 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .IsUnique();
 
                     b.HasIndex("InternshipId");
+
+                    b.HasIndex("SiteUserId");
 
                     b.ToTable("Cvs");
                 });
@@ -753,9 +761,15 @@ namespace RecruitmentSystem.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RecruitmentSystem.Domain.Models.SiteUser", "SiteUser")
+                        .WithMany()
+                        .HasForeignKey("SiteUserId");
+
                     b.Navigation("Application");
 
                     b.Navigation("Internship");
+
+                    b.Navigation("SiteUser");
                 });
 
             modelBuilder.Entity("RecruitmentSystem.Domain.Models.Decision", b =>

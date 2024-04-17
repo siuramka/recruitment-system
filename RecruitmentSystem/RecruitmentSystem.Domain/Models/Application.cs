@@ -12,7 +12,6 @@ public class Application
     
     public Internship Internship { get; set; }
     
-    
     public Guid InternshipStepId { get; set; }
     
     public InternshipStep InternshipStep { get; set; }
@@ -22,8 +21,6 @@ public class Application
     public Assessment? Assessment { get; set; }
     
     public DateTime EndTime { get; set; }
-    
-    public ScoreStatus ScoreStatus { get; set; }
     
     public List<Evaluation> Evaluations { get; set; }
     

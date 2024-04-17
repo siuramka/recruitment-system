@@ -81,6 +81,12 @@ export function ApplicationSheet({
   const onStageChange = async (value: string) => {
     setStep(value);
     handleRefresh();
+
+    var applicationData = await getApplication({ applicationId: appId });
+    if (applicationData) {
+      setApplication(applicationData);
+    }
+
     setIsUpdating(false);
   };
 
