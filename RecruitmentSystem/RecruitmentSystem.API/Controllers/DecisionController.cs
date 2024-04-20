@@ -20,6 +20,7 @@ public class DecisionController : ControllerBase
     private readonly IEvaluationService _evaluationService;
     private readonly IApplicationService _applicationService;
     private readonly IAuthService _authService;
+    private readonly IDecisionService _decisionService;
 
     public DecisionController(
         RecruitmentDbContext db,
@@ -27,7 +28,8 @@ public class DecisionController : ControllerBase
         IOpenAiService openAiService,
         IEvaluationService evaluationService,
         IApplicationService applicationService,
-        IAuthService authService)
+        IAuthService authService,
+        IDecisionService decisionService)
     {
         _db = db;
         _mapper = mapper;
@@ -35,6 +37,7 @@ public class DecisionController : ControllerBase
         _evaluationService = evaluationService;
         _applicationService = applicationService;
         _authService = authService;
+        _decisionService = decisionService;
     }
 
     [HttpGet]
@@ -90,7 +93,7 @@ public class DecisionController : ControllerBase
         {
             return NotFound("Application not found");
         }
-
+        
         await _applicationService.EndApplication(application);
 
         var decision = new Decision
@@ -100,35 +103,44 @@ public class DecisionController : ControllerBase
             CompanyStagesScores = decisionCreateDto.CompanyScore,
         };
 
-        await _db.Decisions.AddAsync(decision);
-        await _db.SaveChangesAsync();
+        await _decisionService.CreateDecision(decision);
 
-        var decisionPrompt = await _openAiService.GenerateDecisionPrompt(applicationId);
-        var decisionTask = _openAiService.GetFinalDecision(decisionPrompt);
-
-        var candidateReviewTaskPrompt = await _openAiService.GenerateScreeningPrompt(applicationId);
-        var candidateReviewTask = _openAiService.GetFitReview(candidateReviewTaskPrompt);
-
-        await Task.WhenAll(decisionTask, candidateReviewTask);
-
-        if (decisionTask.Result == null || candidateReviewTask.Result == null)
+        try
         {
-            return BadRequest("AI service failed to return a result");
+
+            var decisionPrompt = await _openAiService.GenerateDecisionPrompt(applicationId);
+            var candidateReviewTaskPrompt = await _openAiService.GenerateScreeningPrompt(applicationId);
+
+            var decisionTask = _openAiService.GetFinalDecision(decisionPrompt);
+            var candidateReviewTask = _openAiService.GetFitReview(candidateReviewTaskPrompt);
+
+            await Task.WhenAll(decisionTask, candidateReviewTask);
+
+            if (decisionTask.Result == null || candidateReviewTask.Result == null)
+            {
+                return BadRequest("AI service failed to return a result");
+            }
+
+            await _evaluationService.UpdateDecisionWithAiReview(decisionTask.Result, decision);
+            await _evaluationService.UpdateDecisionWithFitnessReview(candidateReviewTask.Result, decision);
+
+            var finalScore = await _evaluationService.CalculateFinalScore(applicationId);
+            finalScore.ApplicationId = applicationId;
+
+            _db.FinalScores.Add(finalScore);
+            await _db.SaveChangesAsync();
+
+            var decisionDto = _mapper.Map<DecisionDto>(decision);
+            return CreatedAtAction(nameof(CreateDecision), decisionDto);
+        }
+        catch
+        {
+            await _decisionService.Remove(decision);
         }
 
-        await _evaluationService.UpdateDecisionWithAiReview(decisionTask.Result, decision);
-        await _evaluationService.UpdateDecisionWithFitnessReview(candidateReviewTask.Result, decision);
-
-        var finalScore = await _evaluationService.CalculateFinalScore(applicationId);
-        finalScore.ApplicationId = applicationId;
-
-        _db.FinalScores.Add(finalScore);
-        await _db.SaveChangesAsync();
-
-        var decisionDto = _mapper.Map<DecisionDto>(decision);
-        return CreatedAtAction(nameof(CreateDecision), decisionDto);
+        return BadRequest("Oops! something went wrong while creating decision");
     }
-
+    
     [HttpPost]
     [Authorize(Roles = Roles.Company)]
     [Route("/api/applications/{applicationId}/decision/offer")]

@@ -92,6 +92,7 @@ public class Program
         builder.Services.AddScoped<IInternshipService, InternshipService>();
         builder.Services.AddScoped<IPdfService, PdfService>();
         builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+        builder.Services.AddScoped<IDecisionService, DecisionService>();
         builder.Services.AddTransient<IAuthService, AuthService>();
 
         var app = builder.Build();

@@ -46,7 +46,7 @@ public class StatisticsService : IStatisticsService
     {
         var application = _db.Applications.Find(applicationId);
         
-        if(application.EndTime == null)
+        if(application.EndTime == default)
         {
             return null;
         }
