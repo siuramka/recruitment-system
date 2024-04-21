@@ -16,6 +16,4 @@ public class PdfService : IPdfService
 
         return extractedTexts;
     }
-
-
 }

@@ -178,7 +178,7 @@ public class EvaluationService : IEvaluationService
 
     public async Task<Setting> GetApplicationInternshipSetting(Guid applicaitonId)
     {
-        var application = await _db.Applications.FindAsync(applicaitonId);
+        var application = await _db.Applications.FirstOrDefaultAsync( x=> x.Id == applicaitonId);
         return await _db.Settings.FirstOrDefaultAsync(s => s.InternshipId == application.InternshipId);
     }
 

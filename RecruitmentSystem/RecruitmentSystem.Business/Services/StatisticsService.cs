@@ -52,7 +52,7 @@ public class StatisticsService : IStatisticsService
     
     public async Task<List<CombinedStatisticsDto>> GetApplicationCombinedChartDataAsync(Guid applicationId)
     {
-        var application = await _db.Applications.FindAsync(applicationId);
+        var application = await _db.Applications.FirstAsync( x => x.Id == applicationId);
 
         var applications = await _db.Applications.Where(a => a.InternshipId == application.InternshipId).ToListAsync();
         

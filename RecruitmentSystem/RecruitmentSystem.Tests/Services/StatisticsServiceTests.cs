@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Moq.EntityFrameworkCore;
 using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
@@ -111,6 +112,48 @@ public class StatisticsServiceTests
         
         // Assert
         result.Should().BeNull();
+    }
+
+    [Test]
+    public async Task GetApplicationCombinedChartDataAsync_ShouldGetChartData()
+    {
+        var applications = new List<Application>
+        {
+            new Application
+            {
+                Id = Guid.NewGuid(),
+                InternshipId = Guid.NewGuid(),
+            },
+        };
+        var evaluations = new List<StepEvaluation>
+        {
+            new StepEvaluation
+            {
+                StepName = "Screening",
+                AiScoreForCandidateInStep = 3,
+                CompanyScoreForCandidateInStep = 3
+            },
+            new StepEvaluation
+            {
+                StepName = "Interview",
+                AiScoreForCandidateInStep = 3,
+                CompanyScoreForCandidateInStep = 3
+            }
+        };
+        var finalDecision = new Decision
+        {
+            AiStagesScore = 3,
+            CompanyStagesScores = 3,
+        };
+        
+        db.Setup(x => x.Applications).ReturnsDbSet(applications);
+        
+        evaluationService.Setup(x => x.GetStepEvaluations(applications[0].Id)).ReturnsAsync(evaluations);
+        evaluationService.Setup(x => x.GetFinalDecision(applications[0].Id)).ReturnsAsync(finalDecision);
+        
+        var result = await service.GetApplicationCombinedChartDataAsync(applications[0].Id);
+        
+        result.Should().NotBeNull();
     }
 
 }
