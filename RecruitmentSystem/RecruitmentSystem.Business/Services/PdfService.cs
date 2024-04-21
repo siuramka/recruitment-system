@@ -1,12 +1,8 @@
+using RecruitmentSystem.Business.Interfaces;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Parsing;
 
 namespace RecruitmentSystem.Business.Services;
-
-public interface IPdfService
-{
-    string GetTextFromPdf(byte[] pdfBytes);
-}
 
 public class PdfService : IPdfService
 {

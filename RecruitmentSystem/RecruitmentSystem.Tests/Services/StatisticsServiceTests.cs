@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Decision;

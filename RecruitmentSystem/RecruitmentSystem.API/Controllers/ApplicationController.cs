@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Constants;

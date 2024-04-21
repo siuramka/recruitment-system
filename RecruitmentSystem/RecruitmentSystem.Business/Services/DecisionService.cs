@@ -1,13 +1,8 @@
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
-
-public interface IDecisionService
-{
-    Task CreateDecision(Decision decision);
-    Task Remove(Decision decision);
-}
 
 public class DecisionService : IDecisionService
 {

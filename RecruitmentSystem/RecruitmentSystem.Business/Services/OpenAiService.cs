@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OpenAI_API;
 using OpenAI_API.Chat;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Decision;
 using RecruitmentSystem.Domain.Dtos.Internship;
@@ -11,17 +12,6 @@ using RecruitmentSystem.Domain.Dtos.OpenAi;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
-
-public interface IOpenAiService
-{
-    Task<string> GenerateScreeningPrompt(Guid applicaitonId);
-    Task<string> GenerateDecisionPrompt(Guid applicationId);
-    Task<ScreeningScoreResponse?> GetScreeningScore(Guid applicationId);
-    Task<FintessReviewResponse?> GetFitReview(string prompt);
-    Task<DecisionResponse?> GetFinalDecision(string prompt);
-    Task<InterviewScoreResponse?> GetInterviewScore(Guid interviewId);
-    Task<AssessmentScoreResponse?> GetAssessmentScore(Guid assessmentId);
-}
 
 public class OpenAiService : IOpenAiService
 {

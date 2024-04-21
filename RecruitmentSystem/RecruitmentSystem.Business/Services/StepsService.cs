@@ -1,14 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
-
-public interface IStepsService
-{
-    Task<List<InternshipStep>> GetInternshipSteps(Guid internshipId);
-    Task<InternshipStep?> GetInternshpStepByType(Guid internshipId, string stepName);
-}
 
 public class StepsService : IStepsService
 {

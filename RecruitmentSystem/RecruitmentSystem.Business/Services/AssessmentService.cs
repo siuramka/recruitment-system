@@ -1,16 +1,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Assessment;
 using RecruitmentSystem.Domain.Models;
 
 namespace RecruitmentSystem.Business.Services;
-
-public interface IAssessmentService
-{
-    Task<Assessment> CreateAssessment(Guid applicationId, AssessmentCreateDto assessmentCreateDto);
-}
 
 public class AssessmentService : IAssessmentService
 {

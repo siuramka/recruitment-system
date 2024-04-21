@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Moq.EntityFrameworkCore;
 using RecruitmentSystem.API.Mappings;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Models;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.DataAccess.Seeders;

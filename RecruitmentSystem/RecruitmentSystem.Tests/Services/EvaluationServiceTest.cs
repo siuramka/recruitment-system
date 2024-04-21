@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.EntityFrameworkCore;
 using RecruitmentSystem.API.Mappings;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Decision;
@@ -207,47 +208,50 @@ public class EvaluationServiceTest
         
         Assert.That(result, Is.EqualTo(shouldBeResult));
     }
-
+    
     [Test]
-    public async Task GetApplicationInternshipSetting_ShouldReturnSetting()
+    public async Task GetStepEvaluations_ShouldReturnStepEvaluationsOfApplication()
     {
-        var internships = new List<Internship>
-        {
-            new Internship()
-            {
-                Id = Guid.NewGuid(),
-            },
-        };
-        
-        var applications = new List<Application>
+        var applications = new List<Application>()
         {
             new Application()
             {
                 Id = Guid.NewGuid(),
-                InternshipId = internships[0].Id,
-            }
-        };
-        
-        var settings = new List<Setting>
-        {
-            new Setting()
+            },
+            new Application()
             {
-                InternshipId = internships[0].Id,
-            }
+                Id = Guid.NewGuid(),
+            },
+            new Application()
+            {
+                Id = Guid.NewGuid(),
+            },
+        };
+
+        var evaluations = new List<Evaluation>()
+        {
+            new Evaluation()
+            {
+                ApplicationId = applications[0].Id,
+                Cv = new Cv(),
+            },
+            new Evaluation()
+            {
+                ApplicationId = applications[0].Id,
+                Interview = new Interview(),
+            },
+            new Evaluation()
+            {
+                ApplicationId = applications[0].Id,
+                Assessment = new Assessment(),
+            },
         };
         
-        _db.Setup(x => x.Internships).ReturnsDbSet(internships);
         _db.Setup(x => x.Applications).ReturnsDbSet(applications);
-        _db.Setup(x => x.Settings).ReturnsDbSet(settings);
+        _db.Setup(x => x.Evaluations).ReturnsDbSet(evaluations);
         
-        var result = await _evaluationService.GetApplicationInternshipSetting(applications[0].Id);
+        var result = await _evaluationService.GetStepEvaluations(applications[0].Id);
         
-        Assert.That(result.InternshipId, Is.EqualTo(settings[0].InternshipId));
-    }
-
-    [Test]
-    public async Task EvaluateInterviewAiScore_ShouldEvaluate()
-    {
-        
+        Assert.That(result, Has.Count.EqualTo(3));
     }
 }

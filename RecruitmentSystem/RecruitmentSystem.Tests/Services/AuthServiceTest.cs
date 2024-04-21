@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Moq.EntityFrameworkCore;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Models;

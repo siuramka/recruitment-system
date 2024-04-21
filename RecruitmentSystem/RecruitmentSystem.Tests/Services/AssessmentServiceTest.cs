@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Moq.EntityFrameworkCore;
+using RecruitmentSystem.Business.Interfaces;
 using RecruitmentSystem.Business.Services;
 using RecruitmentSystem.DataAccess;
 using RecruitmentSystem.Domain.Dtos.Assessment;
@@ -33,7 +34,6 @@ public class AssessmentServiceTest
             Content = "Content",
             EndTime = DateTime.Now
         };
-        
         
         _db.Setup<DbSet<Assessment>>(x => x.Assessments)
             .ReturnsDbSet(new List<Assessment>());

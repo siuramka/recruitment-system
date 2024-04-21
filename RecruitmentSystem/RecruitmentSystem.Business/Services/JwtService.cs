@@ -4,15 +4,9 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using RecruitmentSystem.Business.Interfaces;
 
 namespace RecruitmentSystem.Business.Services;
-
-public interface IJwtService
-{
-    string CreateAccessToken(string userName, string userId, IEnumerable<string> userRoles);
-    string CreateRefreshToken();
-    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
-}
 
 public class JwtService : IJwtService
 {
