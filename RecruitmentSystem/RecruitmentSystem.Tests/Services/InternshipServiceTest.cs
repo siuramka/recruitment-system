@@ -33,7 +33,6 @@ public class InternshipServiceTest
     [Test]
     public async Task CreateInternshipAsync_ShouldCreateInternship()
     {
-        // Arrange
         var internshipCreateDto = new InternshipCreateDto
         {
             Name = "Hey",
@@ -84,17 +83,14 @@ public class InternshipServiceTest
         _db.Setup(d => d.Steps)
             .ReturnsDbSet(steps);
 
-        // Act
         var result = await _internshipService.CreateInternshipAsync(internshipCreateDto, companys[0].SiteUser.Id);
 
-        // Assert
         Assert.That(result.Name, Is.EqualTo(internshipCreateDto.Name));
     }
 
     [Test]
     public async Task GetAllInternshipsAsDtoAsync_ShouldReturnInternshipsAsDtos()
     {
-        // Arrange
         var internships = new List<Internship>
         {
             new Internship
@@ -127,11 +123,7 @@ public class InternshipServiceTest
         _db.Setup(d => d.Internships)
             .ReturnsDbSet(internships);
         
-        // Act
-        
         var result = await _internshipService.GetAllInternshipsAsDtoAsync();
-        
-        // Assert
         
         Assert.That(result.Count, Is.EqualTo(internships.Count));
         StringAssert.AreEqualIgnoringCase(internships[0].Name, result[0].Name);
@@ -140,7 +132,6 @@ public class InternshipServiceTest
     [Test]
     public async Task GetInternshipByIdIncludeCompany_ShouldReturnInternship()
     {
-        // Assert
         var internship = new Internship
         {
             Id = Guid.NewGuid(),
@@ -175,17 +166,14 @@ public class InternshipServiceTest
         _db.Setup(d => d.Internships)
             .ReturnsDbSet(new List<Internship>{internship});
         
-        // Act
         var result = await _internshipService.GetInternshipByIdIncludeCompany(internship.Id);
         
-        // Assert
         Assert.That(result.Company.Name, Is.EqualTo(internship.Company.Name));
     }
 
     [Test]
     public async Task GetAllInternshipsAsDtoOfCompanyAsync_ShouldReturnInternshipsAsDtos()
     {
-        // Assert
         var companies = new List<Company>()
         {
             new Company
@@ -231,11 +219,7 @@ public class InternshipServiceTest
 
         _db.Setup(d => d.Companys).ReturnsDbSet(companies);
         
-        // Act
-        
         var result = await _internshipService.GetAllInternshipsAsDtoOfCompanyAsync(companies[0].SiteUser.Id);
-        
-        // Assert
         
         Assert.That(result.Count, Is.EqualTo(internships.Count));
         StringAssert.AreEqualIgnoringCase(internships[0].Name, result[0].Name);

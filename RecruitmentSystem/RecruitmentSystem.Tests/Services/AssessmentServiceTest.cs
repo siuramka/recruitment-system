@@ -27,7 +27,6 @@ public class AssessmentServiceTest
     [Test]
     public void CreateAssessment_CreatesNewAssessment()
     {
-        // Arrange
         var applicationId = Guid.NewGuid();
         var assessmentCreateDto = new AssessmentCreateDto
         {
@@ -38,11 +37,8 @@ public class AssessmentServiceTest
         _db.Setup<DbSet<Assessment>>(x => x.Assessments)
             .ReturnsDbSet(new List<Assessment>());
         
-        // Act
         var result = _assessmentService.CreateAssessment(applicationId, assessmentCreateDto).Result;
         
-        // Assert
         Assert.That(result.ApplicationId, Is.EqualTo(applicationId));
-        
     }
 }

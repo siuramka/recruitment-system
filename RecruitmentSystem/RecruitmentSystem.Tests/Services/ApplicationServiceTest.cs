@@ -26,20 +26,16 @@ public class ApplicationServiceTest
     [Test]
     public async Task EndApplication_ShouldEnd()
     {
-        // Arrange
         var application = new Application();
 
-        // Act
         await _applicationService.EndApplication(application);
 
-        // Assert
         Assert.That(application.EndTime, Is.LessThan(DateTime.Now.AddSeconds(-30)));
     }
 
     [Test]
     public async Task GetUserApplications_ReturnsCorrectApplications()
     {
-        // Arrange
         var siteUser = new SiteUser();
         var applications = new List<Application>
         {
@@ -51,17 +47,14 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         var result = await _applicationService.GetUserApplications(siteUser);
 
-        // Assert
         Assert.That(result, Has.Count.EqualTo(2));
     }
 
     [Test]
     public async Task GetInternshipApplications_ReturnsCorrectApplications()
     {
-        // Arrange
         var internshipId = Guid.NewGuid();
         var applications = new List<Application>
         {
@@ -73,17 +66,14 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         var result = await _applicationService.GetInternshipApplications(internshipId);
 
-        // Assert
         Assert.That(result, Has.Count.EqualTo(2));
     }
 
     [Test]
     public async Task GetApplicationById_ReturnsApplication()
     {
-        // Arrange
         var applicationId = Guid.NewGuid();
         var application = new Application { Id = applicationId };
         var applications = new List<Application>
@@ -96,17 +86,14 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         var result = await _applicationService.GetApplicaitonById(applicationId);
 
-        // Assert
         Assert.That(result, Is.EqualTo(application));
     }
 
     [Test]
     public async Task GetDecisionApplications_ReturnsCompanyApplications()
     {
-        // Arrange
         var companyId = Guid.NewGuid();
         var applications = new List<Application>
         {
@@ -130,17 +117,14 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         var result = await _applicationService.GetDecisionApplications(companyId);
 
-        // Assert
         Assert.That(result, Has.Count.EqualTo(1));
     }
 
     [Test]
     public async Task IsApplicationCreated_ReturnsApplication()
     {
-        // Arrange
         var internshipId = Guid.NewGuid();
         var siteUserId = Guid.NewGuid().ToString();
         var application = new Application
@@ -163,17 +147,14 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         var result = await _applicationService.IsApplicationCreated(internshipId, siteUserId);
 
-        // Assert
         Assert.That(result, Is.EqualTo(application));
     }
 
     [Test]
     public async Task CreateApplication_CreatesApplication()
     {
-        // Arrange
         var application = new Application() { Id = Guid.NewGuid() };
 
         var applications = new List<Application>
@@ -184,19 +165,16 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         await _applicationService.CreateApplication(application);
 
         var created = _db.Object.Applications.FirstOrDefault();
 
-        // Assert
         Assert.That(created.Id, Is.EqualTo(application.Id));
     }
 
     [Test]
     public async Task UpdateApplication_UpdatesApplication()
     {
-        // Arrange
         var application = new Application() { Id = Guid.NewGuid() };
 
         var applications = new List<Application>
@@ -207,13 +185,11 @@ public class ApplicationServiceTest
         _db.Setup<DbSet<Application>>(x => x.Applications)
             .ReturnsDbSet(applications);
 
-        // Act
         application.Id = Guid.NewGuid();
         await _applicationService.UpdateApplication(application);
         
         var updated = _db.Object.Applications.FirstOrDefault();
 
-        // Assert
         Assert.That(updated.Id, Is.EqualTo(application.Id));
     }
 }

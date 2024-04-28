@@ -33,7 +33,6 @@ public class StatisticsServiceTests
     [Test]
     public async Task GetEvaluationsAsync_ShouldReturnEvaluations()
     {
-        // Arrange
         var applicationId = Guid.NewGuid();
         var application = new Application
         {
@@ -87,17 +86,14 @@ public class StatisticsServiceTests
         evaluationService.Setup(x => x.GetStepEvaluations(applicationId)).ReturnsAsync(evaluations);
         evaluationService.Setup(x => x.GetFinalDecision(applicationId)).ReturnsAsync(finalDecision);
         
-        // Act
         var result = await service.GetEvaluationsAsync(applicationId);
         
-        // Assert
         result.Should().BeEquivalentTo(expected);
     }
     
     [Test]
     public async Task GetApplicationLineChartDataAsync_ApplicationNotEnded_ShouldReturnNull()
     {
-        // Arrange
         var applicationId = Guid.NewGuid();
         var application = new Application
         {
@@ -107,10 +103,8 @@ public class StatisticsServiceTests
         
         db.Setup(x => x.Applications.Find(applicationId)).Returns(application);
         
-        // Act
         var result = await service.GetApplicationLineChartDataAsync(applicationId);
         
-        // Assert
         result.Should().BeNull();
     }
 
