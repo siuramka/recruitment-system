@@ -10,8 +10,8 @@ const DecisionSection = () => {
           <AlertTitle>Last step!</AlertTitle>
           <AlertDescription>
             Currently, we are reviewing your application. You will see the
-            result as soon as candidate is decided and the final decision is
-            made.
+            result as soon as the best candidate is selected and the final
+            decision is made.
           </AlertDescription>
         </Alert>
       </div>

@@ -160,6 +160,12 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
     }
   };
 
+  const handleSelectStepsPositions = (steps: any[]) =>
+    steps.map((item: any, index: any) => ({
+      ...item,
+      positionAscending: index,
+    }));
+
   const handleCreate = async () => {
     if (!savedData) {
       toast({ title: "Please save the internship data before creating." });
@@ -167,27 +173,29 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
     }
 
     dispatch(showLoader());
-    var internshipStepDtos = selectSteps.map(
+
+    const steps = handleSelectStepsPositions(selectSteps);
+    var internshipStepDtos = steps.map(
       (item) => item as InternshipCreateStepDto
     );
 
-    var settingCreateDto: SettingCreateDto = {
+    const settingCreateDto: SettingCreateDto = {
       aiScoreWeight: savedData.aiScoreWeight,
       companyScoreWeight: savedData.companyScoreWeight,
       totalScoreWeight: savedData.totalScoreWeight,
     };
 
-    var internshipCreateDto: InternshipCreateDto = {
+    const internshipCreateDto: InternshipCreateDto = {
       ...savedData,
       internshipStepDtos,
       settingCreateDto,
     };
 
-    var createdInternship = await createInternship(internshipCreateDto);
+    const createdInternship = await createInternship(internshipCreateDto);
     if (createdInternship) {
       handleRefresh();
     }
-    
+
     dispatch(hideLoader());
   };
 

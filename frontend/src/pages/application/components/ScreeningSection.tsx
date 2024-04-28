@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { ApplicationListItemDto } from "@/interfaces/Application/ApplicationListItemDto";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export type ScreeningSectionParams = {
   application: ApplicationListItemDto;
@@ -81,39 +82,62 @@ const ScreeningSection = ({ application }: ScreeningSectionParams) => {
   return (
     <>
       {hasUploadedCv || screening ? (
-        <>
-          We've received your application!
-          <Button onClick={getCvData}>Download my CV</Button>
-        </>
+        <div className="flex justify-center">
+          <div>
+            <div>
+              <Alert>
+                <AlertTitle>Success!</AlertTitle>
+                <AlertDescription>
+                  We've received your application!
+                </AlertDescription>
+              </Alert>
+            </div>
+            <div className="flex justify-center py-4">
+              <Button onClick={getCvData}>Download my CV</Button>
+            </div>
+          </div>
+        </div>
       ) : (
-        <div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)}>
-              <FormField
-                control={form.control}
-                name="file"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-start">
-                      Upload your CV (.pdf)
-                    </FormLabel>
-                    <FormControl>
-                      <div className="flex w-full max-w-sm items-center space-x-2">
-                        <Input
-                          id="file"
-                          type="file"
-                          accept=".pdf"
-                          {...fileRef}
-                        />
-                        <Button type="submit">Upload</Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
+        <div className="flex justify-center">
+          <div>
+            <div className="pb-4">
+              <div>
+                <Alert>
+                  <AlertTitle>Next steps!</AlertTitle>
+                  <AlertDescription>
+                    The next step is to upload your CV.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)}>
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-start">
+                        Upload your CV (.pdf)
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex w-full max-w-sm items-center space-x-2">
+                          <Input
+                            id="file"
+                            type="file"
+                            accept=".pdf"
+                            {...fileRef}
+                          />
+                          <Button type="submit">Upload</Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </div>
         </div>
       )}
     </>

@@ -18,6 +18,7 @@ import { toast } from "@/components/ui/use-toast";
 import { RegisterUser } from "@/interfaces/Auth/RegisterUser";
 import { Separator } from "@/components/ui/separator";
 import { RegisterCompany } from "@/interfaces/Auth/RegisterCompany";
+import BackgroundImgae from "@/assets/bg-v.jpg";
 
 const formSchema = z.object({
   email: z.string().min(5).email(),
@@ -69,16 +70,24 @@ const RegisterCompanyPage = () => {
 
   return (
     <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="hidden h-full bg-muted lg:block" />
+      <div className="hidden h-full bg-muted lg:block">
+        <img
+          src={BackgroundImgae}
+          alt="Your Image"
+          className="w-full max-h-[130vh]"
+        />
+      </div>
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">Register</h1>
           </div>
 
-          <h1 className="text-3xl font-semibold mb-4 text-left">User</h1>
+          <h1 className="text-3xl font-semibold mb-4 text-left">
+            Company registration
+          </h1>
           <p className="text-sm font-light mb-4 text-left pb-8">
-            Create a user account!
+            Create a Company account!
           </p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -218,6 +227,14 @@ const RegisterCompanyPage = () => {
               />
               <Button className="w-full" type="submit">
                 Register
+              </Button>
+              <Button
+                className="w-full"
+                variant={"outline"}
+                type="submit"
+                onClick={() => navigate("/sign-in")}
+              >
+                Login
               </Button>
             </form>
           </Form>

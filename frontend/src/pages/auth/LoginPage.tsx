@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveUser } from "@/features/AuthSlice";
+import BackgroundImgae from "@/assets/bg-v.jpg";
 
 const formSchema = z.object({
   email: z.string().email().min(2, {
@@ -61,13 +62,15 @@ const LoginPage = () => {
 
   return (
     <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="hidden h-full bg-muted lg:block" />
+      <div className="hidden h-full bg-muted lg:block">
+        <img
+          src={BackgroundImgae}
+          alt="Your Image"
+          className="h-[100vh] w-full"
+        />
+      </div>
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
-          </div>
-
           <h1 className="text-3xl font-semibold mb-4 text-left">Login</h1>
           <p className="text-sm font-light mb-4 text-left pb-8">
             Enter your email and password information!
@@ -103,11 +106,22 @@ const LoginPage = () => {
               <Button className="w-full" type="submit">
                 Login
               </Button>
+              <div className="flex justify-between">
+                <Button
+                  variant={"outline"}
+                  onClick={() => navigate("/sign-up/user")}
+                >
+                  Register as User
+                </Button>
+                <Button
+                  variant={"outline"}
+                  onClick={() => navigate("/sign-up/company")}
+                >
+                  Register as Company
+                </Button>
+              </div>
             </form>
           </Form>
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{" "}
-          </p>
         </div>
       </div>
     </div>
