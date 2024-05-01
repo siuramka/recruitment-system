@@ -31,25 +31,25 @@ const DetailedCalculationsDialog = ({
         <div className="mt-5 space-y-8">
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="mb-1 font-semibold">AI Score (X1):</h4>
-            <p className="text-sm">Constants: Normalize = 20</p>
+            <p className="text-sm">normalize = 20</p>
             <p className="text-sm">maxScore = 100</p>
             <p className="text-sm">
-              Formula: aiScoreX1 = {finalScoreDto.aiScoreX1}
+              Formula: aiScoreX1 = ({finalScoreDto.aiScoreX1} * {"20"}) * (
+              {"AiWeight"} / {"100"})
             </p>
             <p className="text-sm">
-              Value: aiScoreX1 = ({finalScoreDto.aiScoreX1} * {"20"}) * (
-              {"AiWeight"} / {"100"})
+              Value: aiScoreX1 = {finalScoreDto.aiScoreX1}
             </p>
           </div>
 
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="mb-1 font-semibold">Company Score (X2):</h4>
+            {/* <p className="text-sm">
+              companyScoreX2 = {finalScoreDto.companyScoreX2}
+            </p> */}
             <p className="text-sm">
-              Formula: companyScoreX2 = {finalScoreDto.companyScoreX2}
-            </p>
-            <p className="text-sm">
-              Value: companyScoreX2 = ({"finalScoreDto.companyScoreX2"} * {"20"}
-              ) * ({"Company Score Weight"} / {"100"})
+              Calculation: companyScoreX2 = ({"finalScoreDto.companyScoreX2"} *{" "}
+              {"20"}) * ({"Company Score Weight"} / {"100"})
             </p>
           </div>
 

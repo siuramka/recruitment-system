@@ -94,20 +94,27 @@ public class EvaluationService : IEvaluationService
         long sumCompanySquared = 0;
         long sumAiCompany = 0;
 
-        Parallel.For(0, n, i =>
+        for (var i = 0; i < n; i++)
         {
             sumAi += aiArray[i];
             sumCompany += companyArray[i];
             sumAiSquared += aiArray[i] * aiArray[i];
             sumCompanySquared += companyArray[i] * companyArray[i];
             sumAiCompany += aiArray[i] * companyArray[i];
-        });
+        }
 
-        var correlationR = (n * sumAiCompany - sumAi * sumCompany) /
-                           Math.Sqrt((n * sumAiSquared - sumAi * sumAi) *
-                                     (n * sumCompanySquared - sumCompany * sumCompany));
+        var deltaAiSquared = n * sumAiSquared - sumAi * sumAi;
+        var deltaCompanySquared = n * sumCompanySquared - sumCompany * sumCompany;
 
-        return correlationR;
+        if (deltaAiSquared == 0 || deltaCompanySquared == 0)
+        {
+            return 0; 
+        }
+
+        var correlationCoefficient = (n * sumAiCompany - sumAi * sumCompany) /
+                                     Math.Sqrt(deltaAiSquared * deltaCompanySquared);
+
+        return correlationCoefficient;
     }
 
     public int[] GetCompanyScores(List<StepEvaluation> stepEvaluations, Decision finalDecision)
@@ -150,13 +157,11 @@ public class EvaluationService : IEvaluationService
         var companyScores = GetCompanyScores(evaluations, finalDecision);
         var aiScores = GetAiScores(evaluations, finalDecision);
         var correlation = CalculateCorrelation(aiScores, companyScores);
-
-        var aiScoreX1 = aiScores.Average() * normalize * (weights.AiScoreWeight / maxScore);
-        var companyScoreX2 = companyScores.Average() * normalize * (weights.CompanyScoreWeight / maxScore);
-
+        var aiScoreX1 = aiScores.Average() * normalize * ((double)weights.AiScoreWeight / maxScore);
+        var companyScoreX2 = companyScores.Average() * normalize * ((double)weights.CompanyScoreWeight / maxScore);
         var x1x2Average = (aiScoreX1 + companyScoreX2) / 2;
 
-        var correlationBoostModifer = (1 + correlation) * (weights.TotalScoreWeight / maxScore);
+        var correlationBoostModifer = (1 + correlation) * ((double)weights.TotalScoreWeight / maxScore);
 
         var finalScore = x1x2Average * correlationBoostModifer;
 

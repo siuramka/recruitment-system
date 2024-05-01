@@ -42,8 +42,13 @@ public class OpenAiService : IOpenAiService
     {
         var cv = await _db.Cvs.FirstOrDefaultAsync(cv => cv.ApplicationId.Equals(applicaitonId));
 
-        var cvContent = _pdfService.GetTextFromPdf(cv.FileContent);
+        var cvContent = "Candidate did not upload his CV";
 
+        if (cv is not null)
+        {
+            cvContent = _pdfService.GetTextFromPdf(cv.FileContent);
+        }
+        
         var screeningPrompt = new ScreeningPrompt
         {
             CvContent = cvContent,
@@ -192,13 +197,14 @@ public class OpenAiService : IOpenAiService
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "You're an AI expert tasked in resume grading tasked with comparing how well the USER's CV matches a" +
+                    "It's very important that the result must be a a valid JSON format. You're an AI expert tasked in resume grading tasked with comparing how well the USER's CV matches a" +
                     " given internship description. You will receive internship details for which you'll compare the user's " +
                     "CV. The data provided to you, will be in JSON format.  Your task is to assess the fitness score, which indicates how well-suited the internship and the " +
                     "resume are for each other. The fitness score ranges from 1 (indicating a poor fit) to 5" +
-                    " (indicating the best fit). Provide output in valid JSON. The JSON should be in this format:" +
+                    " (indicating the best fit). Provide output in valid JSON. It's very important that the result must be a a valid JSON format. The JSON should be in this format:" +
                     " {\"fitnessScore\": {score}"),
-                new ChatMessage(ChatMessageRole.User, prompt)
+                new ChatMessage(ChatMessageRole.User, prompt),
+                new ChatMessage(ChatMessageRole.User, "The JSON response:")
             }
         };
 
@@ -222,11 +228,12 @@ public class OpenAiService : IOpenAiService
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "You're an AI expert tasked in resume grading tasked with comparing how well the USER's CV matches a" +
+                    "It's very important that the result must be a a valid JSON format. You're an AI expert tasked in resume grading tasked with comparing how well the USER's CV matches a" +
                     " given internship description. You will receive internship details for which you'll compare the user's " +
-                    "CV. The data provided to you, will be in JSON format.  Your task is to assess how fit the internship postion and the candidate it. You must provide a review and your opinion on how fit the candidate is for the internship. Pay great detail attention to the requirements and provide detailed report and reasoning behind your review. Provide output in valid JSON. The JSON should be in this format:" +
+                    "CV. The data provided to you, will be in JSON format.  Your task is to assess how fit the internship postion and the candidate it. You must provide a review and your opinion on how fit the candidate is for the internship. Pay great detail attention to the requirements and provide detailed report and reasoning behind your review. It's very important that the result must be a a valid JSON format. Provide output in valid JSON. The JSON should be in this format:" +
                     " {\"fitnessReview\": \"Your generated review\" }"),
-                new ChatMessage(ChatMessageRole.User, prompt)
+                new ChatMessage(ChatMessageRole.User, prompt),
+                new ChatMessage(ChatMessageRole.User, "The JSON response:")
             }
         };
 
@@ -243,14 +250,15 @@ public class OpenAiService : IOpenAiService
         {
             Model = MODEL,
             Temperature = 1,
-            MaxTokens = 312,
+            MaxTokens = 512,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
             TopP = 1,
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "No yapping in the response. You're an AI exert tasked with making a final decision on a candidate for an internship. Candidate can go thru multiple steps: screening, interview, assessment. For each step, Recruiter - Company leaves a review and a score, also the data gets sent to a chat GPT API and also receives a chat gpt score for the step. You will receive the following data from completed steps: AiScore, CompanyScore and Company review, also the description about the internship itself. You will also receive the most important data input: the final review of the candidate from the company. Your task is to evaluate the candidate's performance based on the provided review and task details and assign a final decision. The final decision should be in the range of 1 (indicating poor performance) to 5 (indicating excellent performance), also write your decision as text in the end of the summary. You must consider everything in the recruiter's review and how well the candidate fulfilled the requirements of the assigned tasks, the decision should mostly come from the final recruiter review, but also take into account the previous steps as stated before. Also write a review or summary of all the stages and how the candidate did. Provide output in valid JSON format. The JSON should be in this format: {  \"finalDecision\": {finalDecisionScore},  \"stagesReview\": {stages review text}}"),
-                new ChatMessage(ChatMessageRole.User, prompt)
+                    "It's very important that the result must be a a valid JSON format. No yapping in the response. You're an AI exert tasked with making a final decision on a candidate for an internship. Candidate can go thru multiple steps: screening, interview, assessment. For each step, Recruiter - Company leaves a review and a score, also the data gets sent to a chat GPT API and also receives a chat gpt score for the step. You will receive the following data from completed steps: AiScore, CompanyScore and Company review, also the description about the internship itself. You will also receive the most important data input: the final review of the candidate from the company. Your task is to evaluate the candidate's performance based on the provided review and task details and assign a final decision. The final decision should be in the range of 1 (indicating poor performance) to 5 (indicating excellent performance), also write your decision as text in the end of the summary. You must consider everything in the recruiter's review and how well the candidate fulfilled the requirements of the assigned tasks, the decision should mostly come from the final recruiter review, but also take into account the previous steps as stated before. Also write a review or summary of all the stages and how the candidate did. Provide output in valid JSON format. It's very important that the result must be a a valid JSON format. The JSON should be in this format: {  \"finalDecision\": {finalDecisionScore},  \"stagesReview\": {stages review text}}"),
+                new ChatMessage(ChatMessageRole.User, prompt),
+                new ChatMessage(ChatMessageRole.User, "The JSON response:")
             }
         };
 
@@ -269,20 +277,21 @@ public class OpenAiService : IOpenAiService
         {
             Model = MODEL,
             Temperature = 1,
-            MaxTokens = 256,
+            MaxTokens = 512,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
             TopP = 1,
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "You're an AI expert tasked with grading interview performance for a internship candidacy. You will receive internship details, You will receive the date " +
+                    "It's very important that the result must be a a valid JSON format. You're an AI expert tasked with grading interview performance for a internship candidacy. You will receive internship details, You will receive the date " +
                     "of the interview: the score given by the recruiter: 1 (indicating excellent performance in the interview) to 5 (indicating excellent performance in the interview) ," +
-                    " and any additional notes/review provided by the recruitet. The data provided to you, will be in JSON format.  Your task is to evaluate the " +
+                    " and any additional notes/review provided by the recruiter. The data provided to you, will be in JSON format.  Your task is to evaluate the " +
                     "interview and assign an interview score. The interview score should be in the range of 1 (indicating poor " +
                     "performance) to 5 (indicating excellent performance). You must take into account everything in the recruiter notes/review, " +
                     "and how fit this person would be for the internship description. Provide output in valid JSON format. The JSON should be in " +
                     "this format: {\"interviewScore\": {score}}."),
-                new ChatMessage(ChatMessageRole.User, prompt)
+                new ChatMessage(ChatMessageRole.User, prompt),
+                new ChatMessage(ChatMessageRole.User, "The JSON response:")
             }
         };
 
@@ -301,20 +310,21 @@ public class OpenAiService : IOpenAiService
         {
             Model = MODEL,
             Temperature = 1,
-            MaxTokens = 256,
+            MaxTokens = 512,
             ResponseFormat = ChatRequest.ResponseFormats.JsonObject,
             TopP = 1,
             Messages = new[]
             {
                 new ChatMessage(ChatMessageRole.System,
-                    "You're an AI expert tasked with grading interview performance for a internship candidacy. You will receive internship details, You're " +
+                    "It's very important that the result must be a a valid JSON format. You're an AI expert tasked with grading interview performance for a internship candidacy. You will receive internship details, You're " +
                     "an AI assistant tasked with assessing a candidate's performance on a given set of tasks for an internship candidacy. You will receive details" +
                     " about the tasks assigned to the candidate and the recruiter's review of their performance. The data provided to you, will be in JSON format.  Your task is to evaluate the candidate's " +
                     "performance based on the provided review and task details and assign an assessment score. The assessment score should be in the range of 1 " +
                     "(indicating poor performance) to 5 (indicating excellent performance). You must consider everything in the recruiter's review and how well " +
                     "the candidate fulfilled the requirements of the assigned tasks. Provide output in valid JSON format. The JSON should be in this format: " +
                     "{\"assessmentScore\": {score}}."),
-                new ChatMessage(ChatMessageRole.User, prompt)
+                new ChatMessage(ChatMessageRole.User, prompt),
+                new ChatMessage(ChatMessageRole.User, "The JSON response:")
             }
         };
 
