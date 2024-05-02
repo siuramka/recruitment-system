@@ -447,7 +447,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
                         </FormItem>
                       )}
                     />
-                    <FormField
+                    {/* <FormField
                       name="TotalScoreWeight"
                       render={({ field }) => (
                         <FormItem>
@@ -468,7 +468,7 @@ export function CreateInternshipDialog({ handleRefresh }: props) {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
                   </div>
                   <Button type="submit">Save</Button>
                 </form>

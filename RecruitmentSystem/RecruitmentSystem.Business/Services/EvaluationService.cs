@@ -161,7 +161,7 @@ public class EvaluationService : IEvaluationService
         var companyScoreX2 = companyScores.Average() * normalize * ((double)weights.CompanyScoreWeight / maxScore);
         var x1x2Average = (aiScoreX1 + companyScoreX2) / 2;
 
-        var correlationBoostModifer = (1 + correlation) * ((double)weights.TotalScoreWeight / maxScore);
+        var correlationBoostModifer = 1 + correlation;
 
         var finalScore = x1x2Average * correlationBoostModifer;
 

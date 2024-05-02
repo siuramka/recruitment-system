@@ -2,6 +2,7 @@ import { DecisionDto } from "@/interfaces/Decision/DecisionDto";
 import api from "./Api";
 import { DecisionCreateDto } from "@/interfaces/Decision/DecisionCreateDto";
 import { DecisionScoreDto } from "@/interfaces/Decision/DecisionScoreDto";
+import { toast } from "@/components/ui/use-toast";
 
 export const getDecision = async ({
   applicationId,
@@ -42,6 +43,9 @@ export const createDecision = async ({
 
     return null;
   } catch {
+    toast({
+      title: "Sorry! ChatGPT returned incorrect format results! Try again!",
+    });
     return null;
   }
 };

@@ -166,7 +166,7 @@ const AssessmentSheetItem = ({ application }: Props) => {
                         </FormItem>
                       )}
                     />
-                    {!assessment && application.stepName === "Assessment" && (
+                    {!assessment && (
                       <Button className="mt-5" type="submit" variant="default">
                         Submit
                       </Button>
