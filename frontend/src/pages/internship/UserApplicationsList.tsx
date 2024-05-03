@@ -56,7 +56,7 @@ export function UserApplicationsList() {
                   {app.internshipDto.companyDto.name}
                 </TableCell>
                 <TableCell className="font-medium">
-                  {app.internshipDto.companyDto.email}
+                  {app.internshipDto.contactEmail}
                 </TableCell>
                 <TableCell className="font-medium">
                   {app.internshipDto.name}

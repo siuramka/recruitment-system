@@ -61,7 +61,7 @@ const DecisionLineChart = ({ applicationId }: { applicationId: string }) => {
             </linearGradient>
           </defs>
           <XAxis dataKey="name" />
-          <YAxis />
+          <YAxis domain={[0, 5]} />
           <Legend />
           <CartesianGrid strokeDasharray="3 3" />
 

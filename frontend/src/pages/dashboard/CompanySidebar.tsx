@@ -1,4 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+import { removeUser } from "@/features/AuthSlice";
 import { BarChart, Pen, Settings, TestTube } from "lucide-react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 interface CompanySidebarProps {
@@ -6,6 +10,13 @@ interface CompanySidebarProps {
 }
 const CompanySidebar = ({ children }: CompanySidebarProps) => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(removeUser());
+    toast({ title: "Logged out" });
+  };
 
   return (
     <>
@@ -26,6 +37,10 @@ const CompanySidebar = ({ children }: CompanySidebarProps) => {
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                   Internship selection system
                 </span>
+
+                <Button variant="ghost" onClick={handleLogout}>
+                  Logout
+                </Button>
               </a>
             </div>
           </div>

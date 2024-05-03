@@ -67,7 +67,7 @@ const DecisionCombinedChart = ({
         <ComposedChart width={600} height={300} data={data}>
           <CartesianGrid stroke="#f5f5f5" />
           <XAxis dataKey="step" />
-          <YAxis />
+          <YAxis domain={[0, 5]} />
           <Tooltip />
           <Legend />
           <Bar dataKey="aiAverage" barSize={20} fill="hsl(221.2 33.2% 53.3%)" />
