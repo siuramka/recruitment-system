@@ -17,9 +17,9 @@ const DetailedCalculationsDialog = ({
   return (
     <Dialog>
       <DialogTrigger>
-        <Button variant={"outline"} className="mt-6 w-auto">
+        {/* <Button variant={"outline"} className="mt-6 w-auto">
           Open score calculation breakdown
-        </Button>
+        </Button> */}
       </DialogTrigger>
       <DialogContent className="h-[90vh] overflow-auto">
         <DialogHeader>
